@@ -1,0 +1,38 @@
+<section class="min-h-screen">
+    <div class="photo-upload-container">
+      <h1>Upload or Take a Photo</h1>
+    
+      <!-- Upload photo -->
+      <label for="photo-upload" class="upload-label">Choose a Photo:</label>
+      <input
+        type="file"
+        id="photo-upload"
+        accept="image/*"
+        (change)="onFileSelected($event)"
+        class="photo-input"
+      />
+    
+      <!-- Take photo -->
+      <button class="take-photo-btn" (click)="capturePhoto()">Take Photo</button>
+      <video #videoElement class="video-preview" *ngIf="showCamera" autoplay></video>
+      <canvas #canvasElement class="canvas-preview" *ngIf="showCanvas"></canvas>
+    
+      <!-- Display selected photo preview -->
+      <div class="photo-preview" *ngIf="preview">
+        <h2>Photo Preview:</h2>
+        <img [src]="preview" alt="Selected Photo" />
+      </div>
+    
+      <!-- Upload button -->
+      <button class="upload-btn" (click)="uploadPhoto()" [disabled]="!photo">
+        Upload Photo
+      </button>
+    
+      <!-- API response -->
+      <div *ngIf="response">
+        <h2>Server Response:</h2>
+        <pre>{{ response | json }}</pre>
+      </div>
+    </div>
+  </section>
+  

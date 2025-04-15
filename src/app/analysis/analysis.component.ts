@@ -1,0 +1,149 @@
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';  
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
+interface ClarificationItem {
+  symptom: string;
+  question: string;
+}
+
+@Component({
+  selector: 'app-analysis',
+  standalone: true,
+  imports: [FormsModule, CommonModule],
+  templateUrl: './analysis.component.html',
+  styleUrls: ['./analysis.component.scss']
+})
+export class AnalysisComponent implements OnInit {
+  symptoms: string[] = [];
+  searchQuery: string = ''; 
+  filteredSymptoms: string[] = []; 
+  selectedSymptoms: string[] = []; 
+
+  response: any = null;
+  loading = false;
+  errorMessage = '';
+
+  currentClarification: ClarificationItem | null = null;
+  state: { [symptom: string]: boolean } = {};
+  askedQuestions: string[] = [];
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.loadSymptoms();
+  }
+
+  loadSymptoms(): void {
+    this.http.get<string[]>('http://localhost:5000/api/symptoms').subscribe({
+      next: (data) => this.symptoms = data,
+      error: (err) => console.error('Erreur lors du chargement des symptômes:', err)
+    });
+  }
+
+  filterSymptoms(): void {
+    const query = this.searchQuery.toLowerCase();
+    this.filteredSymptoms = this.symptoms
+      .filter(symptom => symptom.toLowerCase().includes(query))
+      .slice(0, 10);
+  }
+
+  addSymptom(symptom?: string): void {
+    const finalSymptom = (symptom || this.searchQuery).trim();
+    if (finalSymptom && !this.selectedSymptoms.includes(finalSymptom)) {
+      this.selectedSymptoms.push(finalSymptom);
+    }
+    this.searchQuery = '';
+    this.filteredSymptoms = [];
+  }
+
+  removeSymptom(index: number): void {
+    this.selectedSymptoms.splice(index, 1);
+  }
+
+  formatSymptoms(symptoms: string[]): string[] {
+    return symptoms.map(symptom =>
+      symptom.toLowerCase().trim().replace(/ /g, '_')
+    );
+  }
+
+  // 🔍 Étape 1 : Envoi des symptômes initiaux
+  submitSymptoms(): void {
+    if (this.selectedSymptoms.length === 0) {
+      this.errorMessage = 'Veuillez sélectionner au moins un symptôme.';
+      return;
+    }
+
+    this.loading = true;
+    this.errorMessage = '';
+
+    const formattedSymptoms = this.formatSymptoms(this.selectedSymptoms);
+
+    this.http.post<any>('http://localhost:5000/api/nova/start', { symptoms: formattedSymptoms }).subscribe({
+      next: (data) => {
+        this.state = data.state || {};
+        this.askedQuestions = data.question ? [data.question.question] : [];
+        this.currentClarification = data.question || null;
+        this.response = null;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.errorMessage = error.error?.error || 'Erreur lors de l’analyse.';
+        this.loading = false;
+      }
+    });
+  }
+
+  // 🔁 Étape 2 : Réponse à une question oui/non
+  answerClarification(value: boolean): void {
+    if (!this.currentClarification) return;
+
+    const answerPayload = {
+      state: this.state,
+      answer: {
+        [this.currentClarification.symptom]: value
+      },
+      asked_questions: [...this.askedQuestions, this.currentClarification.question]
+    };
+
+    this.loading = true;
+    this.http.post<any>('http://localhost:5000/api/nova/refine', answerPayload).subscribe({
+      next: (data) => {
+        this.state = data.state || {};
+        this.askedQuestions = data.asked_questions || [];
+
+        if (data.final_prediction) {
+          this.response = {
+            predicted_disease: data.final_prediction,
+            confidence: data.confidence
+          };
+          this.currentClarification = null;
+        } else {
+          this.currentClarification = data.question || null;
+          if (this.currentClarification && this.currentClarification.question) {
+            this.askedQuestions.push(this.currentClarification.question);
+          }
+        }
+
+        this.loading = false;
+      },
+      error: (error) => {
+        this.errorMessage = error.error?.error || 'Erreur lors de la clarification.';
+        this.loading = false;
+      }
+    });
+  }
+
+  // 🔁 Reset total
+  resetForm(): void {
+    this.response = null;
+    this.selectedSymptoms = [];
+    this.searchQuery = '';
+    this.filteredSymptoms = [];
+    this.currentClarification = null;
+    this.askedQuestions = [];
+    this.state = {};
+    this.errorMessage = '';
+  }
+}

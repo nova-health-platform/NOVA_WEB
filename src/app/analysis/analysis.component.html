@@ -1,0 +1,89 @@
+<section class="min-h-screen flex justify-center pt-[20vh]">
+  <div class="mx-auto w-full max-w-4xl">
+    <div>
+
+      <!-- 🔴 Message d'erreur -->
+      <div *ngIf="errorMessage" class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center max-w-2xl mx-auto">
+        {{ errorMessage }}
+      </div>
+
+      <!-- 🔄 Loading -->
+      <div *ngIf="loading" class="text-center text-white mb-4 font-semibold">
+        Chargement en cours...
+      </div>
+
+      <!-- 🎯 Étape 1 : sélection des symptômes -->
+      <div *ngIf="!response && !currentClarification" class="max-w-2xl mx-auto">
+        <h1 class="text-4xl text-center text-white font-extrabold mb-6">Analysez vos symptômes :</h1>
+
+        <div class="mb-4 flex items-center gap-2">
+          <div class="w-full">
+            <div class="flex items-center gap-2">
+              <input
+                type="text"
+                [(ngModel)]="searchQuery"
+                (input)="filterSymptoms()"
+                (keydown.enter)="addSymptom()"
+                placeholder="Tapez un symptôme..."
+                class="w-full p-2 py-3 border-3 border-pink-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <button
+                (click)="submitSymptoms()"
+                class="px-4 py-3 rounded-lg bg-pink-500/10 border-3 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
+                Valider
+              </button>
+            </div>
+
+            <ul *ngIf="filteredSymptoms.length > 0"
+                class="w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 z-10">
+              <li *ngFor="let symptom of filteredSymptoms" (click)="addSymptom(symptom)"
+                  class="p-2 cursor-pointer hover:bg-blue-100 text-black">
+                {{ symptom }}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div *ngIf="selectedSymptoms.length > 0" class="mb-2 flex justify-center">
+          <ul class="flex flex-wrap gap-2 justify-center">
+            <li *ngFor="let symptom of selectedSymptoms; let i = index"
+                class="bg-pink-500/10 border-2 border-pink-500 text-white px-3 py-1 mt-1 rounded-full flex items-center hover:bg-pink-500">
+              {{ symptom }}
+              <button (click)="removeSymptom(i)" class="ml-2 text-sm font-bold">✖</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ❓ Étape 2 : clarification dynamique -->
+      <div *ngIf="currentClarification" class="mt-8 bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+        <h3 class="text-lg font-bold mb-4 text-black text-center">Veuillez répondre à la question suivante :</h3>
+        <div class="text-black text-lg text-center mb-6">
+          {{ currentClarification.question }}
+        </div>
+        <div class="flex justify-center gap-6">
+          <button (click)="answerClarification(true)"
+                  class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Oui</button>
+          <button (click)="answerClarification(false)"
+                  class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700">Non</button>
+        </div>
+      </div>
+
+      <!-- ✅ Étape 3 : résultat final -->
+      <div *ngIf="response && !currentClarification" class="text-center mt-10">
+        <h2 class="text-xl font-bold mb-4 text-white">Résultat :</h2>
+        <div class="bg-gray-100 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold text-black">
+            Diagnostic : <span class="text-blue-600">{{ response.predicted_disease }}</span>
+          </h3>
+          <p class="text-black mt-2">
+            Confiance : {{ response.confidence | number : '1.2-2' }}%
+          </p>
+        </div>
+        <button (click)="resetForm()" class="mt-4 bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600">
+          Analyser d'autres symptômes
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>

@@ -12,10 +12,28 @@
         Chargement en cours...
       </div>
 
-      <!-- 🎯 Étape 1 : sélection des symptômes -->
+      <!-- 🎯 Étape 1 : sélection des symptômes + info patient -->
       <div *ngIf="!response && !currentClarification" class="max-w-2xl mx-auto">
         <h1 class="text-4xl text-center text-white font-extrabold mb-6">Analysez vos symptômes :</h1>
 
+        <!-- 👤 Infos patient -->
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <input
+            type="number"
+            [(ngModel)]="age"
+            placeholder="Âge"
+            class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+          <select
+            [(ngModel)]="gender"
+            class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="" disabled selected>Sexe</option>
+            <option value="male">Homme</option>
+            <option value="female">Femme</option>
+          </select>
+        </div>
+
+        <!-- 📝 Input de symptôme -->
         <div class="mb-4 flex items-center gap-2">
           <div class="w-full">
             <div class="flex items-center gap-2">
@@ -25,7 +43,7 @@
                 (input)="filterSymptoms()"
                 (keydown.enter)="addSymptom()"
                 placeholder="Tapez un symptôme..."
-                class="w-full p-2 py-3 border-3 border-pink-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                class="w-full p-2 py-3 border-3 border-pink-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" />
               <button
                 (click)="submitSymptoms()"
                 class="px-4 py-3 rounded-lg bg-pink-500/10 border-3 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
@@ -33,6 +51,7 @@
               </button>
             </div>
 
+            <!-- 🧠 Suggestions -->
             <ul *ngIf="filteredSymptoms.length > 0"
                 class="w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 z-10">
               <li *ngFor="let symptom of filteredSymptoms" (click)="addSymptom(symptom)"
@@ -43,6 +62,7 @@
           </div>
         </div>
 
+        <!-- ✅ Liste des symptômes choisis -->
         <div *ngIf="selectedSymptoms.length > 0" class="mb-2 flex justify-center">
           <ul class="flex flex-wrap gap-2 justify-center">
             <li *ngFor="let symptom of selectedSymptoms; let i = index"

@@ -29,6 +29,9 @@ export class AnalysisComponent implements OnInit {
   state: { [symptom: string]: boolean } = {};
   askedQuestions: string[] = [];
 
+  age: number | null = null;
+  gender: string = ''; // 'male' ou 'female'
+
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
@@ -75,12 +78,21 @@ export class AnalysisComponent implements OnInit {
       return;
     }
 
+    if (!this.age || !this.gender) {
+      this.errorMessage = 'Veuillez renseigner votre âge et votre sexe.';
+      return;
+    }
+
     this.loading = true;
     this.errorMessage = '';
 
     const formattedSymptoms = this.formatSymptoms(this.selectedSymptoms);
 
-    this.http.post<any>('http://localhost:5000/api/nova/start', { symptoms: formattedSymptoms }).subscribe({
+    this.http.post<any>('http://localhost:5000/api/nova/start', {
+      symptoms: formattedSymptoms,
+      age: this.age,
+      gender: this.gender
+    }).subscribe({
       next: (data) => {
         this.state = data.state || {};
         this.askedQuestions = data.question ? [data.question.question] : [];
@@ -145,5 +157,7 @@ export class AnalysisComponent implements OnInit {
     this.askedQuestions = [];
     this.state = {};
     this.errorMessage = '';
+    this.age = null;
+    this.gender = '';
   }
 }

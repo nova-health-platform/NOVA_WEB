@@ -30,12 +30,18 @@ export class AnalysisComponent implements OnInit {
   askedQuestions: string[] = [];
 
   age: number | null = null;
-  gender: string = ''; // 'male' ou 'female'
+  gender: string = '';
+
+  zonesVisible = true;
+
+  // 🔴 Zones SVG
+  zones: any[] = [];
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.loadSymptoms();
+    this.loadZones(); // ⬅️ Charge les rectangles SVG
   }
 
   loadSymptoms(): void {
@@ -43,6 +49,17 @@ export class AnalysisComponent implements OnInit {
       next: (data) => this.symptoms = data,
       error: (err) => console.error('Erreur lors du chargement des symptômes:', err)
     });
+  }
+
+  loadZones(): void {
+    this.http.get<any[]>('assets/pain_location_front.json').subscribe({
+      next: (data) => this.zones = data,
+      error: (err) => console.error('Erreur lors du chargement des zones SVG :', err)
+    });
+  }
+
+  toggleZoneVisibility(zone: any): void {
+    zone.visible = !zone.visible;
   }
 
   filterSymptoms(): void {
@@ -71,7 +88,6 @@ export class AnalysisComponent implements OnInit {
     );
   }
 
-  // 🔍 Étape 1 : Envoi des symptômes initiaux
   submitSymptoms(): void {
     if (this.selectedSymptoms.length === 0) {
       this.errorMessage = 'Veuillez sélectionner au moins un symptôme.';
@@ -107,7 +123,6 @@ export class AnalysisComponent implements OnInit {
     });
   }
 
-  // 🔁 Étape 2 : Réponse à une question oui/non
   answerClarification(value: boolean): void {
     if (!this.currentClarification) return;
 
@@ -133,7 +148,7 @@ export class AnalysisComponent implements OnInit {
           this.currentClarification = null;
         } else {
           this.currentClarification = data.question || null;
-          if (this.currentClarification && this.currentClarification.question) {
+          if (this.currentClarification?.question) {
             this.askedQuestions.push(this.currentClarification.question);
           }
         }
@@ -147,7 +162,6 @@ export class AnalysisComponent implements OnInit {
     });
   }
 
-  // 🔁 Reset total
   resetForm(): void {
     this.response = null;
     this.selectedSymptoms = [];
@@ -159,5 +173,6 @@ export class AnalysisComponent implements OnInit {
     this.errorMessage = '';
     this.age = null;
     this.gender = '';
+    this.zonesVisible = true;
   }
 }

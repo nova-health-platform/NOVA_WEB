@@ -1,0 +1,226 @@
+[
+  {
+    "id": "head_front",
+    "x": 92.298164,
+    "y": 3.1498163,
+    "width": 38.241402,
+    "height": 43.845917,
+    "visible": true
+  },
+  {
+    "id": "neck_front",
+    "x": 99.589333,
+    "y": 41.741203,
+    "width": 23.317974,
+    "height": 20.972477,
+    "visible": true
+  },
+  {
+    "id": "chest_front",
+    "x": 85.422371,
+    "y": 61.87569,
+    "width": 51.992977,
+    "height": 46.287354,
+    "visible": true
+  },
+  {
+    "id": "upper_abdomen_front",
+    "x": 81.625229,
+    "y": 107.54556,
+    "width": 59.928333,
+    "height": 34.286316,
+    "visible": true
+  },
+  {
+    "id": "lower_abdomen_front",
+    "x": 81.201172,
+    "y": 140.26442,
+    "width": 60.094322,
+    "height": 24.801832,
+    "visible": true
+  },
+  {
+    "id": "genital_front",
+    "x": 91.54039,
+    "y": 172.46297,
+    "width": 39.415882,
+    "height": 27.253101,
+    "visible": true
+  },
+  {
+    "id": "arm_right_front",
+    "x": 50.06,
+    "y": 73.79,
+    "width": 39.21,
+    "height": 92.38,
+    "visible": true
+  },
+  {
+    "id": "arm_left_front",
+    "x": 133.65,
+    "y": 73.8,
+    "width": 39.05,
+    "height": 92.36,
+    "visible": true
+  },
+  {
+    "id": "hand_right_front",
+    "x": 44.338032,
+    "y": 160.3315,
+    "width": 27.572271,
+    "height": 34.94022,
+    "visible": true
+  },
+  {
+    "id": "hip_right_front",
+    "x": 76.862831,
+    "y": 159.467,
+    "width": 24.402723,
+    "height": 27.029821,
+    "visible": true
+  },
+  {
+    "id": "hip_left_front",
+    "x": 123.20921,
+    "y": 159.45053,
+    "width": 23.978584,
+    "height": 25.899691,
+    "visible": true
+  },
+  {
+    "id": "elbow_right_front",
+    "x": 61.400433,
+    "y": 107.9827,
+    "width": 20.198261,
+    "height": 17.311592,
+    "visible": true
+  },
+  {
+    "id": "elbow_left_front",
+    "x": 142.86041,
+    "y": 108.88989,
+    "width": 18.882021,
+    "height": 15.393634,
+    "visible": true
+  },
+  {
+    "id": "hand_left_front",
+    "x": 151.052,
+    "y": 160.02888,
+    "width": 28.013044,
+    "height": 35.545437,
+    "visible": true
+  },
+  {
+    "id": "leg_right_front",
+    "x": 76.311356,
+    "y": 164.38148,
+    "width": 32.486526,
+    "height": 141.3532,
+    "visible": true
+  },
+  {
+    "id": "leg_left_front",
+    "x": 113.93391,
+    "y": 164.07356,
+    "width": 32.820965,
+    "height": 141.34647,
+    "visible": true
+  },
+  {
+    "id": "foot_right_front",
+    "x": 83.267738,
+    "y": 304.64359,
+    "width": 25.053921,
+    "height": 26.938623,
+    "visible": true
+  },
+  {
+    "id": "foot_left_front",
+    "x": 115.77111,
+    "y": 304.64255,
+    "width": 25.053839,
+    "height": 26.940704,
+    "visible": true
+  },
+  {
+    "id": "ankle_left_front",
+    "x": 115.65569,
+    "y": 292.01071,
+    "width": 21.448044,
+    "height": 18.838991,
+    "visible": true
+  },
+  {
+    "id": "ankle_right_front",
+    "x": 87.331993,
+    "y": 292.30469,
+    "width": 20.295834,
+    "height": 17.989048,
+    "visible": true
+  },
+  {
+    "id": "face_front",
+    "x": 97.289658,
+    "y": 14.902987,
+    "width": 27.917337,
+    "height": 27.392422,
+    "visible": true
+  },
+  {
+    "id": "eyes_front",
+    "x": 98.098381,
+    "y": 22.135885,
+    "width": 25.849606,
+    "height": 9.4637012,
+    "visible": true
+  },
+  {
+    "id": "mouth_front",
+    "x": 104.20197,
+    "y": 33.754841,
+    "width": 15.0,
+    "height": 8.0,
+    "visible": true
+  },
+  {
+    "id": "groin_front",
+    "x": 88.443375,
+    "y": 160.93614,
+    "width": 46.633102,
+    "height": 12.679451,
+    "visible": true
+  },
+  {
+    "id": "shoulder_right_front",
+    "x": 66.330399,
+    "y": 49.588688,
+    "width": 32.305832,
+    "height": 26.814594,
+    "visible": true
+  },
+  {
+    "id": "shoulder_left_front",
+    "x": 124.29269,
+    "y": 48.79211,
+    "width": 32.286575,
+    "height": 27.222231,
+    "visible": true
+  },
+  {
+    "id": "knee_right_front",
+    "x": 82.564957,
+    "y": 224.74077,
+    "width": 26.903114,
+    "height": 29.116947,
+    "visible": true
+  },
+  {
+    "id": "knee_left_front",
+    "x": 113.61938,
+    "y": 224.67513,
+    "width": 26.324348,
+    "height": 28.347706,
+    "visible": true
+  }
+]

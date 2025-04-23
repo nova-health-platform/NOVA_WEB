@@ -1,5 +1,5 @@
-<section class="min-h-screen flex justify-center pt-[20vh]">
-  <div class="mx-auto w-full max-w-4xl">
+<section class="min-h-screen flex justify-center pt-[10vh]">
+  <div class="mx-auto w-full max-w-6xl">
     <div>
 
       <!-- 🔴 Message d'erreur -->
@@ -12,69 +12,94 @@
         Chargement en cours...
       </div>
 
-      <!-- 🎯 Étape 1 : sélection des symptômes + info patient -->
-      <div *ngIf="!response && !currentClarification" class="max-w-2xl mx-auto">
-        <h1 class="text-4xl text-center text-white font-extrabold mb-6">Analysez vos symptômes :</h1>
+      <!-- 🧍‍♀️ Contenu principal -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
 
-        <!-- 👤 Infos patient -->
-        <div class="grid grid-cols-2 gap-4 mb-4">
-          <input
-            type="number"
-            [(ngModel)]="age"
-            placeholder="Âge"
-            class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <!-- 🎯 Colonne gauche : Infos patient -->
+        <div>
+          <h1 class="text-4xl text-center text-white font-extrabold mb-6">Analysez vos symptômes :</h1>
 
-          <select
-            [(ngModel)]="gender"
-            class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <option value="" disabled selected>Sexe</option>
-            <option value="male">Homme</option>
-            <option value="female">Femme</option>
-          </select>
-        </div>
+          <!-- 👤 Infos patient -->
+          <div class="grid grid-cols-2 gap-4 mb-4">
+            <input type="number" [(ngModel)]="age" placeholder="Âge"
+              class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
-        <!-- 📝 Input de symptôme -->
-        <div class="mb-4 flex items-center gap-2">
-          <div class="w-full">
-            <div class="flex items-center gap-2">
-              <input
-                type="text"
-                [(ngModel)]="searchQuery"
-                (input)="filterSymptoms()"
-                (keydown.enter)="addSymptom()"
-                placeholder="Tapez un symptôme..."
-                class="w-full p-2 py-3 border-3 border-pink-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" />
-              <button
-                (click)="submitSymptoms()"
-                class="px-4 py-3 rounded-lg bg-pink-500/10 border-3 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
-                Valider
-              </button>
-            </div>
+            <select [(ngModel)]="gender"
+              class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="" disabled selected>Sexe</option>
+              <option value="male">Homme</option>
+              <option value="female">Femme</option>
+            </select>
+          </div>
 
-            <!-- 🧠 Suggestions -->
-            <ul *ngIf="filteredSymptoms.length > 0"
+          <!-- 📝 Input symptôme -->
+          <div class="mb-4 flex items-center gap-2">
+            <div class="w-full">
+              <div class="flex items-center gap-2">
+                <input type="text" [(ngModel)]="searchQuery" (input)="filterSymptoms()" (keydown.enter)="addSymptom()"
+                  placeholder="Tapez un symptôme..."
+                  class="w-full p-2 py-3 border-3 border-pink-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" />
+                <button (click)="submitSymptoms()"
+                  class="px-4 py-3 rounded-lg bg-pink-500/10 border-3 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
+                  Valider
+                </button>
+              </div>
+
+              <!-- 🧠 Suggestions -->
+              <ul *ngIf="filteredSymptoms.length > 0"
                 class="w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 z-10">
-              <li *ngFor="let symptom of filteredSymptoms" (click)="addSymptom(symptom)"
+                <li *ngFor="let symptom of filteredSymptoms" (click)="addSymptom(symptom)"
                   class="p-2 cursor-pointer hover:bg-blue-100 text-black">
+                  {{ symptom }}
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- ✅ Liste des symptômes -->
+          <div *ngIf="selectedSymptoms.length > 0" class="mb-2 flex justify-center">
+            <ul class="flex flex-wrap gap-2 justify-center">
+              <li *ngFor="let symptom of selectedSymptoms; let i = index"
+                class="bg-pink-500/10 border-2 border-pink-500 text-white px-3 py-1 mt-1 rounded-full flex items-center hover:bg-pink-500">
                 {{ symptom }}
+                <button (click)="removeSymptom(i)" class="ml-2 text-sm font-bold">✖</button>
               </li>
             </ul>
           </div>
         </div>
 
-        <!-- ✅ Liste des symptômes choisis -->
-        <div *ngIf="selectedSymptoms.length > 0" class="mb-2 flex justify-center">
-          <ul class="flex flex-wrap gap-2 justify-center">
-            <li *ngFor="let symptom of selectedSymptoms; let i = index"
-                class="bg-pink-500/10 border-2 border-pink-500 text-white px-3 py-1 mt-1 rounded-full flex items-center hover:bg-pink-500">
-              {{ symptom }}
-              <button (click)="removeSymptom(i)" class="ml-2 text-sm font-bold">✖</button>
-            </li>
-          </ul>
+        <!-- 🧍 Colonne droite : Silhouette + zones -->
+        <div class="relative w-full max-w-md mx-auto">
+          <!-- Silhouette -->
+          <img src="assets/pain_location_body.svg" class="w-full object-contain" />
+
+          <!-- SVG superposé avec zones interactives -->
+          <svg
+            class="absolute inset-0 m-auto pointer-events-none w-full h-full"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <ng-container *ngFor="let zone of zones">
+              <rect
+                [attr.x]="zone.x"
+                [attr.y]="zone.y"
+                [attr.width]="zone.width"
+                [attr.height]="zone.height"
+                fill="red"
+                stroke="black"
+                stroke-width="0.3"
+                [attr.opacity]="zone.visible ? 0.3 : 0"
+                (click)="toggleZoneVisibility(zone); $event.stopPropagation()"
+                class="cursor-pointer pointer-events-auto transition-opacity duration-300"
+              />
+            </ng-container>
+          </svg>
+
+
         </div>
+
       </div>
 
-      <!-- ❓ Étape 2 : clarification dynamique -->
+      <!-- ❓ Clarification -->
       <div *ngIf="currentClarification" class="mt-8 bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
         <h3 class="text-lg font-bold mb-4 text-black text-center">Veuillez répondre à la question suivante :</h3>
         <div class="text-black text-lg text-center mb-6">
@@ -82,13 +107,13 @@
         </div>
         <div class="flex justify-center gap-6">
           <button (click)="answerClarification(true)"
-                  class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Oui</button>
+            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Oui</button>
           <button (click)="answerClarification(false)"
-                  class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700">Non</button>
+            class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700">Non</button>
         </div>
       </div>
 
-      <!-- ✅ Étape 3 : résultat final -->
+      <!-- ✅ Résultat -->
       <div *ngIf="response && !currentClarification" class="text-center mt-10">
         <h2 class="text-xl font-bold mb-4 text-white">Résultat :</h2>
         <div class="bg-gray-100 p-4 rounded-lg">
@@ -103,7 +128,6 @@
           Analyser d'autres symptômes
         </button>
       </div>
-
     </div>
   </div>
 </section>

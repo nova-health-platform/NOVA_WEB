@@ -33,15 +33,13 @@ export class AnalysisComponent implements OnInit {
   gender: string = '';
 
   zonesVisible = true;
-
-  // 🔴 Zones SVG
   zones: any[] = [];
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.loadSymptoms();
-    this.loadZones(); // ⬅️ Charge les rectangles SVG
+    this.loadZones();
   }
 
   loadSymptoms(): void {
@@ -58,9 +56,22 @@ export class AnalysisComponent implements OnInit {
     });
   }
 
-  toggleZoneVisibility(zone: any): void {
-    zone.visible = !zone.visible;
+  hideZonesAt(event: MouseEvent): void {
+    const svg = event.currentTarget as SVGSVGElement;
+    const pt = svg.createSVGPoint();
+    pt.x = event.clientX;
+    pt.y = event.clientY;
+    const cursor = pt.matrixTransform(svg.getScreenCTM()?.inverse());
+  
+    for (const zone of this.zones) {
+      const withinX = cursor.x >= zone.x && cursor.x <= zone.x + zone.width;
+      const withinY = cursor.y >= zone.y && cursor.y <= zone.y + zone.height;
+      if (withinX && withinY) {
+        zone.visible = !zone.visible; // ⬅️ Toggle ici
+      }
+    }
   }
+  
 
   filterSymptoms(): void {
     const query = this.searchQuery.toLowerCase();
@@ -174,5 +185,6 @@ export class AnalysisComponent implements OnInit {
     this.age = null;
     this.gender = '';
     this.zonesVisible = true;
+    this.zones.forEach(z => z.visible = true); // Réaffiche tout
   }
 }

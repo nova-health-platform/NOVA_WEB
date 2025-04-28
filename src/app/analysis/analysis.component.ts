@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';  
+import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 interface ClarificationItem {
   symptom: string;
   question: string;
+}
+
+interface SvgPath {
+  id: string;
+  d: string;
 }
 
 @Component({
@@ -17,9 +22,9 @@ interface ClarificationItem {
 })
 export class AnalysisComponent implements OnInit {
   symptoms: string[] = [];
-  searchQuery: string = ''; 
-  filteredSymptoms: string[] = []; 
-  selectedSymptoms: string[] = []; 
+  searchQuery: string = '';
+  filteredSymptoms: string[] = [];
+  selectedSymptoms: string[] = [];
 
   response: any = null;
   loading = false;
@@ -32,14 +37,13 @@ export class AnalysisComponent implements OnInit {
   age: number | null = null;
   gender: string = '';
 
-  zonesVisible = true;
-  zones: any[] = [];
+  svgPaths: SvgPath[] = [];
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.loadSymptoms();
-    this.loadZones();
+    this.loadSvgPaths();
   }
 
   loadSymptoms(): void {
@@ -49,29 +53,25 @@ export class AnalysisComponent implements OnInit {
     });
   }
 
-  loadZones(): void {
-    this.http.get<any[]>('assets/pain_location_front.json').subscribe({
-      next: (data) => this.zones = data,
-      error: (err) => console.error('Erreur lors du chargement des zones SVG :', err)
+  loadSvgPaths(): void {
+    this.http.get<SvgPath[]>('assets/pain_location_front.json').subscribe({
+      next: (data) => this.svgPaths = data,
+      error: (err) => console.error('Erreur lors du chargement des paths SVG:', err)
     });
   }
 
-  hideZonesAt(event: MouseEvent): void {
-    const svg = event.currentTarget as SVGSVGElement;
-    const pt = svg.createSVGPoint();
-    pt.x = event.clientX;
-    pt.y = event.clientY;
-    const cursor = pt.matrixTransform(svg.getScreenCTM()?.inverse());
-  
-    for (const zone of this.zones) {
-      const withinX = cursor.x >= zone.x && cursor.x <= zone.x + zone.width;
-      const withinY = cursor.y >= zone.y && cursor.y <= zone.y + zone.height;
-      if (withinX && withinY) {
-        zone.visible = !zone.visible; // ⬅️ Toggle ici
-      }
+  toggleZone(event: MouseEvent, id: string): void {
+    if (id === 'body') return; // Le body ne doit jamais être modifié
+
+    const target = event.target as SVGPathElement;
+    const currentFill = target.getAttribute('fill');
+
+    if (currentFill === '#ff0000') {
+      target.setAttribute('fill', '#ec4899'); // Rose Tailwind pink-500
+    } else {
+      target.setAttribute('fill', '#ff0000'); // Rouge
     }
   }
-  
 
   filterSymptoms(): void {
     const query = this.searchQuery.toLowerCase();
@@ -184,7 +184,5 @@ export class AnalysisComponent implements OnInit {
     this.errorMessage = '';
     this.age = null;
     this.gender = '';
-    this.zonesVisible = true;
-    this.zones.forEach(z => z.visible = true); // Réaffiche tout
   }
 }

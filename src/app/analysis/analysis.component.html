@@ -68,33 +68,23 @@
           </div>
         </div>
 
-        <!-- 🧍 Colonne droite : Silhouette + SVG -->
+        <!-- 🧍 Colonne droite : Silhouette SVG dynamique -->
         <div class="relative w-full max-w-md mx-auto">
-          <!-- Silhouette SVG -->
-          <img src="assets/pain_location_body.svg" class="w-full object-contain" alt="Silhouette" />
-
-          <!-- SVG interactif superposé -->
-          <svg
-            (click)="hideZonesAt($event)"
-            class="absolute inset-0 w-full h-full pointer-events-auto z-10"
-            preserveAspectRatio="xMidYMid meet"
-            viewBox="0 0 200 350"
-          >
-            <ng-container *ngFor="let zone of zones">
-              <rect
-                [attr.x]="zone.x"
-                [attr.y]="zone.y"
-                [attr.width]="zone.width"
-                [attr.height]="zone.height"
-                fill="red"
+          <svg class="w-full h-full" viewBox="80 0 70 190" preserveAspectRatio="xMidYMid meet">
+            <ng-container *ngFor="let path of svgPaths">
+              <path
+                [attr.d]="path.d"
+                [attr.id]="path.id"
+                [attr.fill]="path.id === 'body' ? '#3b82f6' : '#ff0000'"
                 stroke="black"
                 stroke-width="0.3"
-                [attr.opacity]="zone.visible ? 0.3 : 0"
-                class="transition-opacity duration-300 pointer-events-none"
-              />
+                (click)="toggleZone($event, path.id)"
+                [style.pointer-events]="path.id === 'body' ? 'none' : 'auto'"
+              ></path>
             </ng-container>
           </svg>
         </div>
+
       </div>
 
       <!-- ❓ Clarification -->
@@ -126,6 +116,7 @@
           Analyser d'autres symptômes
         </button>
       </div>
+
     </div>
   </div>
 </section>

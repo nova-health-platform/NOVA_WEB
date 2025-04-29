@@ -39,6 +39,11 @@ export class AnalysisComponent implements OnInit {
 
   svgPaths: SvgPath[] = [];
 
+  // UI control flags
+  showPainQuestion: boolean = false;
+  painAnswer: boolean | null = null;
+  showBodySelection: boolean = false;
+
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
@@ -49,27 +54,27 @@ export class AnalysisComponent implements OnInit {
   loadSymptoms(): void {
     this.http.get<string[]>('http://localhost:5000/api/symptoms').subscribe({
       next: (data) => this.symptoms = data,
-      error: (err) => console.error('Erreur lors du chargement des symptômes:', err)
+      error: (err) => console.error('Error loading symptoms:', err)
     });
   }
 
   loadSvgPaths(): void {
     this.http.get<SvgPath[]>('assets/pain_location_front.json').subscribe({
       next: (data) => this.svgPaths = data,
-      error: (err) => console.error('Erreur lors du chargement des paths SVG:', err)
+      error: (err) => console.error('Error loading SVG paths:', err)
     });
   }
 
   toggleZone(event: MouseEvent, id: string): void {
-    if (id === 'body') return; // Le body ne doit jamais être modifié
+    if (id === 'body') return;
 
     const target = event.target as SVGPathElement;
     const currentFill = target.getAttribute('fill');
 
     if (currentFill === '#ff0000') {
-      target.setAttribute('fill', '#ec4899'); // Rose Tailwind pink-500
+      target.setAttribute('fill', '#ec4899'); // pink
     } else {
-      target.setAttribute('fill', '#ff0000'); // Rouge
+      target.setAttribute('fill', '#ff0000'); // red
     }
   }
 
@@ -101,15 +106,39 @@ export class AnalysisComponent implements OnInit {
 
   submitSymptoms(): void {
     if (this.selectedSymptoms.length === 0) {
-      this.errorMessage = 'Veuillez sélectionner au moins un symptôme.';
+      this.errorMessage = 'Please select at least one symptom.';
       return;
     }
 
     if (!this.age || !this.gender) {
-      this.errorMessage = 'Veuillez renseigner votre âge et votre sexe.';
+      this.errorMessage = 'Please enter your age and gender.';
       return;
     }
 
+    // Ask the pain question first
+    this.errorMessage = '';
+    this.showPainQuestion = true;
+  }
+
+  answerPainQuestion(answer: boolean): void {
+    this.painAnswer = answer;
+    this.showPainQuestion = false;
+
+    if (answer) {
+      // Show body silhouette for pain selection
+      this.showBodySelection = true;
+    } else {
+      // Skip to API submission
+      this.submitSymptomsToApi();
+    }
+  }
+
+  validateBodySelection(): void {
+    this.showBodySelection = false;
+    this.submitSymptomsToApi();
+  }
+
+  submitSymptomsToApi(): void {
     this.loading = true;
     this.errorMessage = '';
 
@@ -128,7 +157,7 @@ export class AnalysisComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.errorMessage = error.error?.error || 'Erreur lors de l’analyse.';
+        this.errorMessage = error.error?.error || 'An error occurred during the analysis.';
         this.loading = false;
       }
     });
@@ -167,7 +196,7 @@ export class AnalysisComponent implements OnInit {
         this.loading = false;
       },
       error: (error) => {
-        this.errorMessage = error.error?.error || 'Erreur lors de la clarification.';
+        this.errorMessage = error.error?.error || 'An error occurred during clarification.';
         this.loading = false;
       }
     });
@@ -184,5 +213,8 @@ export class AnalysisComponent implements OnInit {
     this.errorMessage = '';
     this.age = null;
     this.gender = '';
+    this.showPainQuestion = false;
+    this.painAnswer = null;
+    this.showBodySelection = false;
   }
 }

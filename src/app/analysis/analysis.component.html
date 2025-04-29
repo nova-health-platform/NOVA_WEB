@@ -2,46 +2,45 @@
   <div class="mx-auto w-full max-w-6xl">
     <div>
 
-      <!-- 🔴 Message d'erreur -->
+      <!-- 🔴 Error message -->
       <div *ngIf="errorMessage" class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center max-w-2xl mx-auto">
         {{ errorMessage }}
       </div>
 
       <!-- 🔄 Loading -->
       <div *ngIf="loading" class="text-center text-white mb-4 font-semibold">
-        Chargement en cours...
+        Loading...
       </div>
 
-      <!-- 🧍 Contenu principal -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+      <!-- 🧍 Initial form -->
+      <div *ngIf="!showPainQuestion && !showBodySelection && !currentClarification && !response" class="grid grid-cols-1 md:grid-cols-1 items-start ">
 
-        <!-- 🎯 Colonne gauche -->
-        <div>
-          <h1 class="text-4xl text-center text-white font-extrabold mb-6">Analysez vos symptômes :</h1>
+        <div class="w-full max-w-2xl p-6 mx-auto">
+          <h1 class="text-4xl text-center text-white font-extrabold mb-6">Analyze your symptoms:</h1>
 
-          <!-- 👤 Infos patient -->
+          <!-- 👤 Patient info -->
           <div class="grid grid-cols-2 gap-4 mb-4">
-            <input type="number" [(ngModel)]="age" placeholder="Âge"
+            <input type="number" [(ngModel)]="age" placeholder="Age"
               class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
             <select [(ngModel)]="gender"
               class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="" disabled selected>Sexe</option>
-              <option value="male">Homme</option>
-              <option value="female">Femme</option>
+              <option value="" disabled selected>Gender</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
             </select>
           </div>
 
-          <!-- 📝 Input symptôme -->
+          <!-- 📝 Symptom input -->
           <div class="mb-4 flex items-center gap-2">
             <div class="w-full">
               <div class="flex items-center gap-2">
                 <input type="text" [(ngModel)]="searchQuery" (input)="filterSymptoms()" (keydown.enter)="addSymptom()"
-                  placeholder="Tapez un symptôme..."
+                  placeholder="Enter a symptom..."
                   class="w-full p-2 py-3 border-3 border-pink-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" />
                 <button (click)="submitSymptoms()"
                   class="px-4 py-3 rounded-lg bg-pink-500/10 border-3 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
-                  Valider
+                  Submit
                 </button>
               </div>
 
@@ -56,7 +55,7 @@
             </div>
           </div>
 
-          <!-- ✅ Liste symptômes -->
+          <!-- ✅ Selected symptoms -->
           <div *ngIf="selectedSymptoms.length > 0" class="mb-2 flex justify-center">
             <ul class="flex flex-wrap gap-2 justify-center">
               <li *ngFor="let symptom of selectedSymptoms; let i = index"
@@ -67,10 +66,29 @@
             </ul>
           </div>
         </div>
+      </div>
 
-        <!-- 🧍 Colonne droite : Silhouette SVG dynamique -->
-        <div class="relative w-full max-w-md mx-auto">
-          <svg class="w-full h-full" viewBox="80 0 70 190" preserveAspectRatio="xMidYMid meet">
+      <!-- ❓ Pain question -->
+      <div *ngIf="showPainQuestion" class="mt-8 bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto text-center">
+        <h3 class="text-lg font-bold mb-4 text-black">Are you experiencing physical pain?</h3>
+        <div class="flex justify-center gap-6">
+          <button (click)="answerPainQuestion(true)"
+            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Yes</button>
+          <button (click)="answerPainQuestion(false)"
+            class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700">No</button>
+        </div>
+      </div>
+
+      <!-- 🧍 Body selection -->
+      <div *ngIf="showBodySelection" class="mt-8 bg-white p-6 rounded-lg shadow-md max-w-4xl mx-auto text-center">
+
+        <h3 class="text-lg font-bold mb-4 text-black">Select where you feel pain:</h3>
+
+        <div class="relative w-full h-auto mb-6">
+          <svg class="w-full h-full" viewBox="50 0 100 100" preserveAspectRatio="xMidYMid meet">
+            
+            <g id="effects-layer"></g>
+
             <ng-container *ngFor="let path of svgPaths">
               <path
                 [attr.d]="path.d"
@@ -82,38 +100,43 @@
                 [style.pointer-events]="path.id === 'body' ? 'none' : 'auto'"
               ></path>
             </ng-container>
+
           </svg>
         </div>
 
+        <button (click)="validateBodySelection()" 
+          class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+          Confirm selection
+        </button>
       </div>
 
       <!-- ❓ Clarification -->
       <div *ngIf="currentClarification" class="mt-8 bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
-        <h3 class="text-lg font-bold mb-4 text-black text-center">Veuillez répondre à la question suivante :</h3>
+        <h3 class="text-lg font-bold mb-4 text-black text-center">Please answer the following question:</h3>
         <div class="text-black text-lg text-center mb-6">
           {{ currentClarification.question }}
         </div>
         <div class="flex justify-center gap-6">
           <button (click)="answerClarification(true)"
-            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Oui</button>
+            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Yes</button>
           <button (click)="answerClarification(false)"
-            class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700">Non</button>
+            class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700">No</button>
         </div>
       </div>
 
-      <!-- ✅ Résultat -->
+      <!-- ✅ Result -->
       <div *ngIf="response && !currentClarification" class="text-center mt-10">
-        <h2 class="text-xl font-bold mb-4 text-white">Résultat :</h2>
+        <h2 class="text-xl font-bold mb-4 text-white">Result:</h2>
         <div class="bg-gray-100 p-4 rounded-lg">
           <h3 class="text-lg font-semibold text-black">
-            Diagnostic : <span class="text-blue-600">{{ response.predicted_disease }}</span>
+            Diagnosis: <span class="text-blue-600">{{ response.predicted_disease }}</span>
           </h3>
           <p class="text-black mt-2">
-            Confiance : {{ response.confidence | number : '1.2-2' }}%
+            Confidence: {{ response.confidence | number : '1.2-2' }}%
           </p>
         </div>
         <button (click)="resetForm()" class="mt-4 bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600">
-          Analyser d'autres symptômes
+          Analyze other symptoms
         </button>
       </div>
 

@@ -36,6 +36,9 @@ export class AnalysisComponent implements OnInit {
 
   age: number | null = null;
   gender: string = '';
+  weight: number | null = null;
+  height: number | null = null;
+
 
   svgPaths: SvgPath[] = [];
 

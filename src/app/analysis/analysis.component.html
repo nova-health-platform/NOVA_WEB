@@ -16,11 +16,11 @@
       <div *ngIf="!showPainQuestion && !showBodySelection && !currentClarification && !response" class="grid grid-cols-1 md:grid-cols-1 items-start ">
 
         <div class="w-full max-w-2xl p-6 mx-auto">
-          <h1 class="text-4xl text-center text-white font-extrabold mb-6">Analyze your symptoms:</h1>
+          <h1 class="text-4xl text-center text-white font-extrabold mb-6">Analyze your symptoms</h1>
 
           <!-- 👤 Patient info -->
           <div class="grid grid-cols-2 gap-4 mb-4">
-            <input type="number" [(ngModel)]="age" placeholder="Age"
+            <input type="text" [(ngModel)]="age" placeholder="Age"
               class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
 
             <select [(ngModel)]="gender"
@@ -29,6 +29,12 @@
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
+
+            <input type="text" [(ngModel)]="weight" placeholder="Weight (kg)"
+              class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+
+            <input type="text" [(ngModel)]="height" placeholder="Height (cm)"
+              class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
           </div>
 
           <!-- 📝 Symptom input -->

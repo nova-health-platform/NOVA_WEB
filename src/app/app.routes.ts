@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { AnalysisComponent } from './analysis/analysis.component';
 import { ScanBodyComponent } from './scan-body/scan-body.component';
+import { PsyTestComponent } from './psy-test/psy-test.component';
 import { ScanMedComponent } from './scan-med/scan-med.component';
 
 // Définition des routes
@@ -14,6 +15,8 @@ export const routes: Routes = [
     { path: 'analysis', component: AnalysisComponent },
 
     { path: 'skinCheck', component: ScanBodyComponent },
+
+    { path: 'mentalHealth', component: PsyTestComponent },
 
     { path: 'medecineSearch', component: ScanMedComponent },
 

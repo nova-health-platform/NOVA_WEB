@@ -1,0 +1,75 @@
+<section class="min-h-screen">
+    <div class="max-w-3xl mx-auto px-4 py-10 text-white">
+      <h1 class="text-3xl font-bold mb-6 text-center text-pink-500">PHQ-9 – Depression Screening</h1>
+  
+      <form *ngIf="!submitted" (ngSubmit)="submitForm()" class="space-y-8">
+        <p class="text-gray-300 text-center mb-6">
+          Over the last 2 weeks, how often have you been bothered by the following problems?
+        </p>
+  
+        <div *ngFor="let question of questions; let i = index">
+          <label class="block text-lg font-medium mb-2">{{ i + 1 }}. {{ question.text }}</label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <label *ngFor="let opt of options" class="flex items-center gap-2">
+              <input
+                type="radio"
+                [name]="'q' + i"
+                [value]="opt.value"
+                [(ngModel)]="question.answer"
+                class="form-radio text-pink-500"
+                required
+              />
+              <span>{{ opt.label }}</span>
+            </label>
+          </div>
+        </div>
+  
+        <!-- Overall difficulty -->
+        <div>
+          <label class="block text-lg font-medium mb-2">
+            If you checked off any problems, how difficult have they made it for you to do your work, take care of things at home, or get along with other people?
+          </label>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <label class="flex items-center gap-2">
+              <input type="radio" name="impact" [(ngModel)]="impact" [value]="0" class="form-radio text-pink-500" />
+              <span>Not difficult at all</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="radio" name="impact" [(ngModel)]="impact" [value]="1" class="form-radio text-pink-500" />
+              <span>Somewhat difficult</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="radio" name="impact" [(ngModel)]="impact" [value]="2" class="form-radio text-pink-500" />
+              <span>Very difficult</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="radio" name="impact" [(ngModel)]="impact" [value]="3" class="form-radio text-pink-500" />
+              <span>Extremely difficult</span>
+            </label>
+          </div>
+        </div>
+  
+        <div class="text-center pt-6">
+          <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
+            Submit my responses
+          </button>
+        </div>
+      </form>
+  
+      <!-- Result after submission -->
+      <div *ngIf="submitted" class="text-center space-y-6">
+        <h2 class="text-2xl font-bold text-green-400">Result</h2>
+        <p class="text-lg text-white">Total score: <strong>{{ totalScore }}</strong></p>
+        <p class="text-lg text-white">Interpretation: <strong>{{ interpretation }}</strong></p>
+        <p class="text-sm text-gray-400">
+          This tool is a self-assessment and does not replace a medical diagnosis.
+          Please consult a mental health professional if needed.
+        </p>
+  
+        <button (click)="reset()" class="mt-6 bg-pink-500 hover:bg-pink-600 text-white px-5 py-2 rounded-md">
+          Restart
+        </button>
+      </div>
+    </div>
+  </section>
+  

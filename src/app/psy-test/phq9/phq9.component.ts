@@ -10,6 +10,9 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./phq9.component.scss']
 })
 export class Phq9Component {
+  step: 'intro' | 'questions' | 'impact' | 'result' = 'intro';
+  currentQuestionIndex = 0;
+
   questions = [
     { text: 'Little interest or pleasure in doing things', answer: null },
     { text: 'Feeling down, depressed, or hopeless', answer: null },
@@ -30,13 +33,32 @@ export class Phq9Component {
   ];
 
   impact: number | null = null;
-  submitted = false;
   totalScore = 0;
   interpretation = '';
 
+  // Step navigation
+  startTest() {
+    this.step = 'questions';
+    this.currentQuestionIndex = 0;
+  }
+
+  nextQuestion() {
+    const currentAnswer = this.questions[this.currentQuestionIndex].answer;
+    if (currentAnswer === null) {
+      alert('Please select an answer before continuing.');
+      return;
+    }
+
+    if (this.currentQuestionIndex < this.questions.length - 1) {
+      this.currentQuestionIndex++;
+    } else {
+      this.step = 'impact';
+    }
+  }
+
   submitForm() {
-    if (this.questions.some(q => q.answer === null) || this.impact === null) {
-      alert('Please answer all questions before submitting.');
+    if (this.impact === null) {
+      alert('Please select the impact of these problems on your life.');
       return;
     }
 
@@ -48,14 +70,15 @@ export class Phq9Component {
     else if (this.totalScore <= 19) this.interpretation = 'Moderately severe depression';
     else this.interpretation = 'Severe depression';
 
-    this.submitted = true;
+    this.step = 'result';
   }
 
   reset() {
     this.questions.forEach(q => q.answer = null);
     this.impact = null;
-    this.submitted = false;
     this.totalScore = 0;
     this.interpretation = '';
+    this.step = 'intro';
+    this.currentQuestionIndex = 0;
   }
 }

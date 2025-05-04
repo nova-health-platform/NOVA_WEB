@@ -1,75 +1,185 @@
 <section class="min-h-screen">
-    <div class="max-w-3xl mx-auto px-4 py-10 text-white">
-      <h1 class="text-3xl font-bold mb-6 text-center text-pink-500">PHQ-9 – Depression Screening</h1>
-  
-      <form *ngIf="!submitted" (ngSubmit)="submitForm()" class="space-y-8">
-        <p class="text-gray-300 text-center mb-6">
-          Over the last 2 weeks, how often have you been bothered by the following problems?
-        </p>
-  
-        <div *ngFor="let question of questions; let i = index">
-          <label class="block text-lg font-medium mb-2">{{ i + 1 }}. {{ question.text }}</label>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <label *ngFor="let opt of options" class="flex items-center gap-2">
-              <input
-                type="radio"
-                [name]="'q' + i"
-                [value]="opt.value"
-                [(ngModel)]="question.answer"
-                class="form-radio text-pink-500"
-                required
-              />
-              <span>{{ opt.label }}</span>
-            </label>
-          </div>
+    <div class="max-w-5xl mx-auto px-4 py-10 text-white">
+
+        <!-- Intro Screen -->
+        <div *ngIf="step === 'intro'" class="space-y-6">
+            <h1 class="text-3xl font-bold text-white text-center">PHQ-9 – Depression Screening</h1>
+
+            <div class="mt-8 flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+                <!-- Left: Description -->
+                <div class="md:w-1/2 space-y-4 rounded-xl">
+                    <p class="text-gray-300 text-justify">
+                        The Patient Health Questionnaire-9 (PHQ-9) is a nine-item depression screening and diagnostic
+                        tool developed to assess the presence and severity of depressive symptoms in adults. Originally
+                        introduced in 2001, it is commonly used in primary care settings.
+                    </p>
+                    <hr class="h-0.5 border-t-0 bg-pink-500/30 mx-8" />
+                    <p class="text-gray-300 text-justify">
+                        The PHQ-9 can function both as a stand-alone tool and as part of the larger Patient Health
+                        Questionnaire (PHQ). It is part of a broader suite of tools designed for mental health
+                        evaluation in primary care.
+                    </p>
+                    <hr class="h-0.5 border-t-0 bg-pink-500/30 mx-8" />
+                    <p class="text-gray-300 text-justify">
+                        The test takes less than three minutes to complete and is scored by summing the responses to the
+                        nine items. Each item corresponds to a symptom of depression as outlined in the DSM-5. The PHQ-9
+                        is widely used by healthcare professionals to screen for possible depression.
+                    </p>
+                </div>
+
+                <!-- Right: Interpretation Box + Start Button -->
+                <div class="md:w-1/2 space-y-4">
+                    <div
+                        class="bg-white text-pink-500 text-sm rounded-xl px-4 py-3 max-w-xl mx-auto shadow-inner">
+                        ⚠️ These tools are not medical diagnoses. They are self-assessments meant to guide and inform.
+                        If you’re struggling, consider seeking help from a mental health professional.
+                    </div>
+                    <div class="bg-pink-500/10 rounded-xl p-4 text-sm text-left text-pink-500">
+                        <h3 class="text-md font-semibold text-pink-400 mb-2">Understanding Your Results</h3>
+                        <ul class="space-y-4 text-white text-sm">
+                            <li>
+                              <strong>0 – 4:</strong> None-minimal — No action needed.<br />
+                            </li>
+                            <li>
+                              <strong>5 – 9:</strong> Mild — Repeat PHQ-9 at follow-up.<br />
+                            </li>
+                            <li>
+                              <strong>10 – 14:</strong> Moderate — Consider counseling, follow-up, and/or treatment.<br />
+                            </li>
+                            <li>
+                              <strong>15 – 19:</strong> Moderately Severe — Recommend medication and counseling.<br />
+                            </li>
+                            <li>
+                              <strong>20 – 27:</strong> Severe — Medication and urgent referral to mental health specialist.<br />
+                            </li>
+                          </ul>
+                          
+                    </div>
+                    <div class="text-right">
+                        <button (click)="startTest()"
+                            class="mt-4 bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
+                            Start the test
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-  
-        <!-- Overall difficulty -->
-        <div>
-          <label class="block text-lg font-medium mb-2">
-            If you checked off any problems, how difficult have they made it for you to do your work, take care of things at home, or get along with other people?
-          </label>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <label class="flex items-center gap-2">
-              <input type="radio" name="impact" [(ngModel)]="impact" [value]="0" class="form-radio text-pink-500" />
-              <span>Not difficult at all</span>
-            </label>
-            <label class="flex items-center gap-2">
-              <input type="radio" name="impact" [(ngModel)]="impact" [value]="1" class="form-radio text-pink-500" />
-              <span>Somewhat difficult</span>
-            </label>
-            <label class="flex items-center gap-2">
-              <input type="radio" name="impact" [(ngModel)]="impact" [value]="2" class="form-radio text-pink-500" />
-              <span>Very difficult</span>
-            </label>
-            <label class="flex items-center gap-2">
-              <input type="radio" name="impact" [(ngModel)]="impact" [value]="3" class="form-radio text-pink-500" />
-              <span>Extremely difficult</span>
-            </label>
-          </div>
+
+        <!-- Question Step -->
+        <form *ngIf="step === 'questions'" (ngSubmit)="nextQuestion()" class="space-y-8">
+            <div class="w-full bg-gray-700 rounded-full h-2.5 mb-6">
+                <div class="bg-pink-500 h-2.5 rounded-full transition-all duration-300"
+                    [style.width.%]="(currentQuestionIndex + 1) / questions.length * 100">
+                </div>
+            </div>
+            <p class="text-sm text-right text-gray-400 mb-2">Question {{ currentQuestionIndex + 1 }} / {{
+                questions.length }}</p>
+            <div>
+                <label class="block text-lg font-medium mb-2">
+                    {{ questions[currentQuestionIndex].text }}
+                </label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <label *ngFor="let opt of options" class="flex items-center gap-2">
+                        <input type="radio" [name]="'q' + currentQuestionIndex"
+                            [(ngModel)]="questions[currentQuestionIndex].answer" [value]="opt.value"
+                            class="form-radio text-pink-500" required />
+                        <span>{{ opt.label }}</span>
+                    </label>
+                </div>
+            </div>
+            <div class="text-center pt-6">
+                <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
+                    {{ currentQuestionIndex + 1 === questions.length ? 'Continue' : 'Next' }}
+                </button>
+            </div>
+        </form>
+
+        <!-- Impact Question -->
+        <form *ngIf="step === 'impact'" (ngSubmit)="submitForm()" class="space-y-6">
+            <h2 class="text-xl font-semibold mb-4">Final question</h2>
+            <p class="mb-4">If you checked off any problems, how difficult have they made it for you to do your work,
+                take care of things at home, or get along with other people?</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="impact" [(ngModel)]="impact" [value]="0"
+                        class="form-radio text-pink-500" />
+                    <span>Not difficult at all</span>
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="impact" [(ngModel)]="impact" [value]="1"
+                        class="form-radio text-pink-500" />
+                    <span>Somewhat difficult</span>
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="impact" [(ngModel)]="impact" [value]="2"
+                        class="form-radio text-pink-500" />
+                    <span>Very difficult</span>
+                </label>
+                <label class="flex items-center gap-2">
+                    <input type="radio" name="impact" [(ngModel)]="impact" [value]="3"
+                        class="form-radio text-pink-500" />
+                    <span>Extremely difficult</span>
+                </label>
+            </div>
+            <div class="text-center pt-6">
+                <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
+                    View Results
+                </button>
+            </div>
+        </form>
+
+        <!-- Result Step -->
+        <div *ngIf="step === 'result'" class="text-center space-y-6">
+            <h2 class="text-2xl font-bold text-green-400">Your Result</h2>
+            <p class="text-lg text-white">Total score: <strong>{{ totalScore }}</strong></p>
+            <p class="text-lg text-white">Interpretation: <strong>{{ interpretation }}</strong></p>
+
+            <details class="bg-gray-800 rounded-lg p-4 text-left max-w-xl mx-auto text-sm text-gray-200">
+                <summary class="cursor-pointer text-pink-400 font-semibold">Click to view detailed interpretation
+                </summary>
+                <ul class="space-y-4 text-white text-sm">
+                    <li>
+                      <strong>0 – 4:</strong> None-minimal — No action needed.<br />
+                      <span class="text-gray-400">
+                        This score range indicates very few or no depressive symptoms. No treatment or follow-up is usually necessary unless symptoms worsen.
+                      </span>
+                    </li>
+                    <li>
+                      <strong>5 – 9:</strong> Mild — Repeat PHQ-9 at follow-up.<br />
+                      <span class="text-gray-400">
+                        Some mild depressive symptoms are present. Monitoring and a follow-up screening are recommended to assess persistence or progression.
+                      </span>
+                    </li>
+                    <li>
+                      <strong>10 – 14:</strong> Moderate — Consider counseling, follow-up, and/or treatment.<br />
+                      <span class="text-gray-400">
+                        Symptoms suggest moderate depression. It's appropriate to develop a treatment plan that may include psychotherapy, support, or medication.
+                      </span>
+                    </li>
+                    <li>
+                      <strong>15 – 19:</strong> Moderately Severe — Recommend medication and counseling.<br />
+                      <span class="text-gray-400">
+                        Symptoms are likely to interfere significantly with daily life. A combination of antidepressant medication and counseling is generally advised.
+                      </span>
+                    </li>
+                    <li>
+                      <strong>20 – 27:</strong> Severe — Medication and urgent referral to mental health specialist.<br />
+                      <span class="text-gray-400">
+                        This indicates severe depression. Immediate intervention is needed with medication and a referral to a mental health professional for comprehensive care.
+                      </span>
+                    </li>
+                  </ul>
+                  
+            </details>
+
+            <p class="text-sm text-gray-400">
+                This is a self-assessment tool, not a diagnosis. Please consult a mental health professional if needed.
+            </p>
+
+            <button (click)="reset()" class="mt-6 bg-pink-500 hover:bg-pink-600 text-white px-5 py-2 rounded-md">
+                Restart
+            </button>
         </div>
-  
-        <div class="text-center pt-6">
-          <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
-            Submit my responses
-          </button>
-        </div>
-      </form>
-  
-      <!-- Result after submission -->
-      <div *ngIf="submitted" class="text-center space-y-6">
-        <h2 class="text-2xl font-bold text-green-400">Result</h2>
-        <p class="text-lg text-white">Total score: <strong>{{ totalScore }}</strong></p>
-        <p class="text-lg text-white">Interpretation: <strong>{{ interpretation }}</strong></p>
-        <p class="text-sm text-gray-400">
-          This tool is a self-assessment and does not replace a medical diagnosis.
-          Please consult a mental health professional if needed.
-        </p>
-  
-        <button (click)="reset()" class="mt-6 bg-pink-500 hover:bg-pink-600 text-white px-5 py-2 rounded-md">
-          Restart
-        </button>
-      </div>
+
     </div>
-  </section>
-  
+</section>

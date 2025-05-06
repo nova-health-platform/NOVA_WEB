@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 export class Phq9Component {
   step: 'intro' | 'questions' | 'impact' | 'result' = 'intro';
   currentQuestionIndex = 0;
+  selectedCountry = 'fr';
 
   questions = [
     { text: 'Little interest or pleasure in doing things', answer: null },
@@ -36,15 +37,13 @@ export class Phq9Component {
   totalScore = 0;
   interpretation = '';
 
-  // Step navigation
   startTest() {
     this.step = 'questions';
     this.currentQuestionIndex = 0;
   }
 
   nextQuestion() {
-    const currentAnswer = this.questions[this.currentQuestionIndex].answer;
-    if (currentAnswer === null) {
+    if (this.questions[this.currentQuestionIndex].answer === null) {
       alert('Please select an answer before continuing.');
       return;
     }
@@ -58,7 +57,7 @@ export class Phq9Component {
 
   submitForm() {
     if (this.impact === null) {
-      alert('Please select the impact of these problems on your life.');
+      alert('Please indicate the impact.');
       return;
     }
 

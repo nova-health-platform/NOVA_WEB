@@ -80,4 +80,5 @@ export class Phq9Component {
     this.step = 'intro';
     this.currentQuestionIndex = 0;
   }
+  
 }

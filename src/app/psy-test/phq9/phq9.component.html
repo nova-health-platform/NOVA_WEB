@@ -5,17 +5,16 @@
         <div *ngIf="step === 'intro'" class="space-y-6">
             <h1 class="text-3xl font-bold text-white text-center">PHQ-9 – Depression Screening</h1>
 
-            <div class="mt-8 flex flex-col md:flex-row md:items-stretch md:justify-between gap-8">
+            <div class="mt-8 flex flex-col md:flex-row md:items-stretch md:justify-between gap-4">
                 <!-- Left: Description -->
                 <div class="bg-white rounded-xl shadow p-6 md:w-1/2 space-y-4 flex flex-col justify-between">
                     <div>
-                        <p
-                            class="text-black text-justify">
+                        <p class="text-black text-justify">
                             The PHQ-9 is a clinically validated questionnaire used to identify the presence and severity
                             of depressive symptoms in adults.
                             It is widely used in primary care and mental health settings around the world.
                         </p>
-                        
+
                         <div class="bg-[#101010] p-6 rounded-xl shadow max-w-3xl mx-auto mt-6">
                             <h2 class="text-pink-400 text-xl font-semibold mb-2">Why take the PHQ-9?</h2>
                             <ul class="list-disc pl-5 space-y-2 text-gray-200">
@@ -52,7 +51,7 @@
             </div>
             <div class="text-right">
                 <button (click)="startTest()"
-                    class="mt-4 bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
+                    class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
                     Start the test
                 </button>
             </div>
@@ -64,7 +63,7 @@
             <div class="bg-pink-500/10 border-3 border-pink-500 rounded-xl shadow p-6">
 
                 <!-- Progress bar -->
-                <div class="w-full bg-[#101010] rounded-full h-2.5 mb-6">
+                <div class="w-full bg-pink-500/30 rounded-full h-2.5 mb-6">
                     <div class="bg-pink-500 h-2.5 rounded-full transition-all duration-300"
                         [style.width.%]="((currentQuestionIndex + 1) / (questions.length + 1)) * 100">
                     </div>
@@ -76,22 +75,18 @@
                         {{ questions[currentQuestionIndex].text }}
                     </label>
                     <span class="text-white whitespace-nowrap">
-                        {{ currentQuestionIndex + 1 }} / {{ questions.length + 1  }}
+                        {{ currentQuestionIndex + 1 }} / {{ questions.length + 1 }}
                     </span>
                 </div>
 
                 <!-- Options -->
                 <ul class="space-y-4">
                     <li *ngFor="let opt of options" class="w-full">
-                        <div
-                            class="flex items-center ps-4 border border-gray-200 rounded-sm bg-white text-[#101010]">
-                            <input type="radio"
-                                [id]="'opt-' + currentQuestionIndex + '-' + opt.value"
-                                [value]="opt.value"
-                                [name]="'q' + currentQuestionIndex"
+                        <div class="flex items-center ps-4 border border-gray-200 rounded-sm bg-white text-[#101010]">
+                            <input type="radio" [id]="'opt-' + currentQuestionIndex + '-' + opt.value"
+                                [value]="opt.value" [name]="'q' + currentQuestionIndex"
                                 [(ngModel)]="questions[currentQuestionIndex].answer"
-                                class="w-6 h-6 accent-pink-500 bg-pink-500 border-pink-500"
-                                required>
+                                class="w-6 h-6 accent-pink-500 bg-pink-500 border-pink-500" required>
                             <label [for]="'opt-' + currentQuestionIndex + '-' + opt.value"
                                 class="w-full py-4 ms-2 font-medium text-[#101010]">
                                 {{ opt.label }}
@@ -116,10 +111,9 @@
             <div class="bg-pink-500/10 border-3 border-pink-500 rounded-xl shadow p-6">
 
                 <!-- Progress bar -->
-                <div class="w-full bg-[#101010] rounded-full h-2.5 mb-6">
+                <div class="w-full bg-pink-500/30 rounded-full h-2.5 mb-6">
                     <div class="bg-pink-500 h-2.5 rounded-full transition-all duration-500 ease-in-out"
-                        [style.width.%]="(questions.length + 1) / (questions.length + 1) * 100"
->
+                        [style.width.%]="(questions.length + 1) / (questions.length + 1) * 100">
                     </div>
 
                 </div>
@@ -144,15 +138,10 @@
                         { label: 'Extremely difficult', value: 3 }
                     ]" class="w-full">
                         <div class="flex items-center ps-4 border border-gray-200 rounded-sm bg-white text-[#101010]">
-                            <input type="radio"
-                                   [id]="'impact-' + opt.value"
-                                   [value]="opt.value"
-                                   name="impact"
-                                   [(ngModel)]="impact"
-                                   class="w-6 h-6 accent-pink-500 bg-pink-500 border-pink-500"
-                                   required>
-                            <label [for]="'impact-' + opt.value"
-                                   class="w-full py-4 ms-2 font-medium text-[#101010]">
+                            <input type="radio" [id]="'impact-' + opt.value" [value]="opt.value" name="impact"
+                                [(ngModel)]="impact" class="w-6 h-6 accent-pink-500 bg-pink-500 border-pink-500"
+                                required>
+                            <label [for]="'impact-' + opt.value" class="w-full py-4 ms-2 font-medium text-[#101010]">
                                 {{ opt.label }}
                             </label>
                         </div>
@@ -167,122 +156,237 @@
             </div>
         </form>
 
-<!-- Result Step -->
-<div *ngIf="step === 'result'" class="space-y-10">
+        <!-- Result Step -->
+        <div *ngIf="step === 'result'" class="space-y-4">
 
-    <!-- Main Title -->
-    <div class="text-center">
-      <h2 class="text-3xl font-bold text-white">🎯 Your PHQ-9 Result</h2>
-      <p class="text-gray-400 mt-1 text-sm">Based on your answers, here is an overview of your current mental state.</p>
-    </div>
-  
-    <!-- Score Card with Progress Bar -->
-    <div class="bg-[#1e1e1e] rounded-xl shadow-md p-6 border border-pink-500/30 space-y-6">
-  
-      <!-- Segmented Progress Gauge -->
-<!-- Score and Interpretation aligned above the gauge -->
-<!-- Résumé score + interprétation -->
-<div class="text-center mb-6">
-    <div class="text-xl font-bold text-white">Your Score: {{ totalScore }}</div>
-    <div class="text-md text-gray-300">{{ interpretation }}</div>
-  </div>
-  
-  <!-- Progress Bar Container -->
-  <div class="w-full relative">
-    <!-- Background Segments -->
-    <div class="flex w-full h-4 rounded overflow-hidden">
-      <div class="flex-1 bg-green-500"></div>
-      <div class="flex-1 bg-yellow-400"></div>
-      <div class="flex-1 bg-orange-400"></div>
-      <div class="flex-1 bg-orange-600"></div>
-      <div class="flex-1 bg-red-600"></div>
-    </div>
-  
-    <!-- Filled overlay progress -->
-    <div class="absolute top-0 left-0 h-4 bg-white/30 pointer-events-none"
-         [style.width.%]="(totalScore / 27) * 100">
-    </div>
-  
-    <!-- Labels below -->
-    <div class="flex justify-between text-xs text-gray-300 mt-2 px-1">
-      <span>Minimal</span>
-      <span>Mild</span>
-      <span>Moderate</span>
-      <span>Mod. Severe</span>
-      <span>Severe</span>
-    </div>
-  </div>
-  
-  
-  
-  
-  
-      <!-- Personalized Advice (moved here) -->
-      <div>
-        <h3 class="text-pink-400 font-semibold text-base mb-2">💡 Personalized Advice</h3>
-        <div *ngIf="totalScore <= 4" class="text-green-300">
-          You’re doing well. Maintain healthy routines and emotional awareness. Journaling or mindfulness can help.
+            <!-- Main Title -->
+            <div class="text-center">
+                <h2 class="text-3xl font-bold text-white">Your PHQ-9 Result</h2>
+                <p class="text-gray-400 mt-1 text-sm">Based on your answers, here is an overview of your current mental
+                    state.</p>
+            </div>
+
+            <!-- Score Card with Progress Bar -->
+            <!-- Score Card Container -->
+            <div class="bg-white rounded-xl shadow-md p-6 space-y-4">
+
+                <!-- Score & Interpretation -->
+                <div class="text-center mb-4">
+                    <div class="text-xl font-bold text-[#101010]">Your Score: {{ totalScore }}</div>
+                    <div class="text-md text-[#101010]">{{ interpretation }}</div>
+                </div>
+
+                <!-- Combined Progress Bar -->
+                <div class="space-y-3">
+                    <!-- Progress bar wrapper -->
+                    <div class="flex w-full h-4 gap-1">
+                        <ng-container *ngFor="let seg of [
+          { from: 0, to: 4 },
+          { from: 5, to: 9 },
+          { from: 10, to: 14 },
+          { from: 15, to: 19 },
+          { from: 20, to: 27 }
+        ]">
+                            <!-- Background segment -->
+                            <div class="flex-1 bg-pink-500/40 rounded overflow-hidden">
+                                <!-- Fill segment based on score -->
+                                <div class="h-full bg-pink-500 transition-all duration-500" [style.width.%]="
+                totalScore >= seg.to
+                  ? 100
+                  : totalScore < seg.from
+                    ? 0
+                    : ((totalScore - seg.from) / (seg.to - seg.from + 1)) * 100
+              ">
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+
+                    <!-- Labels under each segment -->
+                    <div class="flex justify-between text-xs text-[#101010] px-1">
+                        <span class="w-1/5 text-center">Minimal</span>
+                        <span class="w-1/5 text-center">Mild</span>
+                        <span class="w-1/5 text-center">Moderate</span>
+                        <span class="w-1/5 text-center">Mod. Severe</span>
+                        <span class="w-1/5 text-center">Severe</span>
+                    </div>
+                </div>
+
+                <!-- Personalized Advice -->
+                <div
+                    class="bg-pink-500/10 border-2 border-pink-500 text-[#101010] rounded-xl px-6 py-5 mb-4 shadow-inner text-center">
+                    <div *ngIf="totalScore <= 4">
+                        You’re doing well. Maintain healthy routines and emotional awareness. Journaling or mindfulness
+                        can help.
+                    </div>
+                    <div *ngIf="totalScore > 4 && totalScore <= 9">
+                        You may have mild symptoms. Try physical activity, talk to someone you trust, and check back in
+                        a few weeks.
+                    </div>
+                    <div *ngIf="totalScore > 9 && totalScore <= 14">
+                        Moderate depression might benefit from counseling or therapy. Seeking support is a good next
+                        step.
+                    </div>
+                    <div *ngIf="totalScore > 14 && totalScore <= 19">
+                        These symptoms may be affecting your daily life. Consider therapy and medication in
+                        collaboration with a professional.
+                    </div>
+                    <div *ngIf="totalScore > 19">
+                        Immediate action is advised. Please speak to a healthcare provider or mental health specialist
+                        as soon as possible.
+                    </div>
+                </div>
+                <p class="text-xs text-gray-400 mt-4 text-center">
+                    This is a self-assessment tool, not a diagnosis. If you're experiencing distress, please consult a
+                    healthcare professional.
+                </p>
+            </div>
+
+            <!-- Interpretation + Support Grid -->
+            <div class="grid md:grid-cols-2 gap-4 max-w-5xl mx-auto text-sm">
+
+                <!-- Left: Scale Interpretation -->
+                <div class="bg-pink-500/10 border-2 border-pink-500 rounded-xl p-4 text-left text-pink-500">
+                    <h3 class="font-semibold text-pink-400 mb-2">Understanding your results</h3>
+                    <ul class="space-y-4 text-white">
+                        <li><strong>0 – 4 : </strong> Minimal — Monitoring</li>
+                        <li><strong>5 – 9 : </strong> Mild — Follow-up advised</li>
+                        <li><strong>10 – 14 : </strong> Moderate — Treatment plan recommended</li>
+                        <li><strong>15 – 19 : </strong> Moderately severe — Counseling and medication
+                        </li>
+                        <li><strong>20 – 27 : </strong> Severe — Urgent professional care</li>
+                    </ul>
+                </div>
+
+                <!-- Right: Emergency Contact Selector -->
+                <div class="bg-white p-4 rounded-xl text-gray-200 space-y-4">
+                    <label for="country" class="block font-semibold text-[#101010]">
+                        Select your country for emergency support
+                    </label>
+                    <select id="country" name="country" class="w-full p-2 rounded-xl text-[#101010] border-2"
+                        [(ngModel)]="selectedCountry">
+                        <option value="au">Australia</option>
+                        <option value="be">Belgium</option>
+                        <option value="br">Brazil</option>
+                        <option value="ca">Canada</option>
+                        <option value="ch">Switzerland</option>
+                        <option value="de">Germany</option>
+                        <option value="es">Spain</option>
+                        <option value="fi">Finland</option>
+                        <option value="fr">France</option>
+                        <option value="ie">Ireland</option>
+                        <option value="in">India</option>
+                        <option value="it">Italy</option>
+                        <option value="jp">Japan</option>
+                        <option value="mx">Mexico</option>
+                        <option value="no">Norway</option>
+                        <option value="nz">New Zealand</option>
+                        <option value="se">Sweden</option>
+                        <option value="uk">United Kingdom</option>
+                        <option value="us">United States</option>
+                        <option value="za">South Africa</option>
+                    </select>
+
+                    <div class="bg-[#101010] p-6 rounded-xl">
+                        <div class="text-pink-400">
+                            <div *ngIf="selectedCountry === 'au'">
+                                📞 <strong>13 11 14</strong><br>
+                                Lifeline Australia – 24/7 crisis support
+                            </div>
+                            <div *ngIf="selectedCountry === 'be'">
+                                📞 <strong>1813</strong><br>
+                                Zelfmoordlijn – Suicide helpline (Belgium)
+                            </div>
+                            <div *ngIf="selectedCountry === 'br'">
+                                📞 <strong>188</strong><br>
+                                CVV – Centro de Valorização da Vida (Brazil)
+                            </div>
+                            <div *ngIf="selectedCountry === 'ca'">
+                                📞 <strong>1-833-456-4566</strong><br>
+                                Talk Suicide Canada – 24/7 support
+                            </div>
+                            <div *ngIf="selectedCountry === 'ch'">
+                                📞 <strong>143</strong><br>
+                                Die Dargebotene Hand – Helpline (Switzerland)
+                            </div>
+                            <div *ngIf="selectedCountry === 'de'">
+                                📞 <strong>0800 111 0 111</strong><br>
+                                Telefonseelsorge – Free crisis helpline (Germany)
+                            </div>
+                            <div *ngIf="selectedCountry === 'es'">
+                                📞 <strong>024</strong><br>
+                                Línea 024 – Suicide prevention helpline (Spain)
+                            </div>
+                            <div *ngIf="selectedCountry === 'fi'">
+                                📞 <strong>09 2525 0111</strong><br>
+                                MIELI Crisis Helpline (Finland)
+                            </div>
+                            <div *ngIf="selectedCountry === 'fr'">
+                                📞 <strong>3114</strong><br>
+                                National suicide prevention helpline (France)
+                            </div>
+                            <div *ngIf="selectedCountry === 'ie'">
+                                📞 <strong>116 123</strong><br>
+                                Samaritans Ireland – 24/7 support
+                            </div>
+                            <div *ngIf="selectedCountry === 'in'">
+                                📞 <strong>9152987821</strong><br>
+                                iCall – Free and confidential support (India)
+                            </div>
+                            <div *ngIf="selectedCountry === 'it'">
+                                📞 <strong>800 860 022</strong><br>
+                                Telefono Amico – Emotional support (Italy)
+                            </div>
+                            <div *ngIf="selectedCountry === 'jp'">
+                                📞 <strong>0570-783-556</strong><br>
+                                Tokyo English Lifeline (Japan)
+                            </div>
+                            <div *ngIf="selectedCountry === 'mx'">
+                                📞 <strong>800 822 3737</strong><br>
+                                SAPTEL – Emotional support (Mexico)
+                            </div>
+                            <div *ngIf="selectedCountry === 'no'">
+                                📞 <strong>116 123</strong><br>
+                                Mental Helse – Support line (Norway)
+                            </div>
+                            <div *ngIf="selectedCountry === 'nz'">
+                                📞 <strong>1737</strong><br>
+                                Need to talk? Free call or text 1737 (New Zealand)
+                            </div>
+                            <div *ngIf="selectedCountry === 'se'">
+                                📞 <strong>90101</strong><br>
+                                Mind Sweden – Crisis line
+                            </div>
+                            <div *ngIf="selectedCountry === 'uk'">
+                                📞 <strong>116 123</strong><br>
+                                Samaritans – Confidential listening and support
+                            </div>
+                            <div *ngIf="selectedCountry === 'us'">
+                                📞 <strong>988</strong><br>
+                                Suicide & Crisis Lifeline (USA)
+                            </div>
+                            <div *ngIf="selectedCountry === 'za'">
+                                📞 <strong>0800 567 567</strong><br>
+                                SADAG Suicide Crisis Line (South Africa)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+            <!-- Restart Button -->
+            <div class="text-right">
+                <button (click)="reset()"
+                    class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow-md transition">
+                    🔁 Restart Assessment
+                </button>
+            </div>
         </div>
-        <div *ngIf="totalScore > 4 && totalScore <= 9" class="text-yellow-300">
-          You may have mild symptoms. Try physical activity, talk to someone you trust, and check back in a few weeks.
-        </div>
-        <div *ngIf="totalScore > 9 && totalScore <= 14" class="text-orange-300">
-          Moderate depression might benefit from counseling or therapy. Seeking support is a good next step.
-        </div>
-        <div *ngIf="totalScore > 14 && totalScore <= 19" class="text-orange-500">
-          These symptoms may be affecting your daily life. Consider therapy and medication in collaboration with a professional.
-        </div>
-        <div *ngIf="totalScore > 19" class="text-red-400">
-          Immediate action is advised. Please speak to a healthcare provider or mental health specialist as soon as possible.
-        </div>
-      </div>
-    </div>
-  
-    <!-- Interpretation + Support Container -->
-    <div class="bg-[#111111] p-6 rounded-xl shadow max-w-4xl mx-auto space-y-10 text-sm text-left">
-  
-      <!-- Detailed Interpretation -->
-      <details class="rounded-lg p-4 bg-gray-800 text-gray-200">
-        <summary class="cursor-pointer font-semibold text-pink-400">🧠 Click to view scale interpretation</summary>
-        <ul class="space-y-3 mt-4">
-          <li><strong>0 – 4:</strong> None-minimal — No action needed.</li>
-          <li><strong>5 – 9:</strong> Mild — Repeat PHQ-9 at follow-up.</li>
-          <li><strong>10 – 14:</strong> Moderate — Consider counseling, follow-up, and/or treatment.</li>
-          <li><strong>15 – 19:</strong> Moderately Severe — Recommend medication and counseling.</li>
-          <li><strong>20 – 27:</strong> Severe — Medication and urgent referral to mental health specialist.</li>
-        </ul>
-      </details>
-  
-      <!-- Emergency Support Selector -->
-      <div>
-        <label for="country" class="block text-sm text-gray-300 mb-2">🌍 Select your country for emergency support:</label>
-        <select id="country" name="country" class="w-full p-2 rounded text-black" [(ngModel)]="selectedCountry">
-          <option value="fr">France – 3114 (Suicide Prevention)</option>
-          <option value="us">USA – 988 (Suicide & Crisis Lifeline)</option>
-          <option value="ca">Canada – 1-833-456-4566 (Talk Suicide Canada)</option>
-          <option value="uk">UK – 116 123 (Samaritans)</option>
-        </select>
-        <p class="mt-2 text-sm text-pink-400" *ngIf="selectedCountry === 'fr'">📞 3114 - National suicide prevention helpline (France)</p>
-        <p class="mt-2 text-sm text-pink-400" *ngIf="selectedCountry === 'us'">📞 988 - Suicide & Crisis Lifeline (USA)</p>
-        <p class="mt-2 text-sm text-pink-400" *ngIf="selectedCountry === 'ca'">📞 1-833-456-4566 - Talk Suicide Canada</p>
-        <p class="mt-2 text-sm text-pink-400" *ngIf="selectedCountry === 'uk'">📞 116 123 - Samaritans (UK)</p>
-      </div>
-  
-      <!-- Disclaimer -->
-      <p class="text-xs text-gray-400 mt-4 text-center">
-        This is a self-assessment tool, not a diagnosis. If you're experiencing distress, please consult a healthcare professional.
-      </p>
-    </div>
-  
-    <!-- Restart Button -->
-    <div class="flex justify-center mt-8">
-      <button (click)="reset()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow-md transition">
-        🔁 Restart Assessment
-      </button>
-    </div>
-  </div>
-  
-          
+
+
 
     </div>
 </section>

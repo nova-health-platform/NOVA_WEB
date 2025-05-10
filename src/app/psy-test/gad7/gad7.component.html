@@ -1,3 +1,226 @@
 <section class="min-h-screen">
+  <div class="max-w-5xl mx-auto px-4 py-10 text-white">
 
+    <!-- Intro Screen -->
+    <div *ngIf="step === 'intro'" class="space-y-6">
+      <h1 class="text-3xl font-bold text-white text-center">GAD-7 – Anxiety Screening</h1>
+
+      <div class="mt-8 flex flex-col md:flex-row md:items-stretch md:justify-between gap-4">
+        <!-- Left: Description -->
+        <div class="bg-white rounded-xl shadow p-6 md:w-1/2 space-y-4 flex flex-col justify-between">
+          <div>
+            <p class="text-black text-justify">
+              The GAD-7 is a clinically validated questionnaire used to assess the severity of generalized anxiety disorder.
+              It is widely used in both clinical and research settings.
+            </p>
+
+            <div class="bg-[#101010] p-6 rounded-xl shadow max-w-3xl mx-auto mt-6">
+              <h2 class="text-pink-400 text-xl font-semibold mb-2">Why take the GAD-7?</h2>
+              <ul class="list-disc pl-5 space-y-2 text-gray-200">
+                <li>Understand your anxiety level</li>
+                <li>Identify if you may benefit from support</li>
+                <li>Use it to start a conversation with a professional</li>
+                <li>Fast, private, and based on clinical evidence</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Interpretation Box + Start Button -->
+        <div class="md:w-1/2 space-y-4 flex flex-col justify-between">
+          <div>
+            <div class="bg-pink-500 text-white rounded-xl px-6 py-5 mb-4 shadow-inner text-justify">
+              ⚠️ This is a screening tool, not a diagnosis. If you're struggling, seek help from a qualified mental health professional.
+            </div>
+            <div class="bg-pink-500/10 border-2 border-pink-500 rounded-xl p-4 text-left text-pink-500">
+              <h3 class="font-semibold text-pink-400 mb-2">Understanding your results</h3>
+              <ul class="space-y-4 text-white">
+                <li><strong>0 – 4 :</strong> Minimal — No action needed</li>
+                <li><strong>5 – 9 :</strong> Mild — Monitor symptoms</li>
+                <li><strong>10 – 14 :</strong> Moderate — Possible clinical anxiety</li>
+                <li><strong>15 – 21 :</strong> Severe — Active treatment likely warranted</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-right">
+        <button (click)="startTest()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
+          Start the test
+        </button>
+      </div>
+    </div>
+
+    <!-- Question Step -->
+    <form *ngIf="step === 'questions'" (ngSubmit)="nextQuestion()" class="space-y-8 mt-[5vh]">
+      <div class="bg-pink-500/10 border-3 border-pink-500 rounded-xl shadow p-6">
+
+        <div class="w-full bg-pink-500/30 rounded-full h-2.5 mb-6">
+          <div class="bg-pink-500 h-2.5 rounded-full transition-all duration-300"
+            [style.width.%]="((currentQuestionIndex + 1) / (questions.length + 1)) * 100">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between mb-6">
+          <label class="text-lg font-medium pr-6">
+            {{ questions[currentQuestionIndex].text }}
+          </label>
+          <span class="text-white whitespace-nowrap">
+            {{ currentQuestionIndex + 1 }} / {{ questions.length + 1 }}
+          </span>
+        </div>
+
+        <ul class="space-y-4">
+          <li *ngFor="let opt of options" class="w-full">
+            <div class="flex items-center ps-4 border border-gray-200 rounded-sm bg-white text-[#101010]">
+              <input type="radio" [id]="'opt-' + currentQuestionIndex + '-' + opt.value"
+                [value]="opt.value" [name]="'q' + currentQuestionIndex"
+                [(ngModel)]="questions[currentQuestionIndex].answer"
+                class="w-6 h-6 accent-pink-500 bg-pink-500 border-pink-500" required>
+              <label [for]="'opt-' + currentQuestionIndex + '-' + opt.value"
+                class="w-full py-4 ms-2 font-medium text-[#101010]">
+                {{ opt.label }}
+              </label>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="text-right">
+        <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
+          Next
+        </button>
+      </div>
+    </form>
+
+    <!-- Impact Question -->
+    <form *ngIf="step === 'impact'" (ngSubmit)="submitForm()" class="space-y-8 mt-[5vh]">
+      <div class="bg-pink-500/10 border-3 border-pink-500 rounded-xl shadow p-6">
+
+        <div class="w-full bg-pink-500/30 rounded-full h-2.5 mb-6">
+          <div class="bg-pink-500 h-2.5 rounded-full transition-all duration-500 ease-in-out"
+            [style.width.%]="(questions.length + 1) / (questions.length + 1) * 100">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between mb-6">
+          <label class="text-lg font-medium pr-6">
+            If you checked off any problems, how difficult have they made it for you to do your work,
+            take care of things at home, or get along with other people?
+          </label>
+          <span class="text-white whitespace-nowrap">
+            {{ questions.length + 1 }} / {{ questions.length + 1 }}
+          </span>
+        </div>
+
+        <ul class="space-y-4">
+          <li *ngFor="let opt of [
+            { label: 'Not difficult at all', value: 0 },
+            { label: 'Somewhat difficult', value: 1 },
+            { label: 'Very difficult', value: 2 },
+            { label: 'Extremely difficult', value: 3 }
+          ]" class="w-full">
+            <div class="flex items-center ps-4 border border-gray-200 rounded-sm bg-white text-[#101010]">
+              <input type="radio" [id]="'impact-' + opt.value" [value]="opt.value" name="impact"
+                [(ngModel)]="impact" class="w-6 h-6 accent-pink-500 bg-pink-500 border-pink-500"
+                required>
+              <label [for]="'impact-' + opt.value" class="w-full py-4 ms-2 font-medium text-[#101010]">
+                {{ opt.label }}
+              </label>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="text-right">
+        <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
+          Continue
+        </button>
+      </div>
+    </form>
+
+    <!-- Result Step -->
+<div *ngIf="step === 'result'" class="space-y-4">
+  <div class="text-center">
+    <h2 class="text-3xl font-bold text-white">Your GAD-7 Result</h2>
+    <p class="text-gray-400 mt-1 text-sm">Based on your answers, here is an overview of your anxiety level.</p>
+  </div>
+
+  <!-- Score Card -->
+  <div class="bg-white rounded-xl shadow-md p-6 space-y-4">
+    <div class="text-center mb-4">
+      <div class="text-xl font-bold text-[#101010]">Your Score: {{ totalScore }}</div>
+      <div class="text-md text-[#101010]">{{ interpretation }}</div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="space-y-3">
+      <div class="flex w-full h-4 gap-1">
+        <ng-container *ngFor="let seg of [
+          { from: 0, to: 4 },
+          { from: 5, to: 9 },
+          { from: 10, to: 14 },
+          { from: 15, to: 21 }
+        ]">
+          <div class="flex-1 bg-pink-500/40 rounded overflow-hidden">
+            <div class="h-full bg-pink-500 transition-all duration-500"
+              [style.width.%]="
+                totalScore >= seg.to
+                  ? 100
+                  : totalScore < seg.from
+                    ? 0
+                    : ((totalScore - seg.from) / (seg.to - seg.from + 1)) * 100
+              ">
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="flex justify-between text-xs text-[#101010] px-1">
+        <span class="w-1/4 text-center">Minimal</span>
+        <span class="w-1/4 text-center">Mild</span>
+        <span class="w-1/4 text-center">Moderate</span>
+        <span class="w-1/4 text-center">Severe</span>
+      </div>
+    </div>
+
+    <!-- Personalized Feedback -->
+    <div class="bg-pink-500/10 border-2 border-pink-500 text-[#101010] rounded-xl px-6 py-5 mb-4 shadow-inner text-center">
+      <div *ngIf="totalScore <= 4">
+        You're showing minimal signs of anxiety. Keep an eye on your mental health and practice relaxation strategies.
+      </div>
+      <div *ngIf="totalScore > 4 && totalScore <= 9">
+        Mild anxiety symptoms. Consider lifestyle adjustments and monitor how you’re feeling over time.
+      </div>
+      <div *ngIf="totalScore > 9 && totalScore <= 14">
+        Moderate anxiety detected. It may help to talk to a mental health professional or use coping techniques.
+      </div>
+      <div *ngIf="totalScore > 14">
+        Severe anxiety symptoms present. It’s recommended to seek help from a qualified healthcare provider.
+      </div>
+    </div>
+
+    <p class="text-xs text-gray-400 mt-4 text-center">
+      This is a self-assessment tool, not a diagnosis. Please consult a healthcare professional for clinical evaluation.
+    </p>
+  </div>
+
+  <!-- Detailed Explanation -->
+  <div class="bg-pink-500/10 border-2 border-pink-500 rounded-xl p-6 text-white space-y-2">
+    <h3 class="text-pink-400 text-lg font-semibold mb-2">Understanding your results</h3>
+    <p><strong>0–4 (Minimal):</strong> Little to no anxiety symptoms. No specific action required, but healthy habits are encouraged.</p>
+    <p><strong>5–9 (Mild):</strong> Mild anxiety symptoms. Watchful waiting, stress reduction, and lifestyle changes may be helpful.</p>
+    <p><strong>10–14 (Moderate):</strong> Anxiety symptoms may warrant further evaluation. Consider speaking with a professional.</p>
+    <p><strong>15–21 (Severe):</strong> High levels of anxiety. Professional mental health intervention is likely needed.</p>
+  </div>
+
+  <!-- Restart Button -->
+  <div class="text-right">
+    <button (click)="reset()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow-md transition">
+      Restart Assessment
+    </button>
+  </div>
+</div>
+
+  </div>
 </section>

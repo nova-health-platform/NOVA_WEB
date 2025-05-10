@@ -1,3 +1,154 @@
 <section class="min-h-screen">
+  <div class="max-w-5xl mx-auto px-4 py-10 text-white">
 
+    <!-- Intro Screen -->
+    <div *ngIf="step === 'intro'" class="space-y-6">
+      <h1 class="text-3xl font-bold text-white text-center">DASS-21 – Mental Health Assessment</h1>
+
+      <div class="mt-8 flex flex-col md:flex-row md:items-stretch md:justify-between gap-4">
+        <!-- Left: Description -->
+        <div class="bg-white rounded-xl shadow p-6 md:w-1/2 space-y-4 flex flex-col justify-between">
+          <div>
+            <p class="text-black text-justify">
+              The DASS-21 is a set of three self-report scales designed to measure the emotional states of depression,
+              anxiety and stress. It is a reliable and valid tool used worldwide.
+            </p>
+
+            <div class="bg-[#101010] p-6 rounded-xl shadow max-w-3xl mx-auto mt-6">
+              <h2 class="text-pink-400 text-xl font-semibold mb-2">Why take the DASS-21?</h2>
+              <ul class="list-disc pl-5 space-y-2 text-gray-200">
+                <li>Evaluate your emotional well-being</li>
+                <li>Track symptoms of depression, anxiety, and stress</li>
+                <li>Evidence-based self-assessment tool</li>
+                <li>Confidential and accessible anytime</li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Right: Disclaimer + Start Button -->
+        <div class="md:w-1/2 space-y-4 flex flex-col">
+          <div>
+            <div class="bg-pink-500 text-white rounded-xl px-6 py-5 shadow-inner text-justify">
+              ⚠️ This is not a diagnostic tool. It’s a self-assessment to help you understand your emotional state.
+              For medical advice, please consult a professional.
+            </div>
+          </div>
+          <div class="bg-pink-500/10 border-2 border-pink-500 rounded-xl p-4 h-full">
+              <h3 class="text-pink-400 font-semibold mb-2">Understanding your results</h3>
+              <ul class="text-white space-y-2 text-sm">
+                <li><strong>Depression:</strong> Normal (0–9), Mild (10–13), Moderate (14–20), Severe (21–27), Extremely Severe (28+)</li>
+                <li><strong>Anxiety:</strong> Normal (0–7), Mild (8–9), Moderate (10–14), Severe (15–19), Extremely Severe (20+)</li>
+                <li><strong>Stress:</strong> Normal (0–14), Mild (15–18), Moderate (19–25), Severe (26–33), Extremely Severe (34+)</li>
+              </ul>
+            </div>
+        </div>
+      </div>
+
+      <div class="text-right">
+        <button (click)="startTest()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
+          Start the test
+        </button>
+      </div>
+    </div>
+
+    <!-- Question Step -->
+    <form *ngIf="step === 'questions'" (ngSubmit)="nextQuestion()" class="space-y-8 mt-[5vh]">
+      <div class="bg-pink-500/10 border-3 border-pink-500 rounded-xl shadow p-6">
+
+        <!-- Progress bar -->
+        <div class="w-full bg-pink-500/30 rounded-full h-2.5 mb-6">
+          <div class="bg-pink-500 h-2.5 rounded-full transition-all duration-300"
+            [style.width.%]="((currentQuestionIndex + 1) / questions.length) * 100">
+          </div>
+        </div>
+
+        <!-- Title and Number Row -->
+        <div class="flex items-center justify-between mb-6">
+          <label class="text-lg font-medium pr-6">
+            {{ questions[currentQuestionIndex].text }}
+          </label>
+          <span class="text-white whitespace-nowrap">
+            {{ currentQuestionIndex + 1 }} / {{ questions.length }}
+          </span>
+        </div>
+
+        <!-- Options -->
+        <ul class="space-y-4">
+          <li *ngFor="let opt of options" class="w-full">
+            <div class="flex items-center ps-4 border border-gray-200 rounded-sm bg-white text-[#101010]">
+              <input type="radio" [id]="'opt-' + currentQuestionIndex + '-' + opt.value" [value]="opt.value"
+                [name]="'q' + currentQuestionIndex" [(ngModel)]="questions[currentQuestionIndex].answer"
+                class="w-6 h-6 accent-pink-500 bg-pink-500 border-pink-500" required>
+              <label [for]="'opt-' + currentQuestionIndex + '-' + opt.value"
+                class="w-full py-4 ms-2 font-medium text-[#101010]">
+                {{ opt.label }}
+              </label>
+            </div>
+          </li>
+        </ul>
+
+      </div>
+
+      <!-- Navigation -->
+      <div class="text-right">
+        <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
+          Next
+        </button>
+      </div>
+    </form>
+
+    <!-- Result Step -->
+    <div *ngIf="step === 'result'" class="space-y-6">
+      <div class="text-center">
+        <h2 class="text-3xl font-bold text-white">Your DASS-21 Results</h2>
+        <p class="text-gray-400 mt-1 text-sm">Based on your answers, here are your scores:</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-6 text-[#101010]">
+        <div class="bg-white rounded-xl shadow p-6 space-y-2 text-center">
+          <h3 class="text-xl font-semibold text-pink-500">Depression</h3>
+          <p class="text-4xl font-bold">{{ depressionScore }}</p>
+          <p class="text-lg font-medium">{{ depressionLabel }}</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-6 space-y-2 text-center">
+          <h3 class="text-xl font-semibold text-pink-500">Anxiety</h3>
+          <p class="text-4xl font-bold">{{ anxietyScore }}</p>
+          <p class="text-lg font-medium">{{ anxietyLabel }}</p>
+        </div>
+        <div class="bg-white rounded-xl shadow p-6 space-y-2 text-center">
+          <h3 class="text-xl font-semibold text-pink-500">Stress</h3>
+          <p class="text-4xl font-bold">{{ stressScore }}</p>
+          <p class="text-lg font-medium">{{ stressLabel }}</p>
+        </div>
+      </div>
+
+      <div class="bg-pink-500/10 border-2 border-pink-500 text-white rounded-xl px-6 py-5 shadow-inner text-center">
+        <p>If any of your scores are in the "Severe" or "Extremely Severe" range, consider seeking support from a
+          mental health professional.</p>
+      </div>
+
+      <div class="bg-pink-500/10 border-2 border-pink-500 rounded-xl p-4 text-left">
+        <h3 class="text-pink-400 font-semibold mb-2">Understanding your results</h3>
+        <ul class="text-white space-y-2 text-sm">
+          <li><strong>Depression:</strong> Normal (0–9), Mild (10–13), Moderate (14–20), Severe (21–27), Extremely Severe (28+)</li>
+          <li><strong>Anxiety:</strong> Normal (0–7), Mild (8–9), Moderate (10–14), Severe (15–19), Extremely Severe (20+)</li>
+          <li><strong>Stress:</strong> Normal (0–14), Mild (15–18), Moderate (19–25), Severe (26–33), Extremely Severe (34+)</li>
+        </ul>
+      </div>
+
+      <p class="text-xs text-gray-400 text-center">
+        This self-assessment is not a diagnosis. Please consult a healthcare provider if you are concerned about your
+        mental health.
+      </p>
+
+      <div class="text-right">
+        <button (click)="reset()"
+          class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow-md transition">
+          Restart Assessment
+        </button>
+      </div>
+    </div>
+  </div>
 </section>

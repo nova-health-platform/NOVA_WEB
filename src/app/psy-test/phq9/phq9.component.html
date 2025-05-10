@@ -59,7 +59,7 @@
 
         <!-- Question Step -->
 
-        <form *ngIf="step === 'questions'" (ngSubmit)="nextQuestion()" class="space-y-8 mt-[10vh]">
+        <form *ngIf="step === 'questions'" (ngSubmit)="nextQuestion()" class="space-y-8 mt-[5vh]">
             <div class="bg-pink-500/10 border-3 border-pink-500 rounded-xl shadow p-6">
 
                 <!-- Progress bar -->
@@ -107,7 +107,7 @@
 
 
         <!-- Impact Question -->
-        <form *ngIf="step === 'impact'" (ngSubmit)="submitForm()" class="space-y-8 mt-[10vh]">
+        <form *ngIf="step === 'impact'" (ngSubmit)="submitForm()" class="space-y-8 mt-[5vh]">
             <div class="bg-pink-500/10 border-3 border-pink-500 rounded-xl shadow p-6">
 
                 <!-- Progress bar -->
@@ -381,7 +381,7 @@
             <div class="text-right">
                 <button (click)="reset()"
                     class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow-md transition">
-                    🔁 Restart Assessment
+                    Restart Assessment
                 </button>
             </div>
         </div>

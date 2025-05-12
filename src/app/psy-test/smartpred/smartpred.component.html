@@ -1,3 +1,119 @@
 <section class="min-h-screen">
+  <div class="max-w-3xl mx-auto px-4 py-10 text-white">
 
+    <!-- Progress Bar -->
+    <div *ngIf="step !== 'intro' && step !== 'result'" class="mb-8">
+      <div class="w-full bg-pink-500/30 rounded-full h-2.5">
+        <div class="bg-pink-500 h-2.5 rounded-full transition-all duration-300" [style.width.%]="progress"></div>
+      </div>
+    </div>
+
+    <!-- Intro Step -->
+    <div *ngIf="step === 'intro'" class="space-y-6">
+      <h1 class="text-3xl font-bold text-center">DASS Full Assessment</h1>
+      <p class="text-gray-200 text-justify">
+        This test helps measure Depression, Anxiety and Stress using the full DASS-42 questionnaire, with additional optional demographic inputs and personality profiling.
+      </p>
+      <div class="text-right">
+        <button (click)="startTest()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
+          Start Test
+        </button>
+      </div>
+    </div>
+
+    <!-- Demographic Step -->
+    <div *ngIf="step === 'demographics'">
+      <h2 class="text-xl font-semibold mb-4">Demographic Question {{ currentIndex + 1 }}</h2>
+      <div class="bg-white text-black p-4 rounded shadow">
+        <ng-container [ngSwitch]="currentIndex">
+          <div *ngSwitchCase="0"><label>Age</label><input type="number" [(ngModel)]="demographics.age" name="age" class="w-full p-2 border rounded" /></div>
+          <div *ngSwitchCase="1"><label>Gender</label><select [(ngModel)]="demographics.gender" name="gender" class="w-full p-2 border rounded"><option value="1">Male</option><option value="2">Female</option><option value="3">Other</option></select></div>
+          <div *ngSwitchCase="2"><label>Education</label><select [(ngModel)]="demographics.education" name="education" class="w-full p-2 border rounded"><option value="1">Less than high school</option><option value="2">High school</option><option value="3">University degree</option><option value="4">Graduate degree</option></select></div>
+          <div *ngSwitchCase="3"><label>Childhood Area</label><select [(ngModel)]="demographics.urban" name="urban" class="w-full p-2 border rounded"><option value="1">Rural</option><option value="2">Suburban</option><option value="3">Urban</option></select></div>
+          <div *ngSwitchCase="4"><label>Marital Status</label><select [(ngModel)]="demographics.married" name="married" class="w-full p-2 border rounded"><option value="1">Never married</option><option value="2">Currently married</option><option value="3">Previously married</option></select></div>
+          <div *ngSwitchCase="5"><label>Family Size</label><input type="number" [(ngModel)]="demographics.familysize" name="familysize" class="w-full p-2 border rounded" /></div>
+        </ng-container>
+      </div>
+      <div class="text-right mt-4">
+        <button (click)="nextDemographicStep()" class="bg-pink-500 text-white px-6 py-2 rounded shadow">Next</button>
+      </div>
+    </div>
+
+    <!-- Question Step (DASS) -->
+    <form *ngIf="step === 'questions'" (ngSubmit)="nextQuestion()" class="space-y-6">
+      <div class="bg-white text-black p-6 rounded shadow">
+        <h2 class="text-xl font-semibold mb-4">Question {{ currentQuestionIndex + 1 }} / {{ questions.length }}</h2>
+        <p class="mb-4">{{ questions[currentQuestionIndex].text }}</p>
+        <div *ngFor="let opt of options" class="mb-2">
+          <label class="flex items-center space-x-2">
+            <input type="radio" [(ngModel)]="questions[currentQuestionIndex].answer" [value]="opt.value" name="q{{ currentQuestionIndex }}" required class="accent-pink-500" />
+            <span>{{ opt.label }}</span>
+          </label>
+        </div>
+      </div>
+      <div class="text-right">
+        <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded shadow">Next</button>
+      </div>
+    </form>
+
+    <!-- TIPI Step -->
+    <form *ngIf="step === 'tipi'" (ngSubmit)="nextTipiQuestion()" class="space-y-6">
+      <div class="bg-white text-black p-6 rounded shadow">
+        <h2 class="text-xl font-semibold mb-4">TIPI Question {{ tipiIndex + 1 }} / 10</h2>
+        <p class="mb-4">{{ tipiQuestions[tipiIndex] }}</p>
+        <select [(ngModel)]="tipi[tipiIndex]" name="tipi{{ tipiIndex }}" class="w-full p-2 border rounded" required>
+          <option [ngValue]="null" disabled>Select</option>
+          <option *ngFor="let val of [1,2,3,4,5,6,7]" [value]="val">{{ val }}</option>
+        </select>
+      </div>
+      <div class="text-right">
+        <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded shadow">Next</button>
+      </div>
+    </form>
+
+    <!-- VCL Step -->
+    <form *ngIf="step === 'vcl'" (ngSubmit)="submitVCL()" class="space-y-6">
+      <div class="bg-white text-black p-6 rounded shadow">
+        <h2 class="text-xl font-semibold mb-4">Vocabulary Checklist</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div *ngFor="let word of vclWords; let i = index">
+            <label class="flex items-center">
+              <input type="checkbox" [(ngModel)]="vcl[i]" name="vcl{{ i }}" class="mr-2" />
+              {{ word }}
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="text-right">
+        <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded shadow">Submit</button>
+      </div>
+    </form>
+
+    <!-- Result Step -->
+    <div *ngIf="step === 'result'" class="space-y-6">
+      <h2 class="text-2xl font-bold text-center">Your DASS Results</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-black">
+        <div class="bg-white p-6 rounded shadow text-center">
+          <h3 class="text-pink-500 font-semibold">Depression</h3>
+          <p class="text-3xl font-bold">{{ depressionScore }}</p>
+          <p>{{ depressionLabel }}</p>
+        </div>
+        <div class="bg-white p-6 rounded shadow text-center">
+          <h3 class="text-pink-500 font-semibold">Anxiety</h3>
+          <p class="text-3xl font-bold">{{ anxietyScore }}</p>
+          <p>{{ anxietyLabel }}</p>
+        </div>
+        <div class="bg-white p-6 rounded shadow text-center">
+          <h3 class="text-pink-500 font-semibold">Stress</h3>
+          <p class="text-3xl font-bold">{{ stressScore }}</p>
+          <p>{{ stressLabel }}</p>
+        </div>
+      </div>
+      <div class="text-right">
+        <button (click)="reset()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded shadow">
+          Restart
+        </button>
+      </div>
+    </div>
+  </div>
 </section>

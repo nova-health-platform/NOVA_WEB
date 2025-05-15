@@ -26,7 +26,14 @@ export class AnalysisComponent implements OnInit {
   filteredSymptoms: string[] = [];
   selectedSymptoms: string[] = [];
 
-  response: any = null;
+  response: {
+    predicted_disease: string;
+    confidence: number;
+    disease_info: any;
+    bmi: number;
+    painZonesExpanded: string[];
+  } | null = null;
+
   loading = false;
   errorMessage = '';
 
@@ -35,17 +42,15 @@ export class AnalysisComponent implements OnInit {
   askedQuestions: string[] = [];
 
   age: number | null = null;
-  gender: string = '';
+  sex: string = '';
   weight: number | null = null;
   height: number | null = null;
 
-
   svgPaths: SvgPath[] = [];
-
-  // UI control flags
   showPainQuestion: boolean = false;
   painAnswer: boolean | null = null;
   showBodySelection: boolean = false;
+  selectedPainLocations: string[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -70,14 +75,18 @@ export class AnalysisComponent implements OnInit {
 
   toggleZone(event: MouseEvent, id: string): void {
     if (id === 'body') return;
-
+    const index = this.selectedPainLocations.indexOf(id);
+    if (index === -1) {
+      this.selectedPainLocations.push(id);
+    } else {
+      this.selectedPainLocations.splice(index, 1);
+    }
     const target = event.target as SVGPathElement;
     const currentFill = target.getAttribute('fill');
-
     if (currentFill === '#ff0000') {
-      target.setAttribute('fill', '#ec4899'); // pink
+      target.setAttribute('fill', '#ec4899');
     } else {
-      target.setAttribute('fill', '#ff0000'); // red
+      target.setAttribute('fill', '#ff0000');
     }
   }
 
@@ -112,13 +121,10 @@ export class AnalysisComponent implements OnInit {
       this.errorMessage = 'Please select at least one symptom.';
       return;
     }
-
-    if (!this.age || !this.gender) {
-      this.errorMessage = 'Please enter your age and gender.';
+    if (!this.age || !this.sex || !this.weight || !this.height) {
+      this.errorMessage = 'Please enter your age, gender, weight and height.';
       return;
     }
-
-    // Ask the pain question first
     this.errorMessage = '';
     this.showPainQuestion = true;
   }
@@ -126,12 +132,9 @@ export class AnalysisComponent implements OnInit {
   answerPainQuestion(answer: boolean): void {
     this.painAnswer = answer;
     this.showPainQuestion = false;
-
     if (answer) {
-      // Show body silhouette for pain selection
       this.showBodySelection = true;
     } else {
-      // Skip to API submission
       this.submitSymptomsToApi();
     }
   }
@@ -144,14 +147,16 @@ export class AnalysisComponent implements OnInit {
   submitSymptomsToApi(): void {
     this.loading = true;
     this.errorMessage = '';
-
     const formattedSymptoms = this.formatSymptoms(this.selectedSymptoms);
-
-    this.http.post<any>('http://localhost:5000/api/nova/start', {
+    const requestData = {
       symptoms: formattedSymptoms,
       age: this.age,
-      gender: this.gender
-    }).subscribe({
+      sex: this.sex,
+      weight: this.weight,
+      height: this.height,
+      painLocations: this.selectedPainLocations
+    };
+    this.http.post<any>('http://localhost:5000/api/nova/start', requestData).subscribe({
       next: (data) => {
         this.state = data.state || {};
         this.askedQuestions = data.question ? [data.question.question] : [];
@@ -168,25 +173,30 @@ export class AnalysisComponent implements OnInit {
 
   answerClarification(value: boolean): void {
     if (!this.currentClarification) return;
-
     const answerPayload = {
       state: this.state,
       answer: {
         [this.currentClarification.symptom]: value
       },
-      asked_questions: [...this.askedQuestions, this.currentClarification.question]
+      asked_questions: [...this.askedQuestions, this.currentClarification.question],
+      age: this.age,
+      sex: this.sex,
+      weight: this.weight,
+      height: this.height,
+      painLocations: this.selectedPainLocations
     };
-
     this.loading = true;
     this.http.post<any>('http://localhost:5000/api/nova/refine', answerPayload).subscribe({
       next: (data) => {
         this.state = data.state || {};
         this.askedQuestions = data.asked_questions || [];
-
         if (data.final_prediction) {
           this.response = {
             predicted_disease: data.final_prediction,
-            confidence: data.confidence
+            confidence: data.confidence,
+            disease_info: data.disease_info,
+            bmi: data.bmi,
+            painZonesExpanded: data.painZonesExpanded
           };
           this.currentClarification = null;
         } else {
@@ -195,7 +205,6 @@ export class AnalysisComponent implements OnInit {
             this.askedQuestions.push(this.currentClarification.question);
           }
         }
-
         this.loading = false;
       },
       error: (error) => {
@@ -215,9 +224,12 @@ export class AnalysisComponent implements OnInit {
     this.state = {};
     this.errorMessage = '';
     this.age = null;
-    this.gender = '';
+    this.height = null;
+    this.weight = null;
+    this.sex = '';
     this.showPainQuestion = false;
     this.painAnswer = null;
     this.showBodySelection = false;
+    this.selectedPainLocations = [];
   }
 }

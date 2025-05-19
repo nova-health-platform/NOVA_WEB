@@ -150,12 +150,13 @@ export class AnalysisComponent implements OnInit {
     const formattedSymptoms = this.formatSymptoms(this.selectedSymptoms);
     const requestData = {
       symptoms: formattedSymptoms,
-      age: this.age,
+      age: this.age !== null ? Number(this.age) : null,
       sex: this.sex,
-      weight: this.weight,
-      height: this.height,
+      weight: this.weight !== null ? Number(this.weight) : null,
+      height: this.height !== null ? Number(this.height) : null,
       painLocations: this.selectedPainLocations
     };
+
     this.http.post<any>('http://localhost:5000/api/nova/start', requestData).subscribe({
       next: (data) => {
         this.state = data.state || {};
@@ -179,12 +180,13 @@ export class AnalysisComponent implements OnInit {
         [this.currentClarification.symptom]: value
       },
       asked_questions: [...this.askedQuestions, this.currentClarification.question],
-      age: this.age,
+      age: this.age !== null ? Number(this.age) : null,
       sex: this.sex,
-      weight: this.weight,
-      height: this.height,
+      weight: this.weight !== null ? Number(this.weight) : null,
+      height: this.height !== null ? Number(this.height) : null,
       painLocations: this.selectedPainLocations
     };
+
     this.loading = true;
     this.http.post<any>('http://localhost:5000/api/nova/refine', answerPayload).subscribe({
       next: (data) => {

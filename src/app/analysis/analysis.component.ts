@@ -13,6 +13,13 @@ interface SvgPath {
   d: string;
 }
 
+interface SelectionCircle {
+  cx: number;
+  cy: number;
+  r: number;
+  matchedPaths: string[];
+}
+
 @Component({
   selector: 'app-analysis',
   standalone: true,
@@ -47,16 +54,21 @@ export class AnalysisComponent implements OnInit {
   height: number | null = null;
 
   svgPaths: SvgPath[] = [];
+  svgPathsBack: SvgPath[] = [];
   showPainQuestion: boolean = false;
   painAnswer: boolean | null = null;
   showBodySelection: boolean = false;
   selectedPainLocations: string[] = [];
 
-  constructor(private http: HttpClient) {}
+  selectionCircles: SelectionCircle[] = [];
+
+  constructor(private http: HttpClient) { }
 
   ngOnInit(): void {
     this.loadSymptoms();
     this.loadSvgPaths();
+
+    this.showBodySelection = true;
   }
 
   loadSymptoms(): void {
@@ -69,25 +81,62 @@ export class AnalysisComponent implements OnInit {
   loadSvgPaths(): void {
     this.http.get<SvgPath[]>('assets/pain_location_front.json').subscribe({
       next: (data) => this.svgPaths = data,
-      error: (err) => console.error('Error loading SVG paths:', err)
+      error: (err) => console.error('Error loading front SVG paths:', err)
+    });
+    this.http.get<SvgPath[]>('assets/pain_location_back.json').subscribe({
+      next: (data) => this.svgPathsBack = data,
+      error: (err) => console.error('Error loading back SVG paths:', err)
     });
   }
 
-  toggleZone(event: MouseEvent, id: string): void {
-    if (id === 'body') return;
-    const index = this.selectedPainLocations.indexOf(id);
-    if (index === -1) {
-      this.selectedPainLocations.push(id);
-    } else {
-      this.selectedPainLocations.splice(index, 1);
+  handleSvgClick(event: MouseEvent, side: 'front' | 'back'): void {
+    const svg = (event.target as SVGElement).closest('svg');
+    if (!svg) return;
+
+    const rect = svg.getBoundingClientRect();
+    const viewBox = svg.viewBox.baseVal;
+
+    const cx = ((event.clientX - rect.left) / rect.width) * viewBox.width + viewBox.x;
+    const cy = ((event.clientY - rect.top) / rect.height) * viewBox.height + viewBox.y;
+
+    const r = 4;
+    const paths = side === 'front' ? this.svgPaths : this.svgPathsBack;
+    const matched: string[] = [];
+
+    for (const path of paths) {
+      if (path.id === 'body') continue;
+      const pathEl = document.getElementById(path.id);
+      if (!pathEl) continue;
+
+      const geometry = pathEl as unknown as SVGGeometryElement;
+      if (geometry.isPointInFill?.(new DOMPoint(cx, cy))) {
+        matched.push(path.id);
+      }
     }
-    const target = event.target as SVGPathElement;
-    const currentFill = target.getAttribute('fill');
-    if (currentFill === '#ff0000') {
-      target.setAttribute('fill', '#ec4899');
+
+    const existingIndex = this.selectionCircles.findIndex(
+      (c) => Math.abs(c.cx - cx) < r && Math.abs(c.cy - cy) < r
+    );
+
+    if (existingIndex >= 0) {
+      const circle = this.selectionCircles[existingIndex];
+      this.selectionCircles.splice(existingIndex, 1);
+      this.selectedPainLocations = this.selectedPainLocations.filter(
+        id => !circle.matchedPaths.includes(id)
+      );
     } else {
-      target.setAttribute('fill', '#ff0000');
+      this.selectionCircles.push({ cx, cy, r, matchedPaths: matched });
+      matched.forEach(id => {
+        if (!this.selectedPainLocations.includes(id)) {
+          this.selectedPainLocations.push(id);
+        }
+      });
     }
+  }
+
+  resetBodySelection(): void {
+    this.selectedPainLocations = [];
+    this.selectionCircles = [];
   }
 
   filterSymptoms(): void {
@@ -233,5 +282,6 @@ export class AnalysisComponent implements OnInit {
     this.painAnswer = null;
     this.showBodySelection = false;
     this.selectedPainLocations = [];
+    this.selectionCircles = [];
   }
 }

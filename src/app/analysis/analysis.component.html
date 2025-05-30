@@ -1,4 +1,4 @@
-<section class="min-h-screen flex justify-center pt-[10vh]">
+<section class="min-h-screen flex justify-center pt-[2vh]">
   <div class="mx-auto w-full max-w-6xl">
     <div>
       <div *ngIf="errorMessage" class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center max-w-2xl mx-auto">
@@ -75,65 +75,102 @@
         </div>
       </div>
 
-      <div *ngIf="showBodySelection" class="mt-8 p-6 rounded-lg shadow-md max-w-6xl mx-auto text-center">
-        <h3 class="text-lg font-bold mb-4 text-white">Select where you feel pain:</h3>
+      <div *ngIf="showBodySelection" class="p-6 rounded-lg shadow-md max-w-6xl mx-auto text-center">
+        <div class="flex flex-col md:flex-row gap-6 items-stretch justify-center">
 
-        <div
-          class="w-[70%] mx-auto flex justify-center gap-8 mb-6 bg-pink-500/10 p-4 rounded-lg shadow-lg border-2 border-pink-500">
+          <!-- Boîte de texte explicative -->
+          <div
+            class="bg-pink-500/10 border-2 border-pink-500 rounded-lg shadow-lg p-6 w-full md:w-1/2 h-full min-h-[450px] flex flex-col justify-between text-left text-white space-y-4">
 
-          <div class="flex flex-col items-center">
-            <svg (click)="handleSvgClick($event, 'front')" class="w-[250px] md:w-[300px] h-auto" viewBox="59 0 100 190"
-              preserveAspectRatio="xMidYMid meet">
-              <g id="effects-layer-front"></g>
+            <!-- Titre -->
+            <div class="flex items-center gap-3">
+              <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 8c.667-2 2.5-3.5 5-3.5S21 6 21 8c0 2-1.5 3.5-3.5 3.5S14 10 12 8zM4 16l4-4 4 4M4 20h16" />
+              </svg>
+              <h3 class="text-lg font-bold">Select your physical pain</h3>
+            </div>
 
-              <ng-container *ngFor="let path of svgPaths">
-                <ng-container *ngIf="path.id === 'body'">
-                  <path [attr.d]="path.d" [attr.id]="path.id" [attr.fill]="'#ec4899'" [style.pointer-events]="'none'">
-                  </path>
-                </ng-container>
-              </ng-container>
+            <!-- Description enrichie -->
+            <div class="text-sm leading-relaxed flex-1">
+              <p>
+                To help us understand your discomfort, please indicate where you are experiencing pain.
+              </p>
 
-              <ng-container *ngFor="let path of svgPaths">
-                <ng-container *ngIf="path.id !== 'body'">
-                  <path [attr.d]="path.d" [attr.id]="path.id" [attr.fill]="'transparent'"
-                    [style.pointer-events]="'auto'">
-                  </path>
-                </ng-container>
-              </ng-container>
+              <ul class="list-disc list-inside mt-3 space-y-1">
+                <li><strong>Click</strong> on a body area to mark it — a circle will appear.</li>
+                <li><strong>Click again</strong> on the same area to remove the selection.</li>
+                <li>You can select multiple zones if necessary.</li>
+              </ul>
 
-              <circle *ngFor="let circle of selectionCircles" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
-                [attr.r]="circle.r" fill="rgba(255, 255, 255, 0.2)" stroke="#ec4899" stroke-width="0.5" />
-            </svg>
+              <p class="mt-3 text-pink-300 italic">
+                Your input helps tailor the support or treatment you receive.
+              </p>
+            </div>
 
-            <div class="mt-2 text-white text-sm font-semibold">Front</div>
+            <!-- Astuce ou aide -->
+            <div class="bg-pink-400/10 border border-pink-400 p-3 rounded-md text-sm">
+              💡 <span class="font-medium">Tip:</span> Make sure you differentiate between the "Front" and the "Back" to improve diagnostic accuracy.
+            </div>
+
           </div>
 
-          <div class="flex flex-col items-center">
-            <svg (click)="handleSvgClick($event, 'back')" class="w-[250px] md:w-[300px] h-auto" viewBox="59 0 100 190"
-              preserveAspectRatio="xMidYMid meet">
-              <g id="effects-layer-back"></g>
+          <!-- Silhouettes -->
+          <div
+            class="w-full md:w-1/2 min-h-[450px] flex justify-center gap-8 bg-pink-500/10 p-4 rounded-lg shadow-lg border-2 border-pink-500 h-full">
+            <!-- Avant -->
+            <div class="flex flex-col items-center">
+              <svg (click)="handleSvgClick($event, 'front')" class="w-[150px] md:w-[200px] h-auto"
+                viewBox="59 0 100 190" preserveAspectRatio="xMidYMid meet">
+                <g id="effects-layer-front"></g>
 
-              <circle *ngFor="let circle of selectionCircles" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
-                [attr.r]="circle.r" fill="rgba(255, 255, 255, 0.2)" stroke="#ec4899" stroke-width="0.5" />
+                <ng-container *ngFor="let path of svgPaths">
+                  <ng-container *ngIf="path.id === 'body'">
+                    <path [attr.d]="path.d" [attr.id]="path.id" fill="#ec4899" [style.pointer-events]="'none'"></path>
+                  </ng-container>
+                </ng-container>
 
-              <!-- Zones du corps -->
-              <ng-container *ngFor="let path of svgPaths">
-                <path [attr.d]="path.d" [attr.id]="path.id" [attr.fill]="path.id === 'body' ? '#ec4899' : 'transparent'"
-                  [style.pointer-events]="path.id === 'body' ? 'none' : 'auto'">
-                </path>
-              </ng-container>
-            </svg>
-            <div class="mt-2 text-white text-sm font-semibold">Back</div>
+                <ng-container *ngFor="let path of svgPaths">
+                  <ng-container *ngIf="path.id !== 'body'">
+                    <path [attr.d]="path.d" [attr.id]="path.id" fill="transparent" [style.pointer-events]="'auto'">
+                    </path>
+                  </ng-container>
+                </ng-container>
+
+                <circle *ngFor="let circle of selectionCircles" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
+                  [attr.r]="circle.r" fill="rgba(255,255,255,0.2)" stroke="#ec4899" stroke-width="0.5" />
+              </svg>
+              <div class="mt-2 text-white text-sm font-semibold">Front</div>
+            </div>
+
+            <!-- Arrière -->
+            <div class="flex flex-col items-center">
+              <svg (click)="handleSvgClick($event, 'back')" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190"
+                preserveAspectRatio="xMidYMid meet">
+                <g id="effects-layer-back"></g>
+
+                <ng-container *ngFor="let path of svgPaths">
+                  <ng-container *ngIf="path.id === 'body'">
+                    <path [attr.d]="path.d" [attr.id]="path.id" fill="#ec4899" [style.pointer-events]="'none'"></path>
+                  </ng-container>
+                </ng-container>
+
+                <ng-container *ngFor="let path of svgPaths">
+                  <ng-container *ngIf="path.id !== 'body'">
+                    <path [attr.d]="path.d" [attr.id]="path.id" fill="transparent" [style.pointer-events]="'auto'">
+                    </path>
+                  </ng-container>
+                </ng-container>
+              </svg>
+              <div class="mt-2 text-white text-sm font-semibold">Back</div>
+            </div>
           </div>
-
         </div>
 
         <!-- Zones sélectionnées -->
         <div *ngIf="selectedPainLocations.length > 0" class="mt-4 text-white text-center">
           <p class="text-md font-medium">Selected zones:</p>
-          <p class="text-sm italic text-pink-300">
-            {{ selectedPainLocations.join(', ') }}
-          </p>
+          <p class="text-sm italic text-pink-300">{{ selectedPainLocations.join(', ') }}</p>
         </div>
 
         <!-- Boutons -->
@@ -147,9 +184,6 @@
           </button>
         </div>
       </div>
-
-
-
 
 
       <div *ngIf="currentClarification" class="mt-8 bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">

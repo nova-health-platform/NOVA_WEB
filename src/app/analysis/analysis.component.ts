@@ -103,13 +103,37 @@ export class AnalysisComponent implements OnInit {
     const paths = side === 'front' ? this.svgPaths : this.svgPathsBack;
     const matched: string[] = [];
 
+    const circle = new DOMPoint(cx, cy);
+    const radius = r;
+
     for (const path of paths) {
       if (path.id === 'body') continue;
+
       const pathEl = document.getElementById(path.id);
       if (!pathEl) continue;
 
       const geometry = pathEl as unknown as SVGGeometryElement;
-      if (geometry.isPointInFill?.(new DOMPoint(cx, cy))) {
+
+      const bbox = geometry.getBBox();
+      const step = 0.5;
+
+      let overlaps = false;
+      for (let x = bbox.x; x <= bbox.x + bbox.width; x += step) {
+        for (let y = bbox.y; y <= bbox.y + bbox.height; y += step) {
+          const dx = x - cx;
+          const dy = y - cy;
+          if (dx * dx + dy * dy <= radius * radius) {
+            const point = new DOMPoint(x, y);
+            if (geometry.isPointInFill?.(point)) {
+              overlaps = true;
+              break;
+            }
+          }
+        }
+        if (overlaps) break;
+      }
+
+      if (overlaps) {
         matched.push(path.id);
       }
     }

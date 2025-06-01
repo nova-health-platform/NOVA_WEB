@@ -78,58 +78,87 @@
       <div *ngIf="showBodySelection" class="p-6 rounded-lg shadow-md max-w-6xl mx-auto text-center">
         <div class="flex flex-col md:flex-row gap-6 items-stretch justify-center">
 
-          <!-- Boîte de texte explicative -->
-          <div
-            class="bg-pink-500/10 border-2 border-pink-500 rounded-lg shadow-lg p-6 w-full md:w-1/2 h-full min-h-[450px] flex flex-col justify-between text-left text-white space-y-4">
+          <div class="w-full md:w-1/2 h-full min-h-[450px] flex flex-col space-y-4">
 
-            <!-- Titre -->
-            <div class="flex items-center gap-3">
-              <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M12 8c.667-2 2.5-3.5 5-3.5S21 6 21 8c0 2-1.5 3.5-3.5 3.5S14 10 12 8zM4 16l4-4 4 4M4 20h16" />
-              </svg>
-              <h3 class="text-lg font-bold">Select your physical pain</h3>
+            <!-- Bloc Instructions -->
+            <div
+              class="bg-pink-500/10 border-2 border-pink-500 rounded-lg shadow-lg p-6 text-left text-white space-y-4">
+              <!-- Titre -->
+              <div class="flex items-center gap-3">
+                <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" stroke-width="2"
+                  viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 8c.667-2 2.5-3.5 5-3.5S21 6 21 8c0 2-1.5 3.5-3.5 3.5S14 10 12 8zM4 16l4-4 4 4M4 20h16" />
+                </svg>
+                <h3 class="text-lg font-bold">Select your physical pain</h3>
+              </div>
+
+              <!-- Description -->
+              <div class="text-sm leading-relaxed">
+                <div class="text-sm leading-relaxed">
+                  <p>To help us understand your discomfort, please indicate where you are experiencing pain.</p>
+
+                  <ul class="list-disc list-inside mt-3 space-y-1">
+                    <li><strong>Click</strong> on a body area to mark it — a circle will appear.</li>
+                    <li><strong>Click again</strong> on the same area to remove the selection.</li>
+                    <li>You can select multiple zones if necessary.</li>
+                  </ul>
+
+                  <p class="mt-3 text-pink-300 italic">
+                    Your input helps tailor the support or treatment you receive.
+                  </p>
+
+                  <p class="text-sm text-pink-200 mt-2">
+                    Selected zones will be highlighted with a pink circle.
+                    If a zone is small, try clicking just around it.
+                  </p>
+
+                  <p class="text-sm text-pink-200 mt-2 italic">
+                    Example: For lower back pain, click on the lower area of the back silhouette.
+                  </p>
+                </div>
+              </div>
+
             </div>
 
-            <!-- Description enrichie -->
-            <div class="text-sm leading-relaxed flex-1">
-              <p>
-                To help us understand your discomfort, please indicate where you are experiencing pain.
+
+            <!-- Tips -->
+            <div
+              class="flex-grow flex items-center bg-pink-400/10 border-2 border-pink-500 p-4 rounded-lg text-sm text-white">
+              <p class="text-center w-full leading-relaxed">
+                💡 <span class="font-medium">Tip:</span> Make sure you differentiate between the
+                <strong>"Front"</strong>
+                and the <strong>"Back"</strong> to improve diagnostic accuracy.
               </p>
-
-              <ul class="list-disc list-inside mt-3 space-y-1">
-                <li><strong>Click</strong> on a body area to mark it — a circle will appear.</li>
-                <li><strong>Click again</strong> on the same area to remove the selection.</li>
-                <li>You can select multiple zones if necessary.</li>
-              </ul>
-
-              <p class="mt-3 text-pink-300 italic">
-                Your input helps tailor the support or treatment you receive.
-              </p>
             </div>
 
-            <!-- Astuce ou aide -->
-            <div class="bg-pink-400/10 border border-pink-400 p-3 rounded-md text-sm">
-              💡 <span class="font-medium">Tip:</span> Make sure you differentiate between the "Front" and the "Back" to improve diagnostic accuracy.
-            </div>
+
+            <!-- Zones sélectionnées 
+            <div *ngIf="selectedPainLocations.length > 0"
+              class="bg-pink-500/10 border-2 border-pink-500 p-4 rounded-lg shadow text-white text-sm">
+              <p class="font-semibold mb-2">Selected zones:</p>
+              <p class="italic text-pink-300">{{ selectedPainLocations.join(', ') }}</p>
+            </div>-->
 
           </div>
 
-          <!-- Silhouettes -->
           <div
-            class="w-full md:w-1/2 min-h-[450px] flex justify-center gap-8 bg-pink-500/10 p-4 rounded-lg shadow-lg border-2 border-pink-500 h-full">
-            <!-- Avant -->
+            class="w-full md:w-1/2 min-h-[450px] flex justify-center gap-8 bg-pink-500/10 p-4 rounded-lg shadow-lg border-2 border-pink-500">
+
+            <!-- Silhouette Avant -->
             <div class="flex flex-col items-center">
               <svg (click)="handleSvgClick($event, 'front')" class="w-[150px] md:w-[200px] h-auto"
                 viewBox="59 0 100 190" preserveAspectRatio="xMidYMid meet">
                 <g id="effects-layer-front"></g>
 
+                <!-- Corps -->
                 <ng-container *ngFor="let path of svgPaths">
                   <ng-container *ngIf="path.id === 'body'">
                     <path [attr.d]="path.d" [attr.id]="path.id" fill="#ec4899" [style.pointer-events]="'none'"></path>
                   </ng-container>
                 </ng-container>
 
+                <!-- Zones interactives -->
                 <ng-container *ngFor="let path of svgPaths">
                   <ng-container *ngIf="path.id !== 'body'">
                     <path [attr.d]="path.d" [attr.id]="path.id" fill="transparent" [style.pointer-events]="'auto'">
@@ -137,13 +166,14 @@
                   </ng-container>
                 </ng-container>
 
+                <!-- Cercles de sélection -->
                 <circle *ngFor="let circle of selectionCircles" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
                   [attr.r]="circle.r" fill="rgba(255,255,255,0.2)" stroke="#ec4899" stroke-width="0.5" />
               </svg>
               <div class="mt-2 text-white text-sm font-semibold">Front</div>
             </div>
 
-            <!-- Arrière -->
+            <!-- Silhouette Arrière -->
             <div class="flex flex-col items-center">
               <svg (click)="handleSvgClick($event, 'back')" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190"
                 preserveAspectRatio="xMidYMid meet">
@@ -164,26 +194,21 @@
               </svg>
               <div class="mt-2 text-white text-sm font-semibold">Back</div>
             </div>
+
           </div>
         </div>
 
-        <!-- Zones sélectionnées -->
-        <div *ngIf="selectedPainLocations.length > 0" class="mt-4 text-white text-center">
-          <p class="text-md font-medium">Selected zones:</p>
-          <p class="text-sm italic text-pink-300">{{ selectedPainLocations.join(', ') }}</p>
-        </div>
-
-        <!-- Boutons -->
-        <div class="flex justify-center gap-4 mt-6">
-          <button (click)="resetBodySelection()" class="bg-gray-600 text-white px-6 py-2 rounded-lg hover:bg-gray-700">
+        <div class="flex justify-end gap-4 mt-6">
+          <button (click)="resetBodySelection()" class="rounded-md px-5 py-2.5 text-sm font-medium bg-pink-500/10 border-3 border-pink-500 text-pink-500 dark:text-white hover:bg-pink-500 hover:text-white">
             Reset
           </button>
           <button (click)="validateBodySelection()"
-            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
+            class="rounded-md bg-pink-500 px-5 py-3 text-sm font-medium text-white shadow dark:hover:bg-pink-600">
             Confirm selection
           </button>
         </div>
       </div>
+
 
 
       <div *ngIf="currentClarification" class="mt-8 bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">

@@ -62,12 +62,20 @@ export class AnalysisComponent implements OnInit {
 
   selectionCircles: SelectionCircle[] = [];
 
+  // Gestion du hover et taille de cercle
+  circleSizeIndex: number = 1;
+  hoverCircle: { cx: number; cy: number; r: number } | null = null;
+
   constructor(private http: HttpClient) { }
+
+  get circleRadius(): number {
+    const sizes = [4, 6.66, 9.33, 12];
+    return sizes[this.circleSizeIndex - 1] || 4;
+  }
 
   ngOnInit(): void {
     this.loadSymptoms();
     this.loadSvgPaths();
-
     this.showBodySelection = true;
   }
 
@@ -89,6 +97,28 @@ export class AnalysisComponent implements OnInit {
     });
   }
 
+  handleSvgHover(event: MouseEvent, side: 'front' | 'back'): void {
+    const svg = (event.target as SVGElement).closest('svg');
+    if (!svg) {
+      this.hoverCircle = null;
+      return;
+    }
+
+    const rect = svg.getBoundingClientRect();
+    const viewBox = svg.viewBox.baseVal;
+
+    const cx = ((event.clientX - rect.left) / rect.width) * viewBox.width + viewBox.x;
+    const cy = ((event.clientY - rect.top) / rect.height) * viewBox.height + viewBox.y;
+
+    const bodyPath = svg.querySelector('#body') as SVGGeometryElement;
+    if (!bodyPath || !bodyPath.isPointInFill?.(new DOMPoint(cx, cy))) {
+      this.hoverCircle = null;
+      return;
+    }
+
+    this.hoverCircle = { cx, cy, r: this.circleRadius };
+  }
+
   handleSvgClick(event: MouseEvent, side: 'front' | 'back'): void {
     const svg = (event.target as SVGElement).closest('svg');
     if (!svg) return;
@@ -99,21 +129,21 @@ export class AnalysisComponent implements OnInit {
     const cx = ((event.clientX - rect.left) / rect.width) * viewBox.width + viewBox.x;
     const cy = ((event.clientY - rect.top) / rect.height) * viewBox.height + viewBox.y;
 
-    const r = 4;
+    const bodyPath = svg.querySelector('#body') as SVGGeometryElement;
+    if (!bodyPath || !bodyPath.isPointInFill?.(new DOMPoint(cx, cy))) {
+      return;
+    }
+
+    const r = this.circleRadius;
     const paths = side === 'front' ? this.svgPaths : this.svgPathsBack;
     const matched: string[] = [];
 
-    const circle = new DOMPoint(cx, cy);
-    const radius = r;
-
     for (const path of paths) {
       if (path.id === 'body') continue;
-
       const pathEl = document.getElementById(path.id);
       if (!pathEl) continue;
 
       const geometry = pathEl as unknown as SVGGeometryElement;
-
       const bbox = geometry.getBBox();
       const step = 0.5;
 
@@ -122,7 +152,7 @@ export class AnalysisComponent implements OnInit {
         for (let y = bbox.y; y <= bbox.y + bbox.height; y += step) {
           const dx = x - cx;
           const dy = y - cy;
-          if (dx * dx + dy * dy <= radius * radius) {
+          if (dx * dx + dy * dy <= r * r) {
             const point = new DOMPoint(x, y);
             if (geometry.isPointInFill?.(point)) {
               overlaps = true;
@@ -139,7 +169,7 @@ export class AnalysisComponent implements OnInit {
     }
 
     const existingIndex = this.selectionCircles.findIndex(
-      (c) => Math.abs(c.cx - cx) < r && Math.abs(c.cy - cy) < r
+      (c) => Math.hypot(c.cx - cx, c.cy - cy) < 10
     );
 
     if (existingIndex >= 0) {
@@ -307,5 +337,6 @@ export class AnalysisComponent implements OnInit {
     this.showBodySelection = false;
     this.selectedPainLocations = [];
     this.selectionCircles = [];
+    this.hoverCircle = null;
   }
 }

@@ -77,9 +77,9 @@
 
       <div *ngIf="showBodySelection" class="p-6 rounded-lg shadow-md max-w-6xl mx-auto text-center">
         <div class="flex flex-col md:flex-row gap-6 items-stretch justify-center">
-
+          <!-- Instructions + Slider -->
           <div class="w-full md:w-1/2 h-full min-h-[450px] flex flex-col space-y-4">
-
+            <!-- Bloc Instructions -->
             <!-- Bloc Instructions -->
             <div
               class="bg-pink-500/10 border-2 border-pink-500 rounded-lg shadow-lg p-6 text-left text-white space-y-4">
@@ -93,62 +93,56 @@
                 <h3 class="text-lg font-bold">Select your physical pain</h3>
               </div>
 
-              <!-- Description -->
               <div class="text-sm leading-relaxed">
-                <div class="text-sm leading-relaxed">
-                  <p>To help us understand your discomfort, please indicate where you are experiencing pain.</p>
+                <p>To help us understand your discomfort, please indicate the areas where you feel pain using the body
+                  silhouette.</p>
 
-                  <ul class="list-disc list-inside mt-3 space-y-1">
-                    <li><strong>Click</strong> on a body area to mark it — a circle will appear.</li>
-                    <li><strong>Click again</strong> on the same area to remove the selection.</li>
-                    <li>You can select multiple zones if necessary.</li>
-                  </ul>
+                <ul class="list-disc list-inside mt-3 space-y-1">
+                  <li>Use the <strong>slider</strong> to choose the size of the selection circle.</li>
+                  <li><strong>Click</strong> on the body to place a circle — areas underneath will be selected.</li>
+                  <li><strong>Click again</strong> near an existing circle to remove it.</li>
+                  <li>You can select <strong>multiple zones</strong> if needed.</li>
+                  <li>Make sure you differentiate between the <strong>"Front"</strong> and the <strong>"Back"</strong>
+                    to improve diagnostic accuracy.</li>
+                </ul>
 
-                  <p class="mt-3 text-pink-300 italic">
-                    Your input helps tailor the support or treatment you receive.
-                  </p>
+                <p class="text-sm text-pink-200 mt-2">
+                  Selected areas will appear as semi-transparent pink circles.
+                </p>
 
-                  <p class="text-sm text-pink-200 mt-2">
-                    Selected zones will be highlighted with a pink circle.
-                    If a zone is small, try clicking just around it.
-                  </p>
-
-                  <p class="text-sm text-pink-200 mt-2 italic">
-                    Example: For lower back pain, click on the lower area of the back silhouette.
-                  </p>
-                </div>
+                <p class="text-sm text-pink-200 mt-2 italic">
+                  Example: For shoulder pain, click near the top arm/shoulder section.
+                </p>
               </div>
 
+
             </div>
 
+            <!-- Slider -->
+            <div class="flex-grow bg-pink-400/10 border-2 border-pink-500 p-6 rounded-lg text-sm text-white relative">
+              <label for="circleSizeSlider" class="block mb-2 font-semibold text-white">Circle size:</label>
+              <input id="circleSizeSlider" type="range" min="1" max="4" step="1" [(ngModel)]="circleSizeIndex"
+                class="w-full h-2 bg-pink-300/30 rounded-lg appearance-none cursor-pointer" />
 
-            <!-- Tips -->
-            <div
-              class="flex-grow flex items-center bg-pink-400/10 border-2 border-pink-500 p-4 rounded-lg text-sm text-white">
-              <p class="text-center w-full leading-relaxed">
-                💡 <span class="font-medium">Tip:</span> Make sure you differentiate between the
-                <strong>"Front"</strong>
-                and the <strong>"Back"</strong> to improve diagnostic accuracy.
-              </p>
+              <!-- Tick labels -->
+              <div class="flex justify-between text-pink-300 text-xs mt-2">
+                <span>Small</span>
+                <span>Medium</span>
+                <span>Large</span>
+                <span>XL</span>
+              </div>
             </div>
-
-
-            <!-- Zones sélectionnées 
-            <div *ngIf="selectedPainLocations.length > 0"
-              class="bg-pink-500/10 border-2 border-pink-500 p-4 rounded-lg shadow text-white text-sm">
-              <p class="font-semibold mb-2">Selected zones:</p>
-              <p class="italic text-pink-300">{{ selectedPainLocations.join(', ') }}</p>
-            </div>-->
 
           </div>
 
+          <!-- Silhouettes -->
           <div
             class="w-full md:w-1/2 min-h-[450px] flex justify-center gap-8 bg-pink-500/10 p-4 rounded-lg shadow-lg border-2 border-pink-500">
-
-            <!-- Silhouette Avant -->
+            <!-- Front -->
             <div class="flex flex-col items-center">
-              <svg (click)="handleSvgClick($event, 'front')" class="w-[150px] md:w-[200px] h-auto"
-                viewBox="59 0 100 190" preserveAspectRatio="xMidYMid meet">
+              <svg (click)="handleSvgClick($event, 'front')" (mousemove)="handleSvgHover($event, 'front')"
+                (mouseleave)="hoverCircle = null" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190"
+                preserveAspectRatio="xMidYMid meet">
                 <g id="effects-layer-front"></g>
 
                 <!-- Corps -->
@@ -168,14 +162,20 @@
 
                 <!-- Cercles de sélection -->
                 <circle *ngFor="let circle of selectionCircles" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
-                  [attr.r]="circle.r" fill="rgba(255,255,255,0.2)" stroke="#ec4899" stroke-width="0.5" />
+                  [attr.r]="circle.r" fill="rgba(255,255,255,0.2)" stroke="#3b6fff" stroke-width="0.5" />
+
+                <!-- Cercle de hover -->
+                <circle *ngIf="hoverCircle" [attr.cx]="hoverCircle.cx" [attr.cy]="hoverCircle.cy"
+                  [attr.r]="hoverCircle.r" fill="rgba(255,255,255,0.15)" stroke="#ffffff" stroke-dasharray="2"
+                  stroke-width="0.6" />
               </svg>
               <div class="mt-2 text-white text-sm font-semibold">Front</div>
             </div>
 
-            <!-- Silhouette Arrière -->
+            <!-- Back -->
             <div class="flex flex-col items-center">
-              <svg (click)="handleSvgClick($event, 'back')" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190"
+              <svg (click)="handleSvgClick($event, 'back')" (mousemove)="handleSvgHover($event, 'back')"
+                (mouseleave)="hoverCircle = null" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190"
                 preserveAspectRatio="xMidYMid meet">
                 <g id="effects-layer-back"></g>
 
@@ -191,23 +191,32 @@
                     </path>
                   </ng-container>
                 </ng-container>
+
+                <circle *ngFor="let circle of selectionCircles" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
+                  [attr.r]="circle.r" fill="rgba(255,255,255,0.2)" stroke="#3b6fff" stroke-width="0.5" />
+
+                <circle *ngIf="hoverCircle" [attr.cx]="hoverCircle.cx" [attr.cy]="hoverCircle.cy"
+                  [attr.r]="hoverCircle.r" fill="rgba(255,255,255,0.15)" stroke="#ffffff" stroke-dasharray="2"
+                  stroke-width="0.6" />
               </svg>
               <div class="mt-2 text-white text-sm font-semibold">Back</div>
             </div>
-
           </div>
         </div>
 
+        <!-- Boutons -->
         <div class="flex justify-end gap-4 mt-6">
-          <button (click)="resetBodySelection()" class="rounded-md px-5 py-2.5 text-sm font-medium bg-pink-500/10 border-3 border-pink-500 text-pink-500 dark:text-white hover:bg-pink-500 hover:text-white">
+          <button (click)="resetBodySelection()"
+            class="rounded-md px-5 py-2.5 text-sm font-medium bg-pink-500/10 border-3 border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white">
             Reset
           </button>
           <button (click)="validateBodySelection()"
-            class="rounded-md bg-pink-500 px-5 py-3 text-sm font-medium text-white shadow dark:hover:bg-pink-600">
+            class="rounded-md bg-pink-500 px-5 py-3 text-sm font-medium text-white shadow">
             Confirm selection
           </button>
         </div>
       </div>
+
 
 
 

@@ -32,6 +32,7 @@ export class AnalysisComponent implements OnInit {
   searchQuery: string = '';
   filteredSymptoms: string[] = [];
   selectedSymptoms: string[] = [];
+  step: number = 1;
 
   response: {
     predicted_disease: string;
@@ -62,7 +63,6 @@ export class AnalysisComponent implements OnInit {
 
   selectionCircles: SelectionCircle[] = [];
 
-  // Gestion du hover et taille de cercle
   circleSizeIndex: number = 1;
   hoverCircle: { cx: number; cy: number; r: number } | null = null;
 
@@ -77,6 +77,7 @@ export class AnalysisComponent implements OnInit {
     this.loadSymptoms();
     this.loadSvgPaths();
     this.showBodySelection = true;
+
   }
 
   loadSymptoms(): void {
@@ -224,23 +225,38 @@ export class AnalysisComponent implements OnInit {
       this.errorMessage = 'Please select at least one symptom.';
       return;
     }
+    this.errorMessage = '';
+    this.step = 2;
+  }
+
+  submitPatientInfo(): void {
     if (!this.age || !this.sex || !this.weight || !this.height) {
       this.errorMessage = 'Please enter your age, gender, weight and height.';
       return;
     }
     this.errorMessage = '';
-    this.showPainQuestion = true;
+    this.step = 3;
   }
 
   answerPainQuestion(answer: boolean): void {
     this.painAnswer = answer;
-    this.showPainQuestion = false;
     if (answer) {
       this.showBodySelection = true;
+      this.step = 4; // On passe à l'étape suivante
     } else {
+      this.step = 4; // On passe aussi à l'étape suivante pour soumettre
       this.submitSymptomsToApi();
     }
   }
+
+
+  previousStep(): void {
+    if (this.step > 1) {
+      this.step -= 1;
+      this.errorMessage = '';
+    }
+  }
+
 
   validateBodySelection(): void {
     this.showBodySelection = false;
@@ -338,5 +354,6 @@ export class AnalysisComponent implements OnInit {
     this.selectedPainLocations = [];
     this.selectionCircles = [];
     this.hoverCircle = null;
+    this.step = 1;
   }
 }

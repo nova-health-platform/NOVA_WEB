@@ -1,4 +1,4 @@
-<section class="min-h-screen flex justify-center pt-[2vh]">
+<section class="min-h-screen flex justify-center items-center -mt-35">
   <div class="mx-auto w-full max-w-6xl">
     <div>
       <div *ngIf="errorMessage" class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center max-w-2xl mx-auto">
@@ -9,77 +9,114 @@
         Loading...
       </div>
 
-      <div *ngIf="!showPainQuestion && !showBodySelection && !currentClarification && !response"
-        class="grid grid-cols-1 md:grid-cols-1 items-start">
-        <div class="w-full max-w-2xl p-6 mx-auto">
-          <h1 class="text-4xl text-center text-white font-extrabold mb-6">Analyze your symptoms</h1>
-
-          <div class="grid grid-cols-2 gap-4 mb-4">
-            <input type="number" [(ngModel)]="age" placeholder="Age"
-              class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-
-            <select [(ngModel)]="sex"
-              class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="" disabled selected>Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-
-            <input type="number" [(ngModel)]="weight" placeholder="Weight (kg)"
-              class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-
-            <input type="number" [(ngModel)]="height" placeholder="Height (cm)"
-              class="w-full p-2 py-3 border-3 border-blue-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-
-          <div class="mb-4 flex items-center gap-2">
+      <!-- Step 1: Symptoms -->
+      <div *ngIf="step === 1" class="max-w-2xl mx-auto p-6">
+        <h1 class="text-4xl text-center text-white font-extrabold mb-6">Enter your symptoms</h1>
+        <div class="bg-white/3 rounded-xl shadow-xl p-2 mb-6">
+          <div class="flex items-center gap-2 ">
             <div class="w-full">
               <div class="flex items-center gap-2">
-                <input type="text" [(ngModel)]="searchQuery" (input)="filterSymptoms()" (keydown.enter)="addSymptom()"
-                  placeholder="Enter a symptom..."
-                  class="w-full p-2 py-3 border-3 border-pink-500 bg-[#101010] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" />
-                <button (click)="submitSymptoms()"
-                  class="px-4 py-3 rounded-lg bg-pink-500/10 border-3 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
-                  Submit
-                </button>
+                <div class="bg-[#101010] w-full rounded-lg">
+
+                  <input type="text" [(ngModel)]="searchQuery" (input)="filterSymptoms()" (keydown.enter)="addSymptom()"
+                    placeholder="Enter a symptom..."
+                    class="w-full p-2 py-3 border-2 border-pink-500 bg-pink-500/10 text-white rounded-lg focus:outline-none focus:ring-0 focus:ring-pink-500" />
+                </div>
+                <div class="bg-[#101010] rounded-lg">
+
+                  <button (click)="submitSymptoms()"
+                    class="cursor-pointer px-4 py-3 rounded-lg bg-pink-500/10 border-2 border-pink-500 text-white hover:bg-pink-500 hover:text-white hover:ring-0 hover:ring-pink-500">
+                    Submit
+                  </button>
+                </div>
               </div>
               <ul *ngIf="filteredSymptoms.length > 0"
-                class="w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 z-10">
+                class="w-full bg-white border border-gray-300 rounded-md shadow-lg mt-4 z-10">
                 <li *ngFor="let symptom of filteredSymptoms" (click)="addSymptom(symptom)"
-                  class="p-2 cursor-pointer hover:bg-blue-100 text-black">
+                  class="p-2 cursor-pointer hover:bg-pink-100 text-black">
                   {{ symptom }}
                 </li>
               </ul>
             </div>
           </div>
 
-          <div *ngIf="selectedSymptoms.length > 0" class="mb-2 flex justify-center">
-            <ul class="flex flex-wrap gap-2 justify-center">
-              <li *ngFor="let symptom of selectedSymptoms; let i = index"
-                class="bg-pink-500/10 border-2 border-pink-500 text-white px-3 py-1 mt-1 rounded-full flex items-center hover:bg-pink-500">
-                {{ symptom }}
-                <button (click)="removeSymptom(i)" class="ml-2 text-sm font-bold">✖</button>
-              </li>
-            </ul>
-          </div>
+
+        </div>
+        <div *ngIf="selectedSymptoms.length > 0" class="mt-4 flex flex-wrap gap-2 justify-center items-center">
+          <span *ngFor="let symptom of selectedSymptoms; let i = index" class="bg-[#101010] rounded-full">
+            <span class="bg-pink-500/3 border-2 border-pink-500 text-white px-3 py-1 rounded-full flex items-center">
+              {{ symptom }}
+              <button (click)="removeSymptom(i)" class="cursor-pointer text-pink-500 ml-2 font-bold">✖</button>
+            </span>
+          </span>
         </div>
       </div>
 
-      <div *ngIf="showPainQuestion" class="mt-8 bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto text-center">
-        <h3 class="text-lg font-bold mb-4 text-black">Are you experiencing physical pain?</h3>
-        <div class="flex justify-center gap-6">
+      <!-- Step 2: Patient Info -->
+      <div *ngIf="step === 2" class="max-w-2xl mx-auto p-6">
+        <h2 class="text-4xl text-center text-white font-extrabold mb-6">Patient Information</h2>
+        <div class="bg-white/3 rounded-xl shadow-xl p-2 mb-2">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-[#101010] rounded-lg">
+              <input type="number" [(ngModel)]="age" placeholder="Age"
+                class="w-full p-2 py-3 border-2 border-pink-500 bg-pink-500/10 text-white rounded-lg focus:outline-none focus:ring-0 focus:ring-pink-500" />
+            </div>
+            <div class="bg-[#101010] rounded-lg">
+              <select [(ngModel)]="sex"
+                class="w-full p-2 py-3 border-2 border-pink-500 bg-pink-500/10 text-white rounded-lg focus:outline-none focus:ring-0 focus:ring-pink-500">
+                <option value="" disabled hidden>Gender</option>
+                <option value="male" class="bg-white p-2 cursor-pointer hover:bg-pink-100 text-black">Male</option>
+                <option value="female" class="bg-white p-2 cursor-pointer hover:bg-pink-100 text-black">Female</option>
+              </select>
+
+            </div>
+            <div class="bg-[#101010] rounded-lg">
+              <input type="number" [(ngModel)]="weight" placeholder="Weight (kg)"
+                class="w-full p-2 py-3 border-2 border-pink-500 bg-pink-500/10 text-white rounded-lg focus:outline-none focus:ring-0 focus:ring-pink-500" />
+            </div>
+            <div class="bg-[#101010] rounded-lg">
+              <input type="number" [(ngModel)]="height" placeholder="Height (cm)"
+                class="w-full p-2 py-3 border-2 border-pink-500 bg-pink-500/10 text-white rounded-lg focus:outline-none focus:ring-0 focus:ring-pink-500" />
+            </div>
+          </div>
+
+
+        </div>
+        <div class="flex justify-between">
+          <div class="bg-white/3 p-2 rounded-lg">
+            <button (click)="previousStep()"
+              class="w-25 cursor-pointer px-4 py-2 rounded-lg bg-pink-500/10 border-2 border-pink-500 text-white hover:bg-pink-500 hover:text-white hover:ring-2 hover:ring-pink-500">
+              Back
+            </button>
+          </div>
+          <div class="bg-white/3 p-2 rounded-lg">
+            <button (click)="submitPatientInfo()"
+              class="w-25 cursor-pointer px-4 py-2 rounded-lg bg-pink-500/10 border-2 border-pink-500 text-white hover:bg-pink-500 hover:text-white hover:ring-2 hover:ring-pink-500">
+              Continue
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Step 3: Pain Question -->
+      <div *ngIf="step === 3 && painAnswer === null"
+        class="w-min mx-auto p-6 text-center bg-white/1 rounded-xl shadow-xl">
+        <h3 class="text-xl font-semibold mb-6 text-white whitespace-nowrap px-6">Are you experiencing physical pain?
+        </h3>
+        <div class="flex justify-center gap-6 mb-4">
           <button (click)="answerPainQuestion(true)"
-            class="bg-pink-500 text-white px-6 py-2 rounded-lg hover:bg-green-700">Yes</button>
+            class="cursor-pointer px-4 py-2 w-30 rounded-lg bg-green-500/10 border-2 border-green-500 text-white hover:bg-green-500 hover:text-white hover:ring-2 hover:ring-green-500">Yes</button>
           <button (click)="answerPainQuestion(false)"
-            class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700">No</button>
+            class="cursor-pointer px-4 py-2 w-30 rounded-lg bg-red-500/10 border-2 border-red-500 text-white hover:bg-red-500 hover:text-white hover:ring-2 hover:ring-red-500">No</button>
         </div>
       </div>
 
       <div *ngIf="showBodySelection" class="p-6 rounded-lg shadow-md max-w-6xl mx-auto text-center">
-        <div class="flex flex-col md:flex-row gap-6 items-stretch justify-center">
+        <h2 class="text-4xl text-center text-white font-extrabold mb-6">Select your physical pain</h2>
+        <div class="bg-white/3 p-4 rounded-xl shadow-xl flex flex-col md:flex-row gap-4 items-stretch justify-center">
           <!-- Instructions + Slider -->
-          <div class="w-full md:w-1/2 h-full min-h-[450px] flex flex-col space-y-4">
-            <!-- Bloc Instructions -->
+          <div class="w-full md:w-1/2 h-full min-h-[450px] flex flex-col space-y-5">
             <!-- Bloc Instructions -->
             <div
               class="bg-pink-500/10 border-2 border-pink-500 rounded-lg shadow-lg p-6 text-left text-white space-y-4">
@@ -90,7 +127,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round"
                     d="M12 8c.667-2 2.5-3.5 5-3.5S21 6 21 8c0 2-1.5 3.5-3.5 3.5S14 10 12 8zM4 16l4-4 4 4M4 20h16" />
                 </svg>
-                <h3 class="text-lg font-bold">Select your physical pain</h3>
+                <h3 class="text-lg font-bold">Instruction</h3>
               </div>
 
               <div class="text-sm leading-relaxed">
@@ -118,26 +155,54 @@
 
             </div>
 
-            <!-- Slider -->
-            <div class="flex-grow bg-pink-400/10 border-2 border-pink-500 p-6 rounded-lg text-sm text-white relative">
-              <label for="circleSizeSlider" class="block mb-2 font-semibold text-white">Circle size:</label>
-              <input id="circleSizeSlider" type="range" min="1" max="4" step="1" [(ngModel)]="circleSizeIndex"
-                class="w-full h-2 bg-pink-300/30 rounded-lg appearance-none cursor-pointer" />
+            <div class="flex-grow bg-[#3b6fff]/10 border-2 border-[#3b6fff] p-6 rounded-lg text-sm text-white relative">
+  <div class="flex items-center gap-3">
+    <h3 class="text-lg font-bold mb-5">Circle Size</h3>
+  </div>
 
-              <!-- Tick labels -->
-              <div class="flex justify-between text-pink-300 text-xs mt-2">
-                <span>Small</span>
-                <span>Medium</span>
-                <span>Large</span>
-                <span>XL</span>
-              </div>
-            </div>
+  <!-- Slider input -->
+  <div class="px-0">
+    <input
+      id="circleSizeSlider"
+      type="range"
+      min="1"
+      max="3"
+      step="1"
+      [(ngModel)]="circleSizeIndex"
+      class="w-full h-4 bg-[#3b6fff]/30 rounded-lg appearance-none cursor-pointer transition-all
+            focus:outline-none focus:ring-1 focus:ring-[#3b6fff]
+            [&::-webkit-slider-thumb]:appearance-none
+            [&::-webkit-slider-thumb]:h-4
+            [&::-webkit-slider-thumb]:w-4
+            [&::-webkit-slider-thumb]:rounded-full
+            [&::-webkit-slider-thumb]:bg-white
+            [&::-webkit-slider-thumb]:border-2
+            [&::-webkit-slider-thumb]:border-blue-500
+            [&::-webkit-slider-thumb]:transition
+            [&::-webkit-slider-thumb]:hover:scale-110
+            [&::-moz-range-thumb]:bg-blue-500/0
+            [&::-moz-range-thumb]:border-2
+            [&::-moz-range-thumb]:border-pink-500
+            [&::-moz-range-thumb]:rounded-full
+            [&::-moz-range-thumb]:h-4
+            [&::-moz-range-thumb]:w-4" />
+
+    <!-- Labels bien alignés -->
+    <div class="relative mt-4 h-4 w-full">
+      <span class="absolute left-0 transform -translate-x-0/2 text-xs">Small</span>
+      <span class="absolute left-1/2 transform -translate-x-1/2 text-xs">Medium</span>
+      <span class="absolute left-full transform -translate-x-2/2 text-xs">Large</span>
+    </div>
+  </div>
+</div>
+
+
 
           </div>
 
           <!-- Silhouettes -->
           <div
-            class="w-full md:w-1/2 min-h-[450px] flex justify-center gap-8 bg-pink-500/10 p-4 rounded-lg shadow-lg border-2 border-pink-500">
+            class="w-full md:w-1/2 flex justify-center gap-8 bg-[#3b6fff]/10 pt-15 rounded-lg shadow-lg border-2 border-[#3b6fff]">
             <!-- Front -->
             <div class="flex flex-col items-center">
               <svg (click)="handleSvgClick($event, 'front')" (mousemove)="handleSvgHover($event, 'front')"
@@ -148,7 +213,7 @@
                 <!-- Corps -->
                 <ng-container *ngFor="let path of svgPaths">
                   <ng-container *ngIf="path.id === 'body'">
-                    <path [attr.d]="path.d" [attr.id]="path.id" fill="#ec4899" [style.pointer-events]="'none'"></path>
+                    <path [attr.d]="path.d" [attr.id]="path.id" fill="#3b6fff" [style.pointer-events]="'none'"></path>
                   </ng-container>
                 </ng-container>
 
@@ -162,12 +227,12 @@
 
                 <!-- Cercles de sélection -->
                 <circle *ngFor="let circle of selectionCircles" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
-                  [attr.r]="circle.r" fill="rgba(255,255,255,0.2)" stroke="#3b6fff" stroke-width="0.5" />
+                  [attr.r]="circle.r" fill="rgba(255,255,255,0.1)" stroke="#ec4899" stroke-width="1" />
 
                 <!-- Cercle de hover -->
                 <circle *ngIf="hoverCircle" [attr.cx]="hoverCircle.cx" [attr.cy]="hoverCircle.cy"
-                  [attr.r]="hoverCircle.r" fill="rgba(255,255,255,0.15)" stroke="#ffffff" stroke-dasharray="2"
-                  stroke-width="0.6" />
+                  [attr.r]="hoverCircle.r" fill="rgba(255,255,255,0.2)" stroke="#ffffff" stroke-dasharray="2"
+                  stroke-width="1" />
               </svg>
               <div class="mt-2 text-white text-sm font-semibold">Front</div>
             </div>
@@ -181,7 +246,7 @@
 
                 <ng-container *ngFor="let path of svgPaths">
                   <ng-container *ngIf="path.id === 'body'">
-                    <path [attr.d]="path.d" [attr.id]="path.id" fill="#ec4899" [style.pointer-events]="'none'"></path>
+                    <path [attr.d]="path.d" [attr.id]="path.id" fill="#3b6fff" [style.pointer-events]="'none'"></path>
                   </ng-container>
                 </ng-container>
 
@@ -193,11 +258,11 @@
                 </ng-container>
 
                 <circle *ngFor="let circle of selectionCircles" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
-                  [attr.r]="circle.r" fill="rgba(255,255,255,0.2)" stroke="#3b6fff" stroke-width="0.5" />
+                  [attr.r]="circle.r" fill="rgba(255,255,255,0.1)" stroke="#ec4899" stroke-width="1" />
 
                 <circle *ngIf="hoverCircle" [attr.cx]="hoverCircle.cx" [attr.cy]="hoverCircle.cy"
-                  [attr.r]="hoverCircle.r" fill="rgba(255,255,255,0.15)" stroke="#ffffff" stroke-dasharray="2"
-                  stroke-width="0.6" />
+                  [attr.r]="hoverCircle.r" fill="rgba(255,255,255,0.2)" stroke="#ffffff" stroke-dasharray="2"
+                  stroke-width="1" />
               </svg>
               <div class="mt-2 text-white text-sm font-semibold">Back</div>
             </div>
@@ -205,31 +270,30 @@
         </div>
 
         <!-- Boutons -->
-        <div class="flex justify-end gap-4 mt-6">
-          <button (click)="resetBodySelection()"
-            class="rounded-md px-5 py-2.5 text-sm font-medium bg-pink-500/10 border-3 border-pink-500 text-pink-500 hover:bg-pink-500 hover:text-white">
-            Reset
-          </button>
-          <button (click)="validateBodySelection()"
-            class="rounded-md bg-pink-500 px-5 py-3 text-sm font-medium text-white shadow">
-            Confirm selection
-          </button>
+        <div class="flex justify-end">
+          <div class="mt-4 bg-white/3 p-2 rounded-xl shadow-xl flex gap-2">
+            <button (click)="resetBodySelection()"
+              class="cursor-pointer rounded-md px-5 py-2.5 text-sm font-medium bg-pink-500/10 border-2 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
+              Reset
+            </button>
+            <button (click)="validateBodySelection()"
+              class="cursor-pointer rounded-md px-5 py-2.5 text-sm font-medium bg-[#3b6fff]/10 border-2 border-[#3b6fff] text-white hover:bg-[#3b6fff] hover:text-white">
+              Confirm selection
+            </button>
+          </div>
+
         </div>
       </div>
 
-
-
-
-      <div *ngIf="currentClarification" class="mt-8 bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
-        <h3 class="text-lg font-bold mb-4 text-black text-center">Please answer the following question:</h3>
-        <div class="text-black text-lg text-center mb-6">
+      <div *ngIf="currentClarification" class="w-min mx-auto p-6 text-center bg-white/1 rounded-xl shadow-xl">
+        <div class="text-xl font-semibold mb-6 text-white whitespace-nowrap px-6">
           {{ currentClarification.question }}
         </div>
         <div class="flex justify-center gap-6">
           <button (click)="answerClarification(true)"
-            class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Yes</button>
+            class="cursor-pointer px-4 py-2 w-30 rounded-lg bg-green-500/10 border-2 border-green-500 text-white hover:bg-green-500 hover:text-white hover:ring-2 hover:ring-green-500">Yes</button>
           <button (click)="answerClarification(false)"
-            class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700">No</button>
+            class="cursor-pointer px-4 py-2 w-30 rounded-lg bg-red-500/10 border-2 border-red-500 text-white hover:bg-red-500 hover:text-white hover:ring-2 hover:ring-red-500">No</button>
         </div>
       </div>
 

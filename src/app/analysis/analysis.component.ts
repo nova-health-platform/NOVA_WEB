@@ -54,17 +54,20 @@ export class AnalysisComponent implements OnInit {
   weight: number | null = null;
   height: number | null = null;
 
-  svgPaths: SvgPath[] = [];
-  svgPathsBack: SvgPath[] = [];
+  svgFrontPaths: SvgPath[] = [];
+  svgBackPaths: SvgPath[] = [];
   showPainQuestion: boolean = false;
   painAnswer: boolean | null = null;
   showBodySelection: boolean = false;
   selectedPainLocations: string[] = [];
 
-  selectionCircles: SelectionCircle[] = [];
+  selectionCirclesFront: SelectionCircle[] = [];
+  selectionCirclesBack: SelectionCircle[] = [];
 
   circleSizeIndex: number = 1;
-  hoverCircle: { cx: number; cy: number; r: number } | null = null;
+  hoverCircleFront: { cx: number; cy: number; r: number } | null = null;
+  hoverCircleBack: { cx: number; cy: number; r: number } | null = null;
+
 
   constructor(private http: HttpClient) { }
 
@@ -73,10 +76,35 @@ export class AnalysisComponent implements OnInit {
     return sizes[this.circleSizeIndex - 1] || 4;
   }
 
+  simulateFakeResponse(): void {
+    this.response = {
+      predicted_disease: 'Influenza (Flu)',
+      confidence: 92.5,
+      bmi: 24.7,
+      painZonesExpanded: ['chest_front', 'abdomen_front'],
+      disease_info: {
+        description: 'The flu is a common viral infection that can be deadly for high-risk groups.',
+        risk_factor: 'Age, chronic diseases, weak immune system.',
+        prevention: 'Vaccination, hand hygiene, avoiding contact with sick people.',
+        advice: 'Rest, stay hydrated, take antiviral medications if prescribed.',
+        severity_level: 'Moderate',
+        contagious: 'Yes',
+        chronic_or_acute: 'Acute'
+      }
+    };
+    this.loading = false;
+    this.errorMessage = '';
+    this.currentClarification = null;
+  }
+
+
   ngOnInit(): void {
     this.loadSymptoms();
     this.loadSvgPaths();
     this.showBodySelection = true;
+
+    // uniquement pour le dev temporaire
+    //this.simulateFakeResponse();
 
   }
 
@@ -89,11 +117,11 @@ export class AnalysisComponent implements OnInit {
 
   loadSvgPaths(): void {
     this.http.get<SvgPath[]>('assets/pain_location_front.json').subscribe({
-      next: (data) => this.svgPaths = data,
+      next: (data) => this.svgFrontPaths = data,
       error: (err) => console.error('Error loading front SVG paths:', err)
     });
     this.http.get<SvgPath[]>('assets/pain_location_back.json').subscribe({
-      next: (data) => this.svgPathsBack = data,
+      next: (data) => this.svgBackPaths = data,
       error: (err) => console.error('Error loading back SVG paths:', err)
     });
   }
@@ -101,7 +129,8 @@ export class AnalysisComponent implements OnInit {
   handleSvgHover(event: MouseEvent, side: 'front' | 'back'): void {
     const svg = (event.target as SVGElement).closest('svg');
     if (!svg) {
-      this.hoverCircle = null;
+      if (side === 'front') this.hoverCircleFront = null;
+      if (side === 'back') this.hoverCircleBack = null;
       return;
     }
 
@@ -113,12 +142,16 @@ export class AnalysisComponent implements OnInit {
 
     const bodyPath = svg.querySelector('#body') as SVGGeometryElement;
     if (!bodyPath || !bodyPath.isPointInFill?.(new DOMPoint(cx, cy))) {
-      this.hoverCircle = null;
+      if (side === 'front') this.hoverCircleFront = null;
+      if (side === 'back') this.hoverCircleBack = null;
       return;
     }
 
-    this.hoverCircle = { cx, cy, r: this.circleRadius };
+    const hover = { cx, cy, r: this.circleRadius };
+    if (side === 'front') this.hoverCircleFront = hover;
+    if (side === 'back') this.hoverCircleBack = hover;
   }
+
 
   handleSvgClick(event: MouseEvent, side: 'front' | 'back'): void {
     const svg = (event.target as SVGElement).closest('svg');
@@ -136,7 +169,7 @@ export class AnalysisComponent implements OnInit {
     }
 
     const r = this.circleRadius;
-    const paths = side === 'front' ? this.svgPaths : this.svgPathsBack;
+    const paths = side === 'front' ? this.svgFrontPaths : this.svgBackPaths;
     const matched: string[] = [];
 
     for (const path of paths) {
@@ -169,18 +202,20 @@ export class AnalysisComponent implements OnInit {
       }
     }
 
-    const existingIndex = this.selectionCircles.findIndex(
+    const targetArray = side === 'front' ? this.selectionCirclesFront : this.selectionCirclesBack;
+
+    const existingIndex = targetArray.findIndex(
       (c) => Math.hypot(c.cx - cx, c.cy - cy) < 10
     );
 
     if (existingIndex >= 0) {
-      const circle = this.selectionCircles[existingIndex];
-      this.selectionCircles.splice(existingIndex, 1);
+      const circle = targetArray[existingIndex];
+      targetArray.splice(existingIndex, 1);
       this.selectedPainLocations = this.selectedPainLocations.filter(
         id => !circle.matchedPaths.includes(id)
       );
     } else {
-      this.selectionCircles.push({ cx, cy, r, matchedPaths: matched });
+      targetArray.push({ cx, cy, r, matchedPaths: matched });
       matched.forEach(id => {
         if (!this.selectedPainLocations.includes(id)) {
           this.selectedPainLocations.push(id);
@@ -189,9 +224,11 @@ export class AnalysisComponent implements OnInit {
     }
   }
 
+
   resetBodySelection(): void {
     this.selectedPainLocations = [];
-    this.selectionCircles = [];
+    this.selectionCirclesFront = [];
+    this.selectionCirclesBack = [];
   }
 
   filterSymptoms(): void {
@@ -352,8 +389,10 @@ export class AnalysisComponent implements OnInit {
     this.painAnswer = null;
     this.showBodySelection = false;
     this.selectedPainLocations = [];
-    this.selectionCircles = [];
-    this.hoverCircle = null;
+    this.selectionCirclesFront = [];
+    this.selectionCirclesBack = [];
+    this.hoverCircleFront = null;
+    this.hoverCircleBack = null;
     this.step = 1;
   }
 }

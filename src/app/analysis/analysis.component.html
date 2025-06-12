@@ -156,20 +156,13 @@
             </div>
 
             <div class="flex-grow bg-[#3b6fff]/10 border-2 border-[#3b6fff] p-6 rounded-lg text-sm text-white relative">
-  <div class="flex items-center gap-3">
-    <h3 class="text-lg font-bold mb-5">Circle Size</h3>
-  </div>
+              <div class="flex items-center gap-3">
+                <h3 class="text-lg font-bold mb-5">Circle Size</h3>
+              </div>
 
-  <!-- Slider input -->
-  <div class="px-0">
-    <input
-      id="circleSizeSlider"
-      type="range"
-      min="1"
-      max="3"
-      step="1"
-      [(ngModel)]="circleSizeIndex"
-      class="w-full h-4 bg-[#3b6fff]/30 rounded-lg appearance-none cursor-pointer transition-all
+              <!-- Slider input -->
+              <div class="px-0">
+                <input id="circleSizeSlider" type="range" min="1" max="3" step="1" [(ngModel)]="circleSizeIndex" class="w-full h-4 bg-[#3b6fff]/30 rounded-lg appearance-none cursor-pointer transition-all
             focus:outline-none focus:ring-1 focus:ring-[#3b6fff]
             [&::-webkit-slider-thumb]:appearance-none
             [&::-webkit-slider-thumb]:h-4
@@ -187,14 +180,14 @@
             [&::-moz-range-thumb]:h-4
             [&::-moz-range-thumb]:w-4" />
 
-    <!-- Labels bien alignés -->
-    <div class="relative mt-4 h-4 w-full">
-      <span class="absolute left-0 transform -translate-x-0/2 text-xs">Small</span>
-      <span class="absolute left-1/2 transform -translate-x-1/2 text-xs">Medium</span>
-      <span class="absolute left-full transform -translate-x-2/2 text-xs">Large</span>
-    </div>
-  </div>
-</div>
+                <!-- Labels bien alignés -->
+                <div class="relative mt-4 h-4 w-full">
+                  <span class="absolute left-0 transform -translate-x-0/2 text-xs">Small</span>
+                  <span class="absolute left-1/2 transform -translate-x-1/2 text-xs">Medium</span>
+                  <span class="absolute left-full transform -translate-x-2/2 text-xs">Large</span>
+                </div>
+              </div>
+            </div>
 
 
 
@@ -206,19 +199,19 @@
             <!-- Front -->
             <div class="flex flex-col items-center">
               <svg (click)="handleSvgClick($event, 'front')" (mousemove)="handleSvgHover($event, 'front')"
-                (mouseleave)="hoverCircle = null" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190"
+                (mouseleave)="hoverCircleFront = null" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190"
                 preserveAspectRatio="xMidYMid meet">
                 <g id="effects-layer-front"></g>
 
                 <!-- Corps -->
-                <ng-container *ngFor="let path of svgPaths">
+                <ng-container *ngFor="let path of svgFrontPaths">
                   <ng-container *ngIf="path.id === 'body'">
                     <path [attr.d]="path.d" [attr.id]="path.id" fill="#3b6fff" [style.pointer-events]="'none'"></path>
                   </ng-container>
                 </ng-container>
 
                 <!-- Zones interactives -->
-                <ng-container *ngFor="let path of svgPaths">
+                <ng-container *ngFor="let path of svgFrontPaths">
                   <ng-container *ngIf="path.id !== 'body'">
                     <path [attr.d]="path.d" [attr.id]="path.id" fill="transparent" [style.pointer-events]="'auto'">
                     </path>
@@ -226,12 +219,12 @@
                 </ng-container>
 
                 <!-- Cercles de sélection -->
-                <circle *ngFor="let circle of selectionCircles" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
+                <circle *ngFor="let circle of selectionCirclesFront" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
                   [attr.r]="circle.r" fill="rgba(255,255,255,0.1)" stroke="#ec4899" stroke-width="1" />
 
                 <!-- Cercle de hover -->
-                <circle *ngIf="hoverCircle" [attr.cx]="hoverCircle.cx" [attr.cy]="hoverCircle.cy"
-                  [attr.r]="hoverCircle.r" fill="rgba(255,255,255,0.2)" stroke="#ffffff" stroke-dasharray="2"
+                <circle *ngIf="hoverCircleFront" [attr.cx]="hoverCircleFront.cx" [attr.cy]="hoverCircleFront.cy"
+                  [attr.r]="hoverCircleFront.r" fill="rgba(255,255,255,0.2)" stroke="#ffffff" stroke-dasharray="2"
                   stroke-width="1" />
               </svg>
               <div class="mt-2 text-white text-sm font-semibold">Front</div>
@@ -240,28 +233,28 @@
             <!-- Back -->
             <div class="flex flex-col items-center">
               <svg (click)="handleSvgClick($event, 'back')" (mousemove)="handleSvgHover($event, 'back')"
-                (mouseleave)="hoverCircle = null" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190"
+                (mouseleave)="hoverCircleBack = null" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190"
                 preserveAspectRatio="xMidYMid meet">
                 <g id="effects-layer-back"></g>
 
-                <ng-container *ngFor="let path of svgPaths">
+                <ng-container *ngFor="let path of svgBackPaths">
                   <ng-container *ngIf="path.id === 'body'">
                     <path [attr.d]="path.d" [attr.id]="path.id" fill="#3b6fff" [style.pointer-events]="'none'"></path>
                   </ng-container>
                 </ng-container>
 
-                <ng-container *ngFor="let path of svgPaths">
+                <ng-container *ngFor="let path of svgBackPaths">
                   <ng-container *ngIf="path.id !== 'body'">
                     <path [attr.d]="path.d" [attr.id]="path.id" fill="transparent" [style.pointer-events]="'auto'">
                     </path>
                   </ng-container>
                 </ng-container>
 
-                <circle *ngFor="let circle of selectionCircles" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
+                <circle *ngFor="let circle of selectionCirclesBack" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
                   [attr.r]="circle.r" fill="rgba(255,255,255,0.1)" stroke="#ec4899" stroke-width="1" />
 
-                <circle *ngIf="hoverCircle" [attr.cx]="hoverCircle.cx" [attr.cy]="hoverCircle.cy"
-                  [attr.r]="hoverCircle.r" fill="rgba(255,255,255,0.2)" stroke="#ffffff" stroke-dasharray="2"
+                <circle *ngIf="hoverCircleBack" [attr.cx]="hoverCircleBack.cx" [attr.cy]="hoverCircleBack.cy"
+                  [attr.r]="hoverCircleBack.r" fill="rgba(255,255,255,0.2)" stroke="#ffffff" stroke-dasharray="2"
                   stroke-width="1" />
               </svg>
               <div class="mt-2 text-white text-sm font-semibold">Back</div>

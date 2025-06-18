@@ -38,6 +38,7 @@ export class AnalysisComponent implements OnInit {
     predicted_disease: string;
     confidence: number;
     disease_info: any;
+    treatment: any;
     bmi: number;
     painZonesExpanded: string[];
   } | null = null;
@@ -90,6 +91,19 @@ export class AnalysisComponent implements OnInit {
         severity_level: 'Moderate',
         contagious: 'Yes',
         chronic_or_acute: 'Acute'
+      },
+      treatment: {
+        otc_medications: 'Paracetamol, Ibuprofen',
+        prescription_medications: 'Oseltamivir',
+        recommended_duration: '5 days',
+        dosage: '500mg twice a day',
+        frequency: 'Every 12 hours',
+        administration_route: 'Oral',
+        side_effects: 'Nausea, headache',
+        alternative: 'Hydration, rest',
+        treatment_type: 'Antiviral',
+        driving_restrictions: 'No driving if drowsy',
+        notes: 'Consult a physician if symptoms persist'
       }
     };
     this.loading = false;
@@ -97,14 +111,12 @@ export class AnalysisComponent implements OnInit {
     this.currentClarification = null;
   }
 
-
   ngOnInit(): void {
     this.loadSymptoms();
     this.loadSvgPaths();
-    this.showBodySelection = true;
 
     // uniquement pour le dev temporaire
-    //this.simulateFakeResponse();
+    this.simulateFakeResponse();
 
   }
 
@@ -124,6 +136,22 @@ export class AnalysisComponent implements OnInit {
       next: (data) => this.svgBackPaths = data,
       error: (err) => console.error('Error loading back SVG paths:', err)
     });
+  }
+
+  formatSymptom(symptom: string): string {
+    if (!symptom) return '';
+    const formatted = symptom.replace(/_/g, ' ');
+    return formatted.charAt(0).toUpperCase() + formatted.slice(1);
+  }
+
+  treatmentKeys(obj: any): string[] {
+    return Object.keys(obj || {});
+  }
+
+  formatKey(key: string): string {
+    return key
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
   }
 
   handleSvgHover(event: MouseEvent, side: 'front' | 'back'): void {
@@ -224,7 +252,6 @@ export class AnalysisComponent implements OnInit {
     }
   }
 
-
   resetBodySelection(): void {
     this.selectedPainLocations = [];
     this.selectionCirclesFront = [];
@@ -232,7 +259,7 @@ export class AnalysisComponent implements OnInit {
   }
 
   filterSymptoms(): void {
-    const query = this.searchQuery.toLowerCase();
+    const query = this.searchQuery.toLowerCase().replace(/ /g, '_');
     this.filteredSymptoms = this.symptoms
       .filter(symptom => symptom.toLowerCase().includes(query))
       .slice(0, 10);
@@ -286,14 +313,12 @@ export class AnalysisComponent implements OnInit {
     }
   }
 
-
   previousStep(): void {
     if (this.step > 1) {
       this.step -= 1;
       this.errorMessage = '';
     }
   }
-
 
   validateBodySelection(): void {
     this.showBodySelection = false;
@@ -353,6 +378,7 @@ export class AnalysisComponent implements OnInit {
             predicted_disease: data.final_prediction,
             confidence: data.confidence,
             disease_info: data.disease_info,
+            treatment: data.treatment,
             bmi: data.bmi,
             painZonesExpanded: data.painZonesExpanded
           };

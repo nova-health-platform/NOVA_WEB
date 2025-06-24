@@ -43,6 +43,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   animatedContagious = 0;
   animatedCourse = 0;
 
+  activeTab: string = 'general';
+
   isDescriptionExpanded = false;
   textLimit = 200;
 
@@ -814,6 +816,10 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     });
   }
 
+  splitTreatmentKeys(keys: string[]): [string[], string[]] {
+    const mid = Math.ceil(keys.length / 2);
+    return [keys.slice(0, mid), keys.slice(mid)];
+  }
 
 
   submitSymptomsToApi(): void {

@@ -534,63 +534,86 @@
         <div>
           <div class="bg-white/3 rounded-xl shadow-xl p-4 max-w-6xl mx-auto mt-20 text-white">
 
-            <!-- GRID 2 COLS -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+
 
               <!-- LEFT COLUMN -->
               <div class="flex flex-col gap-4">
-                <div *ngIf="response.treatment"
-                  class="relative bg-[#101010] p-5 rounded-xl border-2 border-blue-500 shadow-md">
-                  <h3 class="text-2xl font-bold mb-4 text-blue-400">Treatment Plan</h3>
+                <div *ngIf="response.treatment" class="relative bg-[#101010] p-5 rounded-xl border-2 border-blue-500 shadow-md">
+  <h3 class="text-2xl font-bold mb-4 text-blue-400">Treatment Plan</h3>
 
-                  <!-- Général (par maladie) -->
-                  <div class="overflow-x-auto rounded-xl shadow ring-1 ring-white/10 mb-6">
-                    <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
-                      <caption class="px-4 py-3 text-left text-white/70 caption-top">
-                        General treatment for <span class="text-blue-300 font-semibold">{{
-                          formatDiseaseLabel(response.predicted_disease) }}</span>
-                      </caption>
-                      <tbody class="divide-y divide-white/10">
-                        <tr *ngFor="let key of getTreatmentKeys(response.treatment.disease_treatment)">
-                          <th class="px-4 py-3 text-blue-300 font-semibold whitespace-nowrap capitalize">
-                            {{ formatKeyLabel(key) }}
-                          </th>
-                          <td class="px-4 py-3">
-                            {{ response.treatment.disease_treatment[key] }}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+  <div class="md:flex">
+    <!-- Tabs -->
+    <ul class="flex-column space-y-2 text-sm font-medium text-white md:me-4 mb-4 md:mb-0">
+      <li>
+        <button (click)="activeTab = 'general'" 
+                [ngClass]="{ 'bg-blue-700 text-white': activeTab === 'general', 'bg-gray-800 hover:bg-gray-700': activeTab !== 'general' }"
+                class="w-full text-left px-4 py-2 rounded-lg transition-colors">
+          General
+        </button>
+      </li>
+      <li *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
+        <button (click)="activeTab = symptom" 
+                [ngClass]="{ 'bg-blue-700 text-white': activeTab === symptom, 'bg-gray-800 hover:bg-gray-700': activeTab !== symptom }"
+                class="w-full text-left px-4 py-2 rounded-lg capitalize transition-colors">
+          {{ formatSymptom(symptom) }}
+        </button>
+      </li>
+    </ul>
 
-                  <!-- Spécifique (par symptôme) -->
-                  <div *ngIf="response.treatment.symptom_treatments">
-                    <div *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)" class="mb-6">
-                      <div class="overflow-x-auto rounded-xl shadow ring-1 ring-white/10">
-                        <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
-                          <caption class="px-4 py-3 text-left text-white/70 caption-top">
-                            Treatment for symptom: <span class="text-blue-300 font-semibold">{{ formatSymptom(symptom)
-                              }}</span>
-                          </caption>
-                          <tbody class="divide-y divide-white/10">
-                            <tr *ngFor="let key of getTreatmentKeys(response.treatment.symptom_treatments[symptom])">
-                              <th class="px-4 py-3 text-blue-300 font-semibold whitespace-nowrap capitalize">
-                                {{ formatKeyLabel(key) }}
-                              </th>
-                              <td class="px-4 py-3">
-                                {{ response.treatment.symptom_treatments[symptom][key] }}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+    <div class="p-4 bg-gray-900 text-white rounded-lg w-full text-sm">
+  <!-- General -->
+  <div *ngIf="activeTab === 'general'">
+  <h4 class="text-lg font-bold text-blue-300 mb-4">
+    General treatment for {{ formatDiseaseLabel(response.predicted_disease) }}
+  </h4>
+
+  <ng-container *ngIf="splitTreatmentKeys(getTreatmentKeys(response.treatment.disease_treatment)) as parts">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Table 1 -->
+      <table class="w-full text-left text-sm divide-y divide-white/10">
+        <tbody>
+          <tr *ngFor="let key of parts[0]">
+            <th class="py-2 font-semibold text-blue-400 capitalize w-1/3">{{ formatKeyLabel(key) }}</th>
+            <td class="py-2 text-white/90">{{ response.treatment.disease_treatment[key] }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Table 2 -->
+      <table class="w-full text-left text-sm divide-y divide-white/10">
+        <tbody>
+          <tr *ngFor="let key of parts[1]">
+            <th class="py-2 font-semibold text-blue-400 capitalize w-1/3">{{ formatKeyLabel(key) }}</th>
+            <td class="py-2 text-white/90">{{ response.treatment.disease_treatment[key] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+</div>
+
+
+  <!-- Symptom-specific -->
+  <div *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
+    <div *ngIf="activeTab === symptom">
+      <h4 class="text-lg font-bold text-blue-300 mb-4">Treatment for {{ formatSymptom(symptom) }}</h4>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+        <div *ngFor="let key of getTreatmentKeys(response.treatment.symptom_treatments[symptom])">
+          <div class="font-semibold text-blue-400 capitalize">{{ formatKeyLabel(key) }}</div>
+          <div class="text-white/90">{{ response.treatment.symptom_treatments[symptom][key] }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div>
+</div>
 
 
 
-              </div>
+
+
             </div>
           </div>
         </div>

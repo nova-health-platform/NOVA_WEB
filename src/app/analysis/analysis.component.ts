@@ -122,8 +122,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
           side_effects: 'Dizziness, nausea',
           alternative: 'Physiotherapy, respiratory support',
           treatment_type: 'Neuroprotective',
-          driving_restrictions: 'Avoid driving if symptoms worsen',
-          notes: 'Regular follow-ups recommended'
+          driving_restrictions: 'Avoid driving if symptoms worsen worsen worsen worsen worsen',
+          notes: 'Regular follow-ups recommended recommended recommended recommended recommended'
         },
         symptom_treatments: {
           difficulty_speaking: {

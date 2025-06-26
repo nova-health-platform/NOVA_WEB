@@ -294,13 +294,14 @@
 
       <div *ngIf="response && !currentClarification" class="text-center mt-10">
         <h2 class="text-4xl font-extrabold text-white">Analysis Result</h2>
-        <p class="text-sm mx-auto text-white/70 mt-2 mb-8 max-w-4xl">
-              These charts provide insights into which age groups and genders are most commonly affected by the
-              predicted disease, based on aggregated clinical data.
-            </p>
+        <p class="text-sm mx-auto text-white/70 mt-3 mb-8 max-w-4xl">
+          This section presents the outcome of the symptom analysis, including the most likely diagnosis, its severity,
+          and related clinical information. It is derived from your input and enhanced by contextual medical data to
+          offer an accurate, data-driven health insight.
+        </p>
         <div>
 
-          <div class="bg-white/3 rounded-xl shadow-xl p-4 max-w-6xl mx-auto text-white">
+          <div class="bg-pink-500/8 rounded-xl shadow-xl p-4 max-w-6xl mx-auto text-white">
 
             <!-- GRID 2 COLS -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
@@ -440,7 +441,7 @@
                       <p class="px-4 py-3 text-justify">{{ response.disease_info.advice }}</p>
                     </div>
                   </div>
-                  <div class="overflow-x-auto rounded-xl shadow ring-1 ring-white/20">
+                  <div class="overflow-x-auto rounded-xl shadow ring-1 ring-white/20 px-5 py-2">
                     <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
                       <tbody class="divide-y divide-white/10">
                         <tr>
@@ -476,19 +477,21 @@
 
           <div *ngIf="response?.disease_info?.demographics">
             <h2 class="text-4xl font-extrabold mt-20 text-white">Disease Demographics Overview</h2>
-            <p class="text-sm mx-auto text-white/70 mt-2 max-w-4xl">
-              These charts provide insights into which age groups and genders are most commonly affected by the
-              predicted disease, based on aggregated clinical data.
+            <p class="text-sm mx-auto text-white/70 mt-3 max-w-4xl">
+              This section illustrates the typical demographic distribution of the predicted disease, highlighting which
+              age groups and genders are most commonly affected. The data is based on aggregated clinical patterns and
+              helps contextualize the diagnosis within a broader population profile.
             </p>
             <div class="max-w-6xl mx-auto mt-8 text-white">
 
               <!-- Container unique avec les 2 graphes -->
-              <div class="bg-white/3 rounded-xl shadow-xl p-4">
+              <div class="bg-purple-500/8 rounded-xl shadow-xl p-4">
                 <div class="grid grid-cols-5 gap-5">
 
                   <!-- Pie Chart (2/5) -->
                   <div class="col-span-2">
-                    <div class="bg-[#101010] p-5 rounded-xl border-2 border-purple-500/50 shadow-md h-100 flex flex-col">
+                    <div
+                      class="bg-[#101010] p-5 rounded-xl border-2 border-purple-500/50 shadow-md h-100 flex flex-col">
                       <h3 class="text-2xl font-bold mb-5 text-purple-400 text-left">Gender Distribution</h3>
                       <div class="flex-grow flex justify-center items-center overflow-hidden">
                         <div class="w-50 h-50">
@@ -506,7 +509,8 @@
 
                   <!-- Bar Chart (3/5) -->
                   <div class="col-span-3">
-                    <div class="bg-[#101010] p-5 rounded-xl border-2 border-purple-500/50 shadow-md h-100 flex flex-col">
+                    <div
+                      class="bg-[#101010] p-5 rounded-xl border-2 border-purple-500/50 shadow-md h-100 flex flex-col">
                       <h3 class="text-2xl font-bold mb-5 text-purple-400 text-left">Age Distribution</h3>
                       <div class="flex-grow relative">
                         <canvas id="ageChart" class="absolute inset-0 w-full h-full"></canvas>
@@ -532,234 +536,237 @@
 
 
         <div>
-          <div class="bg-white/3 rounded-xl shadow-xl p-4 max-w-6xl mx-auto mt-20 text-white">
+          <div *ngIf="response.treatment">
+            <h2 class="text-4xl font-extrabold mt-20 text-white">Treatment Plan Overview</h2>
+            <p class="text-sm mx-auto text-white/70 mt-3 max-w-4xl">
+              This section outlines the most commonly recommended treatments for the predicted disease, including
+              general approaches and symptom-specific strategies. It provides practical details such as medications,
+              dosages, duration, and alternatives to help guide patient care decisions.
+            </p>
+            <div class="max-w-6xl mx-auto mt-8 text-white">
+              <div class="bg-blue-500/8 rounded-xl shadow-xl p-4">
+                <div class="flex flex-col">
+                  <div class="flex gap-5 items-stretch">
+
+                    <!-- Tabs -->
+                    <ul
+                      class="md:w-1/4 flex-column space-y-2 text-sm font-medium text-white bg-[#101010] p-5 rounded-xl border-2 border-blue-500/50 shadow-md">
+                      <li>
+                        <button (click)="activeTab = 'general'"
+                          [ngClass]="{ 'bg-blue-700 text-white': activeTab === 'general', 'bg-blue-700/50 hover:bg-blue-700/70': activeTab !== 'general' }"
+                          class="cursor-pointer w-full text-left px-4 py-2 rounded-lg transition-colors">
+                          General
+                        </button>
+                      </li>
+                      <hr class="h-0.5 border-t-0 bg-white/10">
+                      <li *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
+                        <button (click)="activeTab = symptom"
+                          [ngClass]="{ 'bg-blue-700 text-white': activeTab === symptom, 'bg-blue-700/50 hover:bg-blue-700/70': activeTab !== symptom }"
+                          class="cursor-pointer w-full text-left px-4 py-2 rounded-lg capitalize transition-colors">
+                          {{ formatSymptom(symptom) }}
+                        </button>
+                      </li>
+                    </ul>
+
+                    <div class="w-full text-sm bg-[#101010] p-5 rounded-xl border-2 border-blue-500/50 shadow-md">
+                      <!-- General -->
+                      <div *ngIf="activeTab === 'general'">
+                        <h4 class="text-2xl font-bold mb-5 text-blue-400 text-left">
+                          General treatment for {{ formatDiseaseLabel(response.predicted_disease) }}
+                        </h4>
+
+                        <ng-container *ngIf="response.treatment?.disease_treatment as treatment">
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm text-white">
+
+                            <!-- 💊 Médicaments -->
+                            <div class="w-full text-sm bg-[#101010] p-5 rounded-xl ring-1 ring-white/20 shadow-md">
+                              <h5 class="text-blue-300 text-left font-semibold text-sm mb-2 uppercase tracking-wider">
+                                Medications
+                              </h5>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">OTC Medications</div>
+                                <div class="text-right">{{ response.treatment.disease_treatment.otc_medications }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Prescription</div>
+                                <div class="text-right">{{ response.treatment.disease_treatment.prescription_medications
+                                  }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Alternative</div>
+                                <div class="text-right">{{ response.treatment.disease_treatment.alternative }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Type</div>
+                                <div class="text-right">{{ response.treatment.disease_treatment.treatment_type
+                                  }}</div>
+                              </div>
+                            </div>
+
+                            <!-- 📋 Posologie -->
+                            <div class="w-full text-sm bg-[#101010] p-5 rounded-xl ring-1 ring-white/20 shadow-md">
+                              <h5 class="text-blue-300 text-left font-semibold text-sm mb-2 uppercase tracking-wider">
+                                Posology
+                              </h5>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Dosage</div>
+                                <div class="text-right">{{ response.treatment.disease_treatment.dosage
+                                  }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Frequency</div>
+                                <div class="text-right">{{ response.treatment.disease_treatment.frequency
+                                  }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Duration</div>
+                                <div class="text-right">{{ response.treatment.disease_treatment.recommended_duration
+                                  }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Route</div>
+                                <div class="text-right">{{ response.treatment.disease_treatment.administration_route
+                                  }}</div>
+                              </div>
+                            </div>
 
 
+                          </div>
+                          <!-- ⚠️ Precautions -->
+                          <div class="w-full text-sm bg-[#101010] p-5 rounded-xl ring-1 ring-white/20 shadow-md mt-5">
+                            <h5 class="text-blue-300 text-left font-semibold text-sm mb-2 uppercase tracking-wider">
+                              Precautions
+                            </h5>
 
-              <!-- LEFT COLUMN -->
-              <div class="flex flex-col gap-4">
-                <div *ngIf="response.treatment" class="relative bg-[#101010] p-5 rounded-xl border-2 border-blue-500 shadow-md">
-  <h3 class="text-2xl font-bold mb-4 text-blue-400">Treatment Plan</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                              <!-- Colonne 1 : Side Effects + Driving -->
+                              <div class="space-y-2">
+                                <div>
+                                  <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                    <div class="font-semibold text-blue-400">Side Effects</div>
+                                    <div class="text-right">{{ response.treatment.disease_treatment.side_effects
+                                      }}</div>
+                                  </div>
+                                </div>
+                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between items-center">
+                                  <div class="font-semibold text-blue-400">Driving</div>
+                                  <div class="text-right">
+                                    <span [ngClass]="{
+        'bg-green-500 text-white': response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('allowed'),
+        'bg-yellow-400 text-black': response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('caution'),
+        'bg-red-500 text-white': response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('avoid')
+      }" class="px-3 py-0.5 rounded-full font-medium">
+                                      {{
+                                      response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('allowed')
+                                      ? 'Allowed'
+                                      :
+                                      response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('caution')
+                                      ? 'Caution'
+                                      :
+                                      response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('avoid')
+                                      ? 'Avoid'
+                                      : 'Unknown'
+                                      }}
+                                    </span>
+                                  </div>
+                                </div>
 
-  <div class="md:flex">
-    <!-- Tabs -->
-    <ul class="flex-column space-y-2 text-sm font-medium text-white md:me-4 mb-4 md:mb-0">
-      <li>
-        <button (click)="activeTab = 'general'" 
-                [ngClass]="{ 'bg-blue-700 text-white': activeTab === 'general', 'bg-gray-800 hover:bg-gray-700': activeTab !== 'general' }"
-                class="w-full text-left px-4 py-2 rounded-lg transition-colors">
-          General
-        </button>
-      </li>
-      <li *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
-        <button (click)="activeTab = symptom" 
-                [ngClass]="{ 'bg-blue-700 text-white': activeTab === symptom, 'bg-gray-800 hover:bg-gray-700': activeTab !== symptom }"
-                class="w-full text-left px-4 py-2 rounded-lg capitalize transition-colors">
-          {{ formatSymptom(symptom) }}
-        </button>
-      </li>
-    </ul>
+                              </div>
 
-    <div class="p-4 bg-gray-900 text-white rounded-lg w-full text-sm">
-  <!-- General -->
-  <div *ngIf="activeTab === 'general'">
-  <h4 class="text-lg font-bold text-blue-300 mb-4">
-    General treatment for {{ formatDiseaseLabel(response.predicted_disease) }}
-  </h4>
+                              <!-- Colonne 2 : Notes -->
+                              <div class="space-y-2">
+                                <div>
+                                  <span class="text-blue-400 font-medium">Notes:</span>
+                                  <p class="text-white/90 italic mt-1">{{ treatment.notes }}</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
 
-  <ng-container *ngIf="splitTreatmentKeys(getTreatmentKeys(response.treatment.disease_treatment)) as parts">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <!-- Table 1 -->
-      <table class="w-full text-left text-sm divide-y divide-white/10">
-        <tbody>
-          <tr *ngFor="let key of parts[0]">
-            <th class="py-2 font-semibold text-blue-400 capitalize w-1/3">{{ formatKeyLabel(key) }}</th>
-            <td class="py-2 text-white/90">{{ response.treatment.disease_treatment[key] }}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <!-- Table 2 -->
-      <table class="w-full text-left text-sm divide-y divide-white/10">
-        <tbody>
-          <tr *ngFor="let key of parts[1]">
-            <th class="py-2 font-semibold text-blue-400 capitalize w-1/3">{{ formatKeyLabel(key) }}</th>
-            <td class="py-2 text-white/90">{{ response.treatment.disease_treatment[key] }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </ng-container>
-</div>
+                        </ng-container>
 
 
-  <!-- Symptom-specific -->
-  <div *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
-    <div *ngIf="activeTab === symptom">
-      <h4 class="text-lg font-bold text-blue-300 mb-4">Treatment for {{ formatSymptom(symptom) }}</h4>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-        <div *ngFor="let key of getTreatmentKeys(response.treatment.symptom_treatments[symptom])">
-          <div class="font-semibold text-blue-400 capitalize">{{ formatKeyLabel(key) }}</div>
-          <div class="text-white/90">{{ response.treatment.symptom_treatments[symptom][key] }}</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+                      </div>
 
-  </div>
-</div>
+                      <!-- Symptom-specific -->
+                      <div *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
+                        <div *ngIf="activeTab === symptom">
+                          <h4 class="text-2xl font-bold mb-5 text-blue-400 text-left">
+                            Treatment for {{ formatSymptom(symptom) }}
+                          </h4>
 
+                          <div class="grid grid-cols-1 md:grid-cols-2 gap-20 px-6 mb-3 text-sm text-white">
+                            <!-- Colonne 1 -->
+                            <div class="grid grid-cols-2 gap-x-4">
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">OTC Medications</div>
+                                <div class="text-right">{{
+                                  response.treatment.symptom_treatments[symptom].otc_medications }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Prescription</div>
+                                <div class="text-right">{{
+                                  response.treatment.symptom_treatments[symptom].prescription_medications }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Duration</div>
+                                <div class="text-right">{{
+                                  response.treatment.symptom_treatments[symptom].recommended_duration }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Dosage</div>
+                                <div class="text-right">{{ response.treatment.symptom_treatments[symptom].dosage }}
+                                </div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Frequency</div>
+                                <div class="text-right">{{ response.treatment.symptom_treatments[symptom].frequency }}
+                                </div>
+                              </div>
+                            </div>
 
-
-
-
+                            <!-- Colonne 2 -->
+                            <div class="grid grid-cols-2 gap-x-4">
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Route</div>
+                                <div class="text-right">{{
+                                  response.treatment.symptom_treatments[symptom].administration_route }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Side Effects</div>
+                                <div class="text-right">{{ response.treatment.symptom_treatments[symptom].side_effects
+                                  }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Alternative</div>
+                                <div class="text-right">{{ response.treatment.symptom_treatments[symptom].alternative }}
+                                </div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Type</div>
+                                <div class="text-right">{{ response.treatment.symptom_treatments[symptom].treatment_type
+                                  }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Driving</div>
+                                <div class="text-right">{{
+                                  response.treatment.symptom_treatments[symptom].driving_restrictions }}</div>
+                              </div>
+                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="font-semibold text-blue-400">Notes</div>
+                                <div class="text-right">{{ response.treatment.symptom_treatments[symptom].notes }}</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
-        <div>
-          <div class="bg-white/3 rounded-xl shadow-xl p-4 max-w-6xl mx-auto mt-6 text-white">
-
-            <!-- GRID 2 COLS -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-
-              <!-- LEFT COLUMN -->
-              <div class="flex flex-col gap-4">
-                <div *ngIf="response.treatment"
-                  class="relative bg-[#101010] p-5 rounded-xl border-2 border-blue-500 shadow-md">
-                  <h3 class="text-2xl font-bold mb-4 text-blue-400">Treatment Plan</h3>
-
-                  <!-- Général (par maladie) -->
-                  <div class="overflow-x-auto rounded-xl shadow ring-1 ring-white/10 mb-6">
-                    <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
-                      <caption class="px-4 py-3 text-left text-white/70 caption-top">
-                        General treatment for <span class="text-blue-300 font-semibold">{{
-                          formatDiseaseLabel(response.predicted_disease) }}</span>
-                      </caption>
-                      <tbody class="divide-y divide-white/10">
-                        <tr *ngFor="let key of getTreatmentKeys(response.treatment.disease_treatment)">
-                          <th class="px-4 py-3 text-blue-300 font-semibold whitespace-nowrap capitalize">
-                            {{ formatKeyLabel(key) }}
-                          </th>
-                          <td class="px-4 py-3">
-                            {{ response.treatment.disease_treatment[key] }}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                  <!-- Spécifique (par symptôme) -->
-                  <div *ngIf="response.treatment.symptom_treatments">
-                    <div *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)" class="mb-6">
-                      <div class="overflow-x-auto rounded-xl shadow ring-1 ring-white/10">
-                        <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
-                          <caption class="px-4 py-3 text-left text-white/70 caption-top">
-                            Treatment for symptom: <span class="text-blue-300 font-semibold">{{ formatSymptom(symptom)
-                              }}</span>
-                          </caption>
-                          <tbody class="divide-y divide-white/10">
-                            <tr *ngFor="let key of getTreatmentKeys(response.treatment.symptom_treatments[symptom])">
-                              <th class="px-4 py-3 text-blue-300 font-semibold whitespace-nowrap capitalize">
-                                {{ formatKeyLabel(key) }}
-                              </th>
-                              <td class="px-4 py-3">
-                                {{ response.treatment.symptom_treatments[symptom][key] }}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-
-
-              </div>
-
-              <!-- RIGHT COLUMN -->
-              <div class="flex flex-col gap-4">
-
-                <!-- Treatment Plan -->
-                <div *ngIf="response.treatment"
-                  class="relative bg-[#101010] p-5 rounded-xl border-2 border-pink-500 shadow-md">
-                  <h3 class="text-2xl font-bold mb-3 text-pink-400">Disease Informations</h3>
-                  <div class="overflow-x-auto rounded-xl shadow ring-1 ring-white/10">
-                    <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
-                      <tbody class="divide-y divide-white/10">
-                        <tr>
-                          <th class="px-4 py-3 text-pink-300 font-semibold whitespace-nowrap w-1/3">Risk Factors</th>
-                          <td class="px-4 py-3">{{ response.disease_info.risk_factor }}</td>
-                        </tr>
-                        <tr>
-                          <th class="px-4 py-3 text-pink-300 font-semibold whitespace-nowrap">Prevention</th>
-                          <td class="px-4 py-3">{{ response.disease_info.prevention }}</td>
-                        </tr>
-                        <tr>
-                          <th class="px-4 py-3 text-pink-300 font-semibold whitespace-nowrap">Advice</th>
-                          <td class="px-4 py-3">{{ response.disease_info.advice }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-
-                </div>
-                <!-- NEW CONTAINER BELOW -->
-                <div class="bg-[#101010] p-6 rounded-xl border-2 border-purple-500 shadow-md">
-                  <h3 class="text-2xl font-bold mb-4 text-purple-400">Additional Notes</h3>
-                  <p class="text-sm text-white">
-                    This section can contain extra insights, care instructions, or follow-up recommendations.
-                  </p>
-
-                </div>
-              </div>
-              <!-- BMI Gauge -->
-              <div
-                class="relative w-28 h-28 cursor-pointer group rounded-full transition-transform duration-200 hover:scale-105 hover:bg-white/5 ring-1 ring-white/10 shadow-md backdrop-blur-sm"
-                (click)="showBmiChart()">
-                <svg class="size-full -rotate-225" viewBox="0 0 36 36">
-                  <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#3f3f3f" stroke-dasharray="75 100"
-                    stroke-linecap="round" />
-                  <circle cx="18" cy="18" r="16" fill="none" stroke-width="2"
-                    [attr.stroke]="getGradientColor(animatedBmiPercent)"
-                    [attr.stroke-dasharray]="(animatedBmiPercent * 0.75).toFixed(2) + ' 100'" stroke-linecap="round" />
-                </svg>
-                <div
-                  class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center select-none pointer-events-none">
-                  <div class="text-xl font-bold transition-colors duration-100"
-                    [style.color]="getGradientColor(animatedBmiPercent)">
-                    {{ animatedBmi }}
-                  </div>
-                  <div class="text-sm " [style.color]="getGradientColor(animatedBmiPercent)">BMI</div>
-                </div>
-              </div>
-              <div *ngIf="showBmiModal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-                <div class="bg-[#101010] border-2 border-pink-500 rounded-lg p-6 max-w-3xl w-full relative shadow-2xl">
-                  <button (click)="showBmiModal = false"
-                    class="absolute top-2 right-2 text-white text-xl hover:text-pink-400">&times;</button>
-                  <div class="max-w-xl w-full rounded-lg shadow-sm p-4 md:p-6 mt-2">
-                    <div class="flex justify-between mb-5">
-                      <div>
-                        <h5 class="leading-none text-2xl font-bold text-white pb-1">Courbes de l’IMC</h5>
-                        <p class="text-sm font-normal text-gray-400">Poids en fonction de la taille</p>
-                      </div>
-                      <div class="flex items-center px-2.5 py-0.5 text-base font-semibold text-pink-400">
-                        <span *ngIf="response?.bmi">{{ response.bmi }}</span>
-                      </div>
-                    </div>
-                    <div class="relative w-full h-80">
-                      <canvas id="imcChart" class="w-full h-full"></canvas>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="flex justify-end">
           <div class="mt-4 bg-white/3 p-2 rounded-xl shadow-xl flex gap-2">
             <button (click)="resetForm()"

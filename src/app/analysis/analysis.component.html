@@ -292,7 +292,7 @@
         </div>
       </div>
 
-      <div *ngIf="response && !currentClarification" class="text-center mt-10">
+      <div *ngIf="response && !currentClarification && response.predicted_disease" class="text-center mt-10">
         <h2 class="text-4xl font-extrabold text-white">Analysis Result</h2>
         <p class="text-sm mx-auto text-white/70 mt-3 mb-8 max-w-4xl">
           This section presents the outcome of the symptom analysis, including the most likely diagnosis, its severity,
@@ -475,21 +475,17 @@
         </div>
         <div>
 
-          <div *ngIf="response?.disease_info?.demographics">
+          <div *ngIf="showDemographicsSection">
             <h2 class="text-4xl font-extrabold mt-20 text-white">Disease Demographics Overview</h2>
             <p class="text-sm mx-auto text-white/70 mt-3 max-w-4xl">
-              This section illustrates the typical demographic distribution of the predicted disease, highlighting which
-              age groups and genders are most commonly affected. The data is based on aggregated clinical patterns and
-              helps contextualize the diagnosis within a broader population profile.
+              This section illustrates the typical demographic distribution of the predicted disease...
             </p>
             <div class="max-w-6xl mx-auto mt-8 text-white">
-
-              <!-- Container unique avec les 2 graphes -->
               <div class="bg-purple-500/8 rounded-xl shadow-xl p-4">
-                <div class="grid grid-cols-5 gap-5">
+                <div class="grid gap-5" [ngClass]="getDemographicsGridClass()">
 
                   <!-- Pie Chart (2/5) -->
-                  <div class="col-span-2">
+                  <div class="col-span-2" *ngIf="showGenderChart">
                     <div
                       class="bg-[#101010] p-5 rounded-xl border-2 border-purple-500/50 shadow-md h-100 flex flex-col">
                       <h3 class="text-2xl font-bold mb-5 text-purple-400 text-left">Gender Distribution</h3>
@@ -508,7 +504,7 @@
                   </div>
 
                   <!-- Bar Chart (3/5) -->
-                  <div class="col-span-3">
+                  <div class="col-span-3" *ngIf="showAgeChart">
                     <div
                       class="bg-[#101010] p-5 rounded-xl border-2 border-purple-500/50 shadow-md h-100 flex flex-col">
                       <h3 class="text-2xl font-bold mb-5 text-purple-400 text-left">Age Distribution</h3>
@@ -526,9 +522,9 @@
 
                 </div>
               </div>
-
             </div>
           </div>
+
         </div>
 
 
@@ -536,7 +532,7 @@
 
 
         <div>
-          <div *ngIf="response.treatment">
+          <div *ngIf="hasDiseaseTreatment || hasSymptomTreatments">
             <h2 class="text-4xl font-extrabold mt-20 text-white">Treatment Plan Overview</h2>
             <p class="text-sm mx-auto text-white/70 mt-3 max-w-4xl">
               This section outlines the most commonly recommended treatments for the predicted disease, including
@@ -551,26 +547,30 @@
                     <!-- Tabs -->
                     <ul
                       class="md:w-1/4 flex-column space-y-2 text-sm font-medium text-white bg-[#101010] p-5 rounded-xl border-2 border-blue-500/50 shadow-md">
-                      <li>
+                      <li *ngIf="hasDiseaseTreatment">
                         <button (click)="activeTab = 'general'"
                           [ngClass]="{ 'bg-blue-700 text-white': activeTab === 'general', 'bg-blue-700/50 hover:bg-blue-700/70': activeTab !== 'general' }"
                           class="cursor-pointer w-full text-left px-4 py-2 rounded-lg transition-colors">
                           General
                         </button>
+                        <hr class="h-0.5 border-t-0 bg-white/10">
                       </li>
-                      <hr class="h-0.5 border-t-0 bg-white/10">
-                      <li *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
-                        <button (click)="activeTab = symptom"
-                          [ngClass]="{ 'bg-blue-700 text-white': activeTab === symptom, 'bg-blue-700/50 hover:bg-blue-700/70': activeTab !== symptom }"
-                          class="cursor-pointer w-full text-left px-4 py-2 rounded-lg capitalize transition-colors">
-                          {{ formatSymptom(symptom) }}
-                        </button>
-                      </li>
+                      <ng-container *ngIf="hasSymptomTreatments">
+
+                        <li *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
+                          <button (click)="activeTab = symptom"
+                            [ngClass]="{ 'bg-blue-700 text-white': activeTab === symptom, 'bg-blue-700/50 hover:bg-blue-700/70': activeTab !== symptom }"
+                            class="cursor-pointer w-full text-left px-4 py-2 rounded-lg capitalize transition-colors">
+                            {{ formatSymptom(symptom) }}
+                          </button>
+                        </li>
+                      </ng-container>
                     </ul>
 
                     <div class="w-full text-sm bg-[#101010] p-5 rounded-xl border-2 border-blue-500/50 shadow-md">
                       <!-- General -->
-                      <div *ngIf="activeTab === 'general'">
+                      <div *ngIf="activeTab === 'general' && hasDiseaseTreatment">
+
                         <h4 class="text-2xl font-bold mb-5 text-blue-400 text-left">
                           General treatment for {{ formatDiseaseLabel(response.predicted_disease) }}
                         </h4>
@@ -689,72 +689,79 @@
                       </div>
 
                       <!-- Symptom-specific -->
-                      <div *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
-                        <div *ngIf="activeTab === symptom">
-                          <h4 class="text-2xl font-bold mb-5 text-blue-400 text-left">
-                            Treatment for {{ formatSymptom(symptom) }}
-                          </h4>
+                      <div *ngIf="hasSymptomTreatments">
 
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-20 px-6 mb-3 text-sm text-white">
-                            <!-- Colonne 1 -->
-                            <div class="grid grid-cols-2 gap-x-4">
-                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-400">OTC Medications</div>
-                                <div class="text-right">{{
-                                  response.treatment.symptom_treatments[symptom].otc_medications }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-400">Prescription</div>
-                                <div class="text-right">{{
-                                  response.treatment.symptom_treatments[symptom].prescription_medications }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-400">Duration</div>
-                                <div class="text-right">{{
-                                  response.treatment.symptom_treatments[symptom].recommended_duration }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-400">Dosage</div>
-                                <div class="text-right">{{ response.treatment.symptom_treatments[symptom].dosage }}
-                                </div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-400">Frequency</div>
-                                <div class="text-right">{{ response.treatment.symptom_treatments[symptom].frequency }}
-                                </div>
-                              </div>
-                            </div>
 
-                            <!-- Colonne 2 -->
-                            <div class="grid grid-cols-2 gap-x-4">
-                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-400">Route</div>
-                                <div class="text-right">{{
-                                  response.treatment.symptom_treatments[symptom].administration_route }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-400">Side Effects</div>
-                                <div class="text-right">{{ response.treatment.symptom_treatments[symptom].side_effects
-                                  }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-400">Alternative</div>
-                                <div class="text-right">{{ response.treatment.symptom_treatments[symptom].alternative }}
+                        <div *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
+                          <div *ngIf="activeTab === symptom">
+                            <h4 class="text-2xl font-bold mb-5 text-blue-400 text-left">
+                              Treatment for {{ formatSymptom(symptom) }}
+                            </h4>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-20 px-6 mb-3 text-sm text-white">
+                              <!-- Colonne 1 -->
+                              <div class="grid grid-cols-2 gap-x-4">
+                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                  <div class="font-semibold text-blue-400">OTC Medications</div>
+                                  <div class="text-right">{{
+                                    response.treatment.symptom_treatments[symptom].otc_medications }}</div>
+                                </div>
+                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                  <div class="font-semibold text-blue-400">Prescription</div>
+                                  <div class="text-right">{{
+                                    response.treatment.symptom_treatments[symptom].prescription_medications }}</div>
+                                </div>
+                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                  <div class="font-semibold text-blue-400">Duration</div>
+                                  <div class="text-right">{{
+                                    response.treatment.symptom_treatments[symptom].recommended_duration }}</div>
+                                </div>
+                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                  <div class="font-semibold text-blue-400">Dosage</div>
+                                  <div class="text-right">{{ response.treatment.symptom_treatments[symptom].dosage }}
+                                  </div>
+                                </div>
+                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                  <div class="font-semibold text-blue-400">Frequency</div>
+                                  <div class="text-right">{{ response.treatment.symptom_treatments[symptom].frequency }}
+                                  </div>
                                 </div>
                               </div>
-                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-400">Type</div>
-                                <div class="text-right">{{ response.treatment.symptom_treatments[symptom].treatment_type
-                                  }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-400">Driving</div>
-                                <div class="text-right">{{
-                                  response.treatment.symptom_treatments[symptom].driving_restrictions }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-400">Notes</div>
-                                <div class="text-right">{{ response.treatment.symptom_treatments[symptom].notes }}</div>
+
+                              <!-- Colonne 2 -->
+                              <div class="grid grid-cols-2 gap-x-4">
+                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                  <div class="font-semibold text-blue-400">Route</div>
+                                  <div class="text-right">{{
+                                    response.treatment.symptom_treatments[symptom].administration_route }}</div>
+                                </div>
+                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                  <div class="font-semibold text-blue-400">Side Effects</div>
+                                  <div class="text-right">{{ response.treatment.symptom_treatments[symptom].side_effects
+                                    }}</div>
+                                </div>
+                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                  <div class="font-semibold text-blue-400">Alternative</div>
+                                  <div class="text-right">{{ response.treatment.symptom_treatments[symptom].alternative
+                                    }}
+                                  </div>
+                                </div>
+                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                  <div class="font-semibold text-blue-400">Type</div>
+                                  <div class="text-right">{{
+                                    response.treatment.symptom_treatments[symptom].treatment_type
+                                    }}</div>
+                                </div>
+                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                  <div class="font-semibold text-blue-400">Driving</div>
+                                  <div class="text-right">{{
+                                    response.treatment.symptom_treatments[symptom].driving_restrictions }}</div>
+                                </div>
+                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                  <div class="font-semibold text-blue-400">Notes</div>
+                                  <div class="text-right">{{ response.treatment.symptom_treatments[symptom].notes }}
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>

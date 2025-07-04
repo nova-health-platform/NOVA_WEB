@@ -42,6 +42,10 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   animatedSeverity = 0;
   animatedContagious = 0;
   animatedCourse = 0;
+  showDemographicsSection = false;
+  showGenderChart = false;
+  showAgeChart = false;
+
 
   activeTab: string = 'general';
 
@@ -93,64 +97,93 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     return sizes[this.circleSizeIndex - 1] || 4;
   }
 
+
+  get hasDiseaseTreatment(): boolean {
+    const treatment = this.response?.treatment?.disease_treatment;
+    return !!treatment && Object.keys(treatment).length > 0;
+  }
+
+
+  get hasSymptomTreatments(): boolean {
+    return !!this.response?.treatment?.symptom_treatments &&
+          Object.keys(this.response.treatment.symptom_treatments).length > 0;
+  }
+
   simulateFakeResponse(): void {
-    this.response = {
-      predicted_disease: 'amyotrophic_lateral_sclerosis_als',
-      confidence: 0.70,
-      bmi: 20,
-      painZonesExpanded: ['chest_front', 'abdomen_front'],
-      disease_info: {
-        description: "Amyotrophic lateral sclerosis (ALS), also known as Lou Gehrig's disease, is a progressive neurodegenerative disease that affects nerve cells in the brain and spinal cord. It leads to muscle weakness, disability, and eventually death. The disease is characterized by the degeneration of motor neurons, which are responsible for controlling voluntary muscle movements. As these neurons die, the brain loses the ability to initiate and control muscle movement, leading to symptoms such as difficulty speaking, swallowing, and breathing.",
-        risk_factor: 'Age, chronic diseases, weak immune system.',
-        prevention: 'Vaccination, hand hygiene, avoiding contact with sick people.',
-        advice: 'Seek support from healthcare professionals and support groups to help manage symptoms and cope with the disease.',
-        severity_level: 'Mild.',
-        contagious: 'No.',
-        chronic_or_acute: 'Acute.',
-        related_diseases: 'Multiple sclerosis, Parkinson’s disease, Huntington’s disease.',
-        complications: 'Respiratory failure, aspiration pneumonia, malnutrition.',
-        demographics: 'Male: 80%, Female: 20%; 0–5 years: 0%, 5–10: 0%, 10–15: 1%, 15–20: 2%, 20–25: 5%, 30–35: 10%, 35–40: 15%, 40–45: 20%, 45–50: 20%, 55–60: 15%, 60–65: 10%, 65+ years: 2%.'
+    this.response = 
+        {
+      "bmi": 24.69,
+      "confidence": 0.3188423216342926,
+      "disease_info": {
+        "advice": "Seek medical attention if experiencing symptoms of hyperkalemia.",
+        "chronic_or_acute": "Acute.",
+        "complications": "Cardiac arrhythmias, muscle weakness, paralysis.",
+        "contagious": "No.",
+        "demographics": "Male: 20%, Female: 80%; 0\u20135 years: 80%, 5\u201310: 20%, 10\u201315: %, 15\u201320: %, 20\u201325: %, 30\u201335: %, 35\u201340: %, 40\u201345: %, 45\u201350: %, 55\u201360: %, 60\u201365: %, 65+ years: %.",
+        "description": "Hyperkalemia is a medical condition characterized by high levels of potassium in the blood. It can be caused by kidney disease, certain medications, or conditions that affect potassium regulation in the body. Symptoms may include shortness of breath, depressive or psychotic symptoms, sharp chest pain, dizziness, difficulty in swallowing, feeling ill, vomiting, nausea, weakness, and decreased heart rate. Treatment may involve medications, dietary changes, or dialysis in severe cases.",
+        "prevention": "Monitoring potassium levels regularly and following a balanced diet low in potassium.",
+        "related_diseases": "Hypokalemia, electrolyte imbalance.",
+        "risk_factor": "Kidney disease, certain medications (e.g., ACE inhibitors, potassium-sparing diuretics), conditions affecting potassium regulation.",
+        "severity_level": "Severe."
       },
-      treatment: {
-        disease_treatment: {
-          otc_medications: 'Paracetamol, Ibuprofen',
-          prescription_medications: 'Riluzole',
-          recommended_duration: 'As prescribed',
-          dosage: '50mg twice a day',
-          frequency: 'Every 12 hours',
-          administration_route: 'Oral',
-          side_effects: 'Dizziness, nausea',
-          alternative: 'Physiotherapy, respiratory support',
-          treatment_type: 'Neuroprotective',
-          driving_restrictions: 'Avoid driving if symptoms worsen worsen worsen worsen worsen',
-          notes: 'Regular follow-ups recommended recommended recommended recommended recommended'
+      "painZonesExpanded": [],
+      "predicted_disease": "hyperkalemia",
+      "treatment": {
+        "disease_treatment": {
+          
         },
-        symptom_treatments: {
-          difficulty_speaking: {
-            otc_medications: 'Voice therapy exercises',
-            prescription_medications: 'Baclofen',
-            recommended_duration: '8 weeks',
-            dosage: '10mg/day',
-            frequency: 'Once daily',
-            administration_route: 'Oral',
-            side_effects: 'Fatigue, dry mouth',
-            alternative: 'Speech therapy',
-            treatment_type: 'Muscle relaxant',
-            driving_restrictions: 'Use caution',
-            notes: 'Monitor swallowing ability'
+        "symptom_treatments": {
+          "difficulty_speaking": {
+            "administration_route": "NaN",
+            "alternative": "Communication aids",
+            "dosage": "NaN",
+            "driving_restrictions": "NaN",
+            "frequency": "Regular sessions as advised by a therapist",
+            "notes": "Early intervention can improve outcomes",
+            "otc_medications": "NaN",
+            "prescription_medications": "Speech therapy is the primary treatment",
+            "recommended_duration": "Long-term, ongoing",
+            "side_effects": "NaN",
+            "treatment_type": "Symptomatic"
           },
-          leg_cramps: {
-            otc_medications: 'Magnesium supplements',
-            prescription_medications: 'Quinine sulfate',
-            recommended_duration: '2 weeks',
-            dosage: '200mg/day',
-            frequency: 'Once a day',
-            administration_route: 'Oral',
-            side_effects: 'Ringing in ears, nausea',
-            alternative: 'Stretching, hydration',
-            treatment_type: 'Antispasmodic',
-            driving_restrictions: 'Avoid if dizzy',
-            notes: 'Discontinue if side effects occur'
+          "feeling_ill": {
+            "administration_route": "Oral",
+            "alternative": "Rest, hydration",
+            "dosage": "Paracetamol 500 mg, ibuprofen 200-400 mg",
+            "driving_restrictions": "None",
+            "frequency": "Every 4-6 hours as needed",
+            "notes": "Ensure no contraindications with other medications.",
+            "otc_medications": "Paracetamol, ibuprofen",
+            "prescription_medications": "NaN",
+            "recommended_duration": "As needed",
+            "side_effects": "Nausea, dizziness",
+            "treatment_type": "Symptomatic"
+          },
+          "palpitations": {
+            "administration_route": "Oral",
+            "alternative": "Lifestyle changes, stress management",
+            "dosage": "Typically 25-100 mg per day",
+            "driving_restrictions": "Caution if experiencing dizziness",
+            "frequency": "Once or twice daily",
+            "notes": "Palpitations should be assessed to rule out cardiac complications.",
+            "otc_medications": "NaN",
+            "prescription_medications": "Beta-blockers (e.g., Metoprolol)",
+            "recommended_duration": "As prescribed",
+            "side_effects": "Fatigue, dizziness, cold extremities",
+            "treatment_type": "Symptomatic"
+          },
+          "shortness_of_breath": {
+            "administration_route": "Inhalation (for bronchodilators)",
+            "alternative": "Breathing exercises, oxygen therapy",
+            "dosage": "As prescribed",
+            "driving_restrictions": "NaN",
+            "frequency": "As prescribed",
+            "notes": "Shortness of breath related to AAA should be evaluated by a healthcare provider immediately.",
+            "otc_medications": "NaN",
+            "prescription_medications": "Bronchodilators (if related to respiratory issues)",
+            "recommended_duration": "As prescribed by a healthcare provider",
+            "side_effects": "Tremors, nervousness, headache",
+            "treatment_type": "Symptomatic"
           }
         }
       }
@@ -167,7 +200,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.loadSymptoms();
     this.loadSvgPaths();
 
-    // Simule une réponse directement au chargement
     this.simulateFakeResponse();
 
     // Anime la jauge si des données sont présentes
@@ -182,6 +214,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.animateSeverity();
     this.animateContagiousGauge();
     this.animateCourseGauge();
+    this.setInitialActiveTab();
   }
 
 
@@ -733,10 +766,14 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
   parseDemographics(demographics: string): {
     genderData: { labels: string[], values: number[] },
-    ageData: { labels: string[], values: number[] }
+    ageData: { labels: string[], values: number[] },
+    isGenderDataValid: boolean,
+    isAgeDataValid: boolean
   } {
+    const clean = demographics.replace(/\\u2013/g, '-').replace(/\b(\w+):\s?%(?!\d)/g, '$1: 0%');
+    
     const genderRegex = /(Male|Female):\s?(\d+)%/gi;
-    const ageRegex = /(\d{1,2}\+?\s?(?:years)?|\d{1,2}–\d{1,2}):\s?(\d+)%/gi;
+    const ageRegex = /(\d{1,2}\+?|\d{1,2}-\d{1,2})\s?(?:years)?:\s?(\d+)%/gi;
 
     const genderLabels: string[] = [];
     const genderValues: number[] = [];
@@ -745,82 +782,127 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
     let match;
 
-    while ((match = genderRegex.exec(demographics)) !== null) {
+    while ((match = genderRegex.exec(clean)) !== null) {
       genderLabels.push(match[1]);
       genderValues.push(parseInt(match[2], 10));
     }
 
-    while ((match = ageRegex.exec(demographics)) !== null) {
-      ageLabels.push(match[1].replace('years', '').trim());
+    while ((match = ageRegex.exec(clean)) !== null) {
+      ageLabels.push(match[1]);
       ageValues.push(parseInt(match[2], 10));
     }
 
+    const isGenderDataValid = genderValues.some(v => v > 0);
+    const isAgeDataValid = ageValues.some(v => v > 0);
+
     return {
       genderData: { labels: genderLabels, values: genderValues },
-      ageData: { labels: ageLabels, values: ageValues }
+      ageData: { labels: ageLabels, values: ageValues },
+      isGenderDataValid,
+      isAgeDataValid
     };
   }
 
+  getDemographicsGridClass(): string {
+    if (this.showGenderChart && this.showAgeChart) return 'grid-cols-5';
+    if (this.showGenderChart) return 'grid-cols-2';
+    if (this.showAgeChart) return 'grid-cols-3';
+    return '';
+  }
+
+
   renderDemographicCharts(): void {
     const demographics = this.response?.disease_info?.demographics;
-    if (!demographics) return;
+    this.showDemographicsSection = false;
+    this.showGenderChart = false;
+    this.showAgeChart = false;
 
-    const { genderData, ageData } = this.parseDemographics(demographics);
+    if (!demographics || !demographics.includes('Male') || !demographics.includes('Female')) {
+      return;
+    }
+
+    const { genderData, ageData, isGenderDataValid, isAgeDataValid } = this.parseDemographics(demographics);
+
+    if (!isGenderDataValid && !isAgeDataValid) {
+      return;
+    }
+
+    this.showDemographicsSection = true;
+    this.showGenderChart = isGenderDataValid;
+    this.showAgeChart = isAgeDataValid;
 
     const genderCanvas = document.getElementById('genderChart') as HTMLCanvasElement | null;
     const ageCanvas = document.getElementById('ageChart') as HTMLCanvasElement | null;
 
-    if (!genderCanvas || !ageCanvas) return;
-
-    new Chart(genderCanvas, {
-      type: 'pie',
-      data: {
-        labels: genderData.labels,
-        datasets: [{
-          data: genderData.values,
-          backgroundColor: ['rgb(139, 92, 246)', 'rgb(217, 70, 239)'],
-          borderWidth: 0,
-          hoverOffset: 4
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'bottom', labels: { color: 'white' } }
-        }
-      }
-    });
-
-    new Chart(ageCanvas, {
-      type: 'bar',
-      data: {
-        labels: ageData.labels,
-        datasets: [{
-          label: 'Age Distribution (%)',
-          data: ageData.values,
-          backgroundColor: 'rgb(139, 92, 246)',
-          borderRadius: 4
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { ticks: { color: 'white' } },
-          y: { ticks: { color: 'white' }, beginAtZero: true }
+    if (isGenderDataValid && genderCanvas) {
+      new Chart(genderCanvas, {
+        type: 'pie',
+        data: {
+          labels: genderData.labels,
+          datasets: [{
+            data: genderData.values,
+            backgroundColor: ['rgb(139, 92, 246)', 'rgb(217, 70, 239)'],
+            borderWidth: 0,
+            hoverOffset: 4
+          }]
         },
-        plugins: {
-          legend: { display: false }
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'bottom', labels: { color: 'white' } }
+          }
         }
-      }
-    });
+      });
+    }
+
+    if (isAgeDataValid && ageCanvas) {
+      new Chart(ageCanvas, {
+        type: 'bar',
+        data: {
+          labels: ageData.labels,
+          datasets: [{
+            label: 'Age Distribution (%)',
+            data: ageData.values,
+            backgroundColor: 'rgb(139, 92, 246)',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: { ticks: { color: 'white' } },
+            y: { ticks: { color: 'white' }, beginAtZero: true }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
   }
+
 
   splitTreatmentKeys(keys: string[]): [string[], string[]] {
     const mid = Math.ceil(keys.length / 2);
     return [keys.slice(0, mid), keys.slice(mid)];
   }
 
+  
+  setInitialActiveTab(): void {
+    const hasGeneral = !!this.response?.treatment?.disease_treatment &&
+                      Object.keys(this.response.treatment.disease_treatment).length > 0;
+
+    const symptoms = this.getSymptomList(this.response?.treatment?.symptom_treatments);
+
+    if (hasGeneral) {
+      this.activeTab = 'general';
+    } else if (symptoms.length > 0) {
+      this.activeTab = symptoms[0];
+    } else {
+      this.activeTab = '';
+    }
+  }
 
   submitSymptomsToApi(): void {
     this.loading = true;
@@ -870,15 +952,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       next: (data) => {
         this.state = data.state || {};
         this.askedQuestions = data.asked_questions || [];
-        if (data.final_prediction) {
-          this.response = {
-            predicted_disease: data.final_prediction,
-            confidence: data.confidence,
-            disease_info: data.disease_info,
-            treatment: data.treatment,
-            bmi: data.bmi,
-            painZonesExpanded: data.painZonesExpanded
-          };
+        if (data.final_prediction || data.predicted_disease) {
+          this.response = data;
           this.currentClarification = null;
         } else {
           this.currentClarification = data.question || null;

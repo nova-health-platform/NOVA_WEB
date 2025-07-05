@@ -841,7 +841,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
           labels: genderData.labels,
           datasets: [{
             data: genderData.values,
-            backgroundColor: ['rgb(139, 92, 246)', 'rgb(217, 70, 239)'],
+            backgroundColor: ['rgb(185, 85, 247)', 'rgb(247, 85, 239)'],
             borderWidth: 0,
             hoverOffset: 4
           }]
@@ -863,7 +863,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
           datasets: [{
             label: 'Age Distribution (%)',
             data: ageData.values,
-            backgroundColor: 'rgb(139, 92, 246)',
+            backgroundColor: 'rgb(247, 85, 239)',
             borderRadius: 4
           }]
         },

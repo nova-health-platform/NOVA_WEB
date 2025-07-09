@@ -1,4 +1,4 @@
-<section class="min-h-screen flex justify-center items-center -mt-35">
+<section class="min-h-screen flex justify-center items-center">
   <div class="mx-auto w-full max-w-6xl">
     <div>
       <div *ngIf="errorMessage" class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center max-w-2xl mx-auto">
@@ -10,7 +10,7 @@
       </div>
 
       <!-- Step 1: Symptoms -->
-      <div *ngIf="step === 1" class="max-w-2xl mx-auto p-6">
+      <div *ngIf="step === 1" class="max-w-2xl mx-auto p-6 -mt-35">
         <h1 class="text-4xl text-center text-white font-extrabold mb-6">Enter your symptoms</h1>
         <div class="bg-white/3 rounded-xl shadow-xl p-2 mb-6">
           <div class="flex items-center gap-2 ">
@@ -20,12 +20,12 @@
 
                   <input type="text" [(ngModel)]="searchQuery" (input)="filterSymptoms()" (keydown.enter)="addSymptom()"
                     placeholder="Enter a symptom..."
-                    class="w-full p-2 py-3 border-2 border-pink-500 bg-pink-500/10 text-white rounded-lg focus:outline-none focus:ring-0 focus:ring-pink-500" />
+                    class="w-full p-2 py-3 border-2 border-pink-500/80 bg-pink-500/10 text-white rounded-lg focus:outline-none focus:ring-0 focus:ring-pink-500" />
                 </div>
                 <div class="bg-[#101010] rounded-lg">
 
                   <button (click)="submitSymptoms()"
-                    class="cursor-pointer px-4 py-3 rounded-lg bg-pink-500/10 border-2 border-pink-500 text-white hover:bg-pink-500 hover:text-white hover:ring-0 hover:ring-pink-500">
+                    class="cursor-pointer px-4 py-3 rounded-lg bg-pink-500/10 border-2 border-pink-500/80 text-white hover:bg-pink-500 hover:text-white hover:ring-0 hover:ring-pink-500">
                     Submit
                   </button>
                 </div>
@@ -55,7 +55,7 @@
       </div>
 
       <!-- Step 2: Patient Info -->
-      <div *ngIf="step === 2" class="max-w-2xl mx-auto p-6">
+      <div *ngIf="step === 2" class="max-w-2xl mx-auto p-6 -mt-35">
         <h2 class="text-4xl text-center text-white font-extrabold mb-6">Patient Information</h2>
         <div class="bg-white/3 rounded-xl shadow-xl p-2 mb-2">
           <div class="grid grid-cols-2 gap-4">
@@ -103,7 +103,7 @@
 
       <!-- Step 3: Pain Question -->
       <div *ngIf="step === 3 && painAnswer === null"
-        class="w-min mx-auto p-6 text-center bg-white/1 rounded-xl shadow-xl">
+        class="w-min mx-auto p-6 text-center bg-white/1 rounded-xl shadow-xl -mt-35">
         <h3 class="text-xl font-semibold mb-6 text-white whitespace-nowrap px-6">Are you experiencing physical pain?
         </h3>
         <div class="flex justify-center gap-6 mb-4">
@@ -114,7 +114,7 @@
         </div>
       </div>
 
-      <div *ngIf="showBodySelection" class="p-6 rounded-lg shadow-md max-w-6xl mx-auto text-center">
+      <div *ngIf="showBodySelection" class="p-6 rounded-lg shadow-md max-w-6xl mx-auto text-center -mt-35">
         <h2 class="text-4xl text-center text-white font-extrabold mb-6">Select your physical pain</h2>
         <div class="bg-white/3 p-4 rounded-xl shadow-xl flex flex-col md:flex-row gap-4 items-stretch justify-center">
           <!-- Instructions + Slider -->
@@ -280,7 +280,7 @@
         </div>
       </div>
 
-      <div *ngIf="currentClarification" class="w-min mx-auto p-6 text-center bg-white/1 rounded-xl shadow-xl">
+      <div *ngIf="currentClarification" class="w-min mx-auto p-6 text-center bg-white/1 rounded-xl shadow-xl -mt-35">
         <div class="text-xl font-semibold mb-6 text-white whitespace-nowrap px-6">
           {{ currentClarification.question }}
         </div>
@@ -294,191 +294,173 @@
 
       <div *ngIf="response && !currentClarification && response.predicted_disease" class="text-center mt-10">
         <h2 class="text-4xl font-extrabold text-white">Analysis Result</h2>
-        <p class="text-sm mx-auto text-white/70 mt-3 mb-8 max-w-4xl">
+        <p class="text-sm mx-auto text-white/80 mt-3 mb-8 max-w-4xl">
           This section presents the outcome of the symptom analysis, including the most likely diagnosis, its severity,
           and related clinical information. It is derived from your input and enhanced by contextual medical data to
           offer an accurate, data-driven health insight.
         </p>
         <div>
-
-          <div class="bg-pink-500/10 rounded-xl shadow-xl p-4 max-w-6xl mx-auto text-white">
-
-            <!-- GRID 2 COLS -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-left">
-
+          <div class="bg-white/3 p-3 rounded-xl shadow-xl max-w-6xl mx-auto text-white">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
               <!-- LEFT COLUMN -->
-              <div class="flex flex-col gap-4">
-
-
-
-                <!-- DISEASE INFO -->
-                <div class="relative bg-pink-500/60 p-5 rounded-xl shadow-md h-full">
-                  <!-- Confidence bar in top-right -->
-                  <div class="absolute top-5 right-5 w-45 rounded-xl shadow bg-[#101010]">
-                    <div class="bg-pink-500/80 h-full w-full p-2 pb-3 rounded-xl">
-
-                      <div class="flex items-center justify-between mb-1">
-                        <span class="text-[10px] font-semibold text-white/70 uppercase">Confidence</span>
-                        <span class="text-xs font-bold" [style.color]="getGradientColor(animatedConfidence)">
-                          {{ animatedConfidence }}%
-                        </span>
-                      </div>
-                      <div class="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
-                        <div class="h-full rounded-full transition-all transition-colors duration-100" [ngStyle]="{
-                          width: animatedConfidence + '%',
-                          backgroundColor: getGradientColor(animatedConfidence)
-                        }">
+              <div class="flex flex-col h-full gap-4">
+                <!-- Top: Diagnostic Info -->
+                <div class="p-4 rounded-xl shadow-md bg-pink-500/10 border border-pink-500/80">
+                  <!-- Confidence bar -->
+                  <div class="relative">
+                    <div class="absolute top-0 right-0 w-60 rounded-xl shadow-lg bg-pink-500/5">
+                      <div class="h-full w-full pt-1.5 pb-2 px-2 rounded-xl">
+                        <div class="flex items-center justify-between mb-1">
+                          <span class="text-[10px] font-semibold text-white uppercase">Confidence</span>
+                          <span class="text-xs font-bold" [style.color]="getGradientColor(animatedConfidence)">
+                            {{ animatedConfidence }}%
+                          </span>
+                        </div>
+                        <div class="w-full h-2 bg-pink-500/10 rounded-full overflow-hidden">
+                          <div class="h-full rounded-full transition-all duration-100" [ngStyle]="{
+              width: animatedConfidence + '%',
+              backgroundColor: getGradientColor(animatedConfidence)
+            }"></div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                  </div>
 
-                  <h3 class="text-2xl font-bold mb-2 text-white">Diagnostic Result</h3>
+                  <h3 class="text-2xl font-bold mb-4 text-white text-left">Diagnostic Result</h3>
 
-                  <p class="text-lg mb-2">
-                    <span class="font-semibold text-pink-300">{{ formatDiseaseLabel(response.predicted_disease)
-                      }}</span>
-                  </p>
-                  <div class="bg-[#101010] rounded-xl">
-
-                    <div class="text-sm mt-4 p-4 mb-4 rounded-xl shadow bg-pink-500/80 text-justify space-y-2">
-                      <div class="overflow-hidden transition-[max-height] duration-500 ease-in-out"
-                        [style.maxHeight]="isDescriptionExpanded ? '1000px' : '3.5rem'"
-                        [style.opacity]="isDescriptionExpanded ? '1' : '1'">
-                        {{ response.disease_info.description }}
-                      </div>
-  
-                      <button *ngIf="response.disease_info.description?.length > textLimit"
-                        (click)="isDescriptionExpanded = !isDescriptionExpanded"
-                        class="cursor-pointer text-pink-300 hover:underline text-xs font-medium mt-1">
-                        {{ isDescriptionExpanded ? 'Read less' : 'Read more' }}
-                      </button>
-                    </div>
-                  </div>
-
-
-
-
-
-                  <!-- Triple Gauge Display -->
-                  <div class="rounded-xl">
+                  <!-- Disease description -->
                   <div
-                  class="flex justify-center gap-16 flex-wrap p-4 rounded-xl">
-                  <!-- Severity -->
+                    class="text-sm p-4 rounded-xl shadow bg-pink-500/10 text-justify space-y-1 border-2 border-pink-500/20">
+                    <p class="text-lg">
+                      <span class="font-semibold text-pink-400">{{ formatDiseaseLabel(response.predicted_disease)
+                        }}</span>
+                    </p>
+                    <div class="overflow-hidden transition-[max-height] duration-500 ease-in-out"
+                      [style.maxHeight]="isDescriptionExpanded ? '1000px' : '3.5rem'"
+                      [style.opacity]="isDescriptionExpanded ? '1' : '1'">
+                      {{ response.disease_info.description }}
+                    </div>
+                    <button *ngIf="response.disease_info.description?.length > textLimit"
+                      (click)="isDescriptionExpanded = !isDescriptionExpanded"
+                      class="cursor-pointer text-pink-400 hover:underline text-xs font-medium mt-1">
+                      {{ isDescriptionExpanded ? 'Read less' : 'Read more' }}
+                    </button>
+                  </div>
+                </div>
 
+                <!-- Bottom: Gauges take all remaining space -->
+                <div class="flex-1 p-4 rounded-xl shadow-md bg-pink-500/10 flex flex-col justify-center border border-pink-500/80">
+                  <h3 class="text-2xl font-bold mb-4 text-white text-left">Clinical Indicators</h3>
+                  <div
+                    class="flex justify-center items-center gap-16 flex-wrap p-4 rounded-xl bg-pink-500/10 border-2 border-pink-500/20 h-full">
+                    <!-- Severity -->
                     <div
-                    class="bg-white/10 relative w-28 h-28 cursor-pointer rounded-full ring-1 ring-white/20 shadow-md backdrop-blur-sm transition-transform duration-100 hover:scale-105 hover:bg-white/5">
-                    <svg class="size-full -rotate-225" viewBox="0 0 36 36">
-                        <!-- Background circle -->
-                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#3f3f3f"
-                        stroke-dasharray="75 100" stroke-linecap="round" />
-                        
-                        <!-- Animated circle -->
+                      class="relative w-28 h-28 cursor-pointer rounded-full ring-1 ring-white/10 shadow-md backdrop-blur-md transition-transform duration-100 hover:scale-105 hover:bg-white/5">
+                      <svg class="size-full -rotate-225" viewBox="0 0 36 36">
+                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#334155"
+                          stroke-dasharray="75 100" stroke-linecap="round" />
                         <circle cx="18" cy="18" r="16" fill="none" stroke-width="2"
-                        [attr.stroke]="getSeverityColor(animatedSeverity)"
-                        [attr.stroke-dasharray]="(animatedSeverity * 0.75 / 100 * 100).toFixed(2) + ' 100'"
-                        stroke-linecap="round" />
-                      </svg>
-                      
-                      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center px-2">
-                        <div class="text-base font-semibold leading-tight"
-                        [style.color]="getSeverityColor(animatedSeverity)">
-                        {{ response.disease_info.severity_level.replace('.', '') }}
-                      </div>
-                      <div class="text-xs text-white/70">Severity</div>
-                    </div>
-                  </div>
-                  
-                  <!-- Contagious -->
-                  <div
-                  class="relative w-28 h-28 cursor-pointer rounded-full ring-1 ring-white/20 shadow-md backdrop-blur-sm transition-transform duration-100 hover:scale-105 hover:bg-white/5">
-                  <svg class="size-full -rotate-225" viewBox="0 0 36 36">
-                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#3f3f3f"
-                        stroke-dasharray="75 100" stroke-linecap="round" />
-                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2"
-                        [attr.stroke]="getContagiousColor(response.disease_info.contagious)"
-                        [attr.stroke-dasharray]="(animatedContagious * 0.75).toFixed(2) + ' 100'"
-                        stroke-linecap="round" />
-                        
+                          [attr.stroke]="getSeverityColor(animatedSeverity)"
+                          [attr.stroke-dasharray]="(animatedSeverity * 0.75 / 100 * 100).toFixed(2) + ' 100'"
+                          stroke-linecap="round" />
                       </svg>
                       <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
                         <span class="text-base font-semibold leading-tight"
-                        [style.color]="getContagiousColor(response.disease_info.contagious)">
-                        {{ response.disease_info.contagious.replace('.', '') }}
-                      </span>
-                      <span class="text-xs text-white/70">Contagious</span>
-                    </div>
+                          [style.color]="getSeverityColor(animatedSeverity)">
+                          {{ response.disease_info.severity_level.replace('.', '') }}
+                        </span>
+                        <span class="text-xs text-white/70">Severity</span>
+                      </div>
                     </div>
 
-                    
-                    <!-- Chronic / Acute -->
+                    <!-- Contagious -->
                     <div
-                    class="relative w-28 h-28 cursor-pointer rounded-full ring-1 ring-white/20 shadow-md backdrop-blur-sm transition-transform duration-100 hover:scale-105 hover:bg-white/5">
-                    <svg class="size-full -rotate-225" viewBox="0 0 36 36">
-                      <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#3f3f3f"
-                      stroke-dasharray="75 100" stroke-linecap="round" />
-                      <circle cx="18" cy="18" r="16" fill="none" stroke-width="2"
-                      [attr.stroke]="getCourseColor(response.disease_info.chronic_or_acute)"
-                      [attr.stroke-dasharray]="(animatedCourse * 0.75).toFixed(2) + ' 100'"
-                      stroke-linecap="round" />
-                      
-                    </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                      <span class="text-sm font-semibold text-white"
-                      [style.color]="getCourseColor(response.disease_info.chronic_or_acute)">
-                      {{ response.disease_info.chronic_or_acute.replace('.', '') }}
-                    </span>
-                    <span class="text-xs text-white/70">Course</span>
+                      class="relative w-28 h-28 cursor-pointer rounded-full ring-1 ring-white/10 shadow-md backdrop-blur-md transition-transform duration-100 hover:scale-105 hover:bg-white/5">
+                      <svg class="size-full -rotate-225" viewBox="0 0 36 36">
+                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#334155"
+                          stroke-dasharray="75 100" stroke-linecap="round" />
+                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2"
+                          [attr.stroke]="getContagiousColor(response.disease_info.contagious)"
+                          [attr.stroke-dasharray]="(animatedContagious * 0.75).toFixed(2) + ' 100'"
+                          stroke-linecap="round" />
+                      </svg>
+                      <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                        <span class="text-base font-semibold leading-tight"
+                          [style.color]="getContagiousColor(response.disease_info.contagious)">
+                          {{ response.disease_info.contagious.replace('.', '') }}
+                        </span>
+                        <span class="text-xs text-white/70">Contagious</span>
+                      </div>
+                    </div>
+
+                    <!-- Chronic/Acute -->
+                    <div
+                      class="relative w-28 h-28 cursor-pointer rounded-full ring-1 ring-white/10 shadow-md backdrop-blur-md transition-transform duration-100 hover:scale-105 hover:bg-white/5">
+                      <svg class="size-full -rotate-225" viewBox="0 0 36 36">
+                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#334155"
+                          stroke-dasharray="75 100" stroke-linecap="round" />
+                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2"
+                          [attr.stroke]="getCourseColor(response.disease_info.chronic_or_acute)"
+                          [attr.stroke-dasharray]="(animatedCourse * 0.75).toFixed(2) + ' 100'"
+                          stroke-linecap="round" />
+                      </svg>
+                      <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                        <span class="text-sm font-semibold"
+                          [style.color]="getCourseColor(response.disease_info.chronic_or_acute)">
+                          {{ response.disease_info.chronic_or_acute.replace('.', '') }}
+                        </span>
+                        <span class="text-xs text-white/70">Course</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              </div>
-                </div>
-
-                
-              </div>
 
               <!-- RIGHT COLUMN -->
               <div class="flex flex-col gap-4">
-
-                <div *ngIf="response.disease_info"
-                  class="relative bg-[#101010] p-5 rounded-xl border-2 border-pink-500/50 shadow-md h-full">
-                  <h3 class="text-2xl font-bold mb-3 text-pink-400">Disease Informations</h3>
-                  <div class="overflow-x-auto rounded-xl shadow ring-1 ring-white/20 mb-4">
-                    <div class="min-w-full text-sm text-left text-white table-auto rounded-xl">
-                      <p class="px-4 py-3 text-justify">{{ response.disease_info.advice }}</p>
-                    </div>
-                  </div>
-                  <div class="overflow-x-auto rounded-xl shadow ring-1 ring-white/20 px-5 py-2">
+                <div *ngIf="response.disease_info" class="relative p-4 rounded-xl shadow-md h-full bg-pink-500/10 border border-pink-500/80">
+                  <h3 class="text-2xl font-bold mb-4 text-white">Recommended Actions</h3>
+                  <div class="overflow-x-auto rounded-xl shadow bg-pink-500/10 border-2 border-pink-500/20">
                     <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
-                      <tbody class="divide-y divide-white/10">
+                      <tbody class="divide-y divide-pink-500/20">
                         <tr>
-                          <th class="px-4 py-3 text-pink-300 font-semibold whitespace-nowrap">Risk Factors</th>
+                          <th class="ps-5 py-3 text-pink-400 font-semibold whitespace-nowrap">🩷</th>
+                          <td class="ps-5 pe-5 py-3">{{ response.disease_info.advice }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                </div>
+                <div *ngIf="response.disease_info" class="relative p-4 rounded-xl shadow-md h-full bg-pink-500/10 border border-pink-500/80">
+                  <h3 class="text-2xl font-bold mb-4 text-white">Disease Informations</h3>
+
+                  <div class="overflow-x-auto rounded-xl shadow bg-pink-500/10 border-2 border-pink-500/20">
+                    <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
+                      <tbody class="divide-y divide-pink-500/20">
+                        <tr>
+                          <th class="px-4 py-3 text-pink-400 font-semibold whitespace-nowrap">Risk Factors</th>
                           <td class="px-4 py-3">{{ response.disease_info.risk_factor }}</td>
                         </tr>
                         <tr>
-                          <th class="px-4 py-3 text-pink-300 font-semibold whitespace-nowrap">Prevention</th>
+                          <th class="px-4 py-3 text-pink-400 font-semibold whitespace-nowrap">Prevention</th>
                           <td class="px-4 py-3">{{ response.disease_info.prevention }}</td>
                         </tr>
                         <tr>
-                          <th class="px-4 py-3 text-pink-300 font-semibold whitespace-nowrap w-1/4">Complications</th>
+                          <th class="px-4 py-3 text-pink-400 font-semibold whitespace-nowrap">Complications</th>
                           <td class="px-4 py-3">{{ response.disease_info.complications }}</td>
                         </tr>
                         <tr>
-                          <th class="px-4 py-3 text-pink-300 font-semibold whitespace-nowrap w-1/4">Related Diseases
-                          </th>
+                          <th class="px-4 py-3 text-pink-400 font-semibold whitespace-nowrap">Related Diseases</th>
                           <td class="px-4 py-3">{{ response.disease_info.related_diseases }}</td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
 
-
-
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -495,18 +477,19 @@
 
                   <!-- Pie Chart (2/5) -->
                   <div class="col-span-2" *ngIf="showGenderChart">
-                    <div
-                      class="bg-purple-500/60 p-5 rounded-xl shadow-md h-100 flex flex-col">
+                    <div class="bg-purple-500/10 p-5 rounded-xl shadow-md h-100 flex flex-col">
                       <h3 class="text-2xl font-bold mb-5 text-white text-left">Gender Distribution</h3>
-                      <div class="bg-[#101010] rounded-xl shadow">
-                        <div class=" h-full w-full bg-purple-500/80 rounded-xl flex-grow flex justify-center items-center overflow-hidden">
-                          <div class="w-50 h-50 mt-4 mb-2">
+                      <div class="rounded-xl shadow">
+                        <div
+                          class=" h-full w-full bg-purple-500/10 rounded-xl flex-grow flex justify-center items-center overflow-hidden border-2 border-purple-500/20">
+                          <div class="w-49 h-49 mt-4 mb-2">
                             <canvas id="genderChart" class="w-full h-full"></canvas>
                           </div>
                         </div>
                       </div>
-                      <div class="overflow-x-auto rounded-xl shadow bg-[#101010] mt-4">
-                        <div class="min-w-full text-sm text-left text-white table-auto rounded-xl bg-purple-500/80">
+                      <div class="overflow-x-auto rounded-xl shadow mt-4">
+                        <div
+                          class="min-w-full text-sm text-left text-white table-auto rounded-xl bg-purple-500/10 border-2 border-purple-500/20">
                           <p class="px-4 py-3 text-justify">This pie chart represents the distribution of disease cases
                             between the sexes (men and women).</p>
                         </div>
@@ -516,17 +499,18 @@
 
                   <!-- Bar Chart (3/5) -->
                   <div class="col-span-3" *ngIf="showAgeChart">
-                    <div
-                      class="bg-purple-500/60 p-5 rounded-xl shadow-md h-100 flex flex-col">
+                    <div class="bg-purple-500/10 p-5 rounded-xl shadow-md h-100 flex flex-col">
                       <h3 class="text-2xl font-bold mb-5 text-white text-left">Age Distribution</h3>
-                      <div class="flex-grow relative bg-[#101010] rounded-xl">
-                        <div class="absolute inset-0 w-full h-full bg-purple-500/80 rounded-xl">
+                      <div class="flex-grow relative rounded-xl">
+                        <div
+                          class="absolute inset-0 w-full h-full bg-purple-500/10 rounded-xl border-2 border-purple-500/20">
                           <canvas id="ageChart" class="mx-4 my-2"></canvas>
 
                         </div>
                       </div>
-                      <div class="overflow-x-auto rounded-xl shadow bg-[#101010] mt-4">
-                        <div class="min-w-full text-sm text-left text-white table-auto rounded-xl bg-purple-500/80">
+                      <div class="overflow-x-auto rounded-xl shadow mt-4">
+                        <div
+                          class="min-w-full text-sm text-left text-white table-auto rounded-xl bg-purple-500/10 border-2 border-purple-500/20">
                           <p class="px-4 py-3 text-justify">This bar chart shows the frequency of cases by age group,
                             highlighting the groups most affected.</p>
                         </div>

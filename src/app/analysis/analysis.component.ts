@@ -115,7 +115,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       "bmi": 24.69,
       "confidence": 0.3188423216342926,
       "disease_info": {
-        "advice": "Seek medical attention if experiencing symptoms of hyperkalemia.",
+        "advice": "Seek medical attention if experiencing symptoms of hyperkalemia.Seek medical attention if experiencing symptoms of hyperkalemia. Seek medical attention if experiencing symptoms of hyperkalemia.",
         "chronic_or_acute": "Acute.",
         "complications": "Cardiac arrhythmias, muscle weakness, paralysis.",
         "contagious": "No.",

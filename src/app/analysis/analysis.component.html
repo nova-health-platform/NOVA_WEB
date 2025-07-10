@@ -330,7 +330,7 @@
 
                   <!-- Disease description -->
                   <div
-                    class="text-sm p-4 rounded-xl shadow bg-pink-500/10 text-justify space-y-1 border-2 border-pink-500/20">
+                    class="text-sm p-4 rounded-xl shadow bg-pink-500/10 text-justify space-y-1">
                     <p class="text-lg">
                       <span class="font-semibold text-pink-400">{{ formatDiseaseLabel(response.predicted_disease)
                         }}</span>
@@ -352,7 +352,7 @@
                 <div class="flex-1 p-4 rounded-xl shadow-md bg-pink-500/10 flex flex-col justify-center border border-pink-500/80">
                   <h3 class="text-2xl font-bold mb-4 text-white text-left">Clinical Indicators</h3>
                   <div
-                    class="flex justify-center items-center gap-16 flex-wrap p-4 rounded-xl bg-pink-500/10 border-2 border-pink-500/20 h-full">
+                    class="flex justify-center items-center gap-16 flex-wrap p-4 rounded-xl bg-pink-500/10 h-full">
                     <!-- Severity -->
                     <div
                       class="relative w-28 h-28 cursor-pointer rounded-full ring-1 ring-white/10 shadow-md backdrop-blur-md transition-transform duration-100 hover:scale-105 hover:bg-white/5">
@@ -421,7 +421,7 @@
               <div class="flex flex-col gap-4">
                 <div *ngIf="response.disease_info" class="relative p-4 rounded-xl shadow-md h-full bg-pink-500/10 border border-pink-500/80">
                   <h3 class="text-2xl font-bold mb-4 text-white">Recommended Actions</h3>
-                  <div class="overflow-x-auto rounded-xl shadow bg-pink-500/10 border-2 border-pink-500/20">
+                  <div class="overflow-x-auto rounded-xl shadow bg-pink-500/10">
                     <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
                       <tbody class="divide-y divide-pink-500/20">
                         <tr>
@@ -436,7 +436,7 @@
                 <div *ngIf="response.disease_info" class="relative p-4 rounded-xl shadow-md h-full bg-pink-500/10 border border-pink-500/80">
                   <h3 class="text-2xl font-bold mb-4 text-white">Disease Informations</h3>
 
-                  <div class="overflow-x-auto rounded-xl shadow bg-pink-500/10 border-2 border-pink-500/20">
+                  <div class="overflow-x-auto rounded-xl shadow bg-pink-500/10">
                     <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
                       <tbody class="divide-y divide-pink-500/20">
                         <tr>
@@ -472,16 +472,16 @@
               This section illustrates the typical demographic distribution of the predicted disease...
             </p>
             <div class="max-w-6xl mx-auto mt-8 text-white">
-              <div class="bg-purple-500/10 rounded-xl shadow-xl p-4">
-                <div class="grid gap-5" [ngClass]="getDemographicsGridClass()">
+              <div class="bg-white/3 p-3 rounded-xl shadow-xl">
+                <div class="grid gap-4" [ngClass]="getDemographicsGridClass()">
 
                   <!-- Pie Chart (2/5) -->
                   <div class="col-span-2" *ngIf="showGenderChart">
-                    <div class="bg-purple-500/10 p-5 rounded-xl shadow-md h-100 flex flex-col">
+                    <div class="bg-purple-500/10 p-4 rounded-xl shadow-md h-100 flex flex-col border border-purple-500/80">
                       <h3 class="text-2xl font-bold mb-5 text-white text-left">Gender Distribution</h3>
                       <div class="rounded-xl shadow">
                         <div
-                          class=" h-full w-full bg-purple-500/10 rounded-xl flex-grow flex justify-center items-center overflow-hidden border-2 border-purple-500/20">
+                          class=" h-full w-full bg-purple-500/10 rounded-xl flex-grow flex justify-center items-center overflow-hidden">
                           <div class="w-49 h-49 mt-4 mb-2">
                             <canvas id="genderChart" class="w-full h-full"></canvas>
                           </div>
@@ -489,7 +489,7 @@
                       </div>
                       <div class="overflow-x-auto rounded-xl shadow mt-4">
                         <div
-                          class="min-w-full text-sm text-left text-white table-auto rounded-xl bg-purple-500/10 border-2 border-purple-500/20">
+                          class="min-w-full text-sm text-left text-white table-auto rounded-xl bg-purple-500/10">
                           <p class="px-4 py-3 text-justify">This pie chart represents the distribution of disease cases
                             between the sexes (men and women).</p>
                         </div>
@@ -499,18 +499,18 @@
 
                   <!-- Bar Chart (3/5) -->
                   <div class="col-span-3" *ngIf="showAgeChart">
-                    <div class="bg-purple-500/10 p-5 rounded-xl shadow-md h-100 flex flex-col">
+                    <div class="bg-purple-500/10 p-4 rounded-xl shadow-md h-100 flex flex-col border border-purple-500/80">
                       <h3 class="text-2xl font-bold mb-5 text-white text-left">Age Distribution</h3>
                       <div class="flex-grow relative rounded-xl">
                         <div
-                          class="absolute inset-0 w-full h-full bg-purple-500/10 rounded-xl border-2 border-purple-500/20">
+                          class="absolute inset-0 w-full h-full bg-purple-500/10 rounded-xl">
                           <canvas id="ageChart" class="mx-4 my-2"></canvas>
 
                         </div>
                       </div>
                       <div class="overflow-x-auto rounded-xl shadow mt-4">
                         <div
-                          class="min-w-full text-sm text-left text-white table-auto rounded-xl bg-purple-500/10 border-2 border-purple-500/20">
+                          class="min-w-full text-sm text-left text-white table-auto rounded-xl bg-purple-500/10">
                           <p class="px-4 py-3 text-justify">This bar chart shows the frequency of cases by age group,
                             highlighting the groups most affected.</p>
                         </div>
@@ -538,17 +538,17 @@
               dosages, duration, and alternatives to help guide patient care decisions.
             </p>
             <div class="max-w-6xl mx-auto mt-8 text-white">
-              <div class="bg-blue-500/8 rounded-xl shadow-xl p-4">
+              <div class="bg-white/3 p-3 rounded-xl shadow-xl">
                 <div class="flex flex-col">
-                  <div class="flex gap-5 items-stretch">
+                  <div class="flex gap-4 items-stretch">
 
                     <!-- Tabs -->
                     <ul
-                      class="md:w-1/4 flex-column space-y-2 text-sm font-medium text-white bg-[#101010] p-5 rounded-xl border-2 border-blue-500/50 shadow-md">
+                      class="md:w-1/4 flex-column space-y-2 text-sm font-medium text-white bg-blue-700/10 p-5 rounded-xl border border-blue-700 shadow-md">
                       <li *ngIf="hasDiseaseTreatment">
                         <button (click)="activeTab = 'general'"
                           [ngClass]="{ 'bg-blue-700 text-white': activeTab === 'general', 'bg-blue-700/50 hover:bg-blue-700/70': activeTab !== 'general' }"
-                          class="cursor-pointer w-full text-left px-4 py-2 rounded-lg transition-colors">
+                          class="cursor-pointer w-full text-left px-4 py-2 rounded-lg transition-colors mb-2">
                           General
                         </button>
                         <hr class="h-0.5 border-t-0 bg-white/10">
@@ -565,11 +565,11 @@
                       </ng-container>
                     </ul>
 
-                    <div class="w-full text-sm bg-[#101010] p-5 rounded-xl border-2 border-blue-500/50 shadow-md">
+                    <div class="w-full text-sm bg-blue-700/10 p-4 rounded-xl border border-blue-700 shadow-md">
                       <!-- General -->
-                      <div *ngIf="activeTab === 'general' && hasDiseaseTreatment">
-
-                        <h4 class="text-2xl font-bold mb-5 text-blue-400 text-left">
+                      <div *ngIf="activeTab === 'general' && hasDiseaseTreatment" class="">
+                        
+                        <h4 class="text-2xl font-bold mb-5 text-white text-left">
                           General treatment for {{ formatDiseaseLabel(response.predicted_disease) }}
                         </h4>
 
@@ -577,8 +577,8 @@
                           <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm text-white">
 
                             <!-- 💊 Médicaments -->
-                            <div class="w-full text-sm bg-[#101010] p-5 rounded-xl ring-1 ring-white/20 shadow-md">
-                              <h5 class="text-blue-300 text-left font-semibold text-sm mb-2 uppercase tracking-wider">
+                            <div class="w-full text-sm shadow-md p-4 rounded-xl bg-blue-700/20">
+                              <h5 class="font-semibold text-blue-300 text-left font-semibold text-lg mb-2 tracking-wider">
                                 Medications
                               </h5>
                               <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
@@ -602,8 +602,8 @@
                             </div>
 
                             <!-- 📋 Posologie -->
-                            <div class="w-full text-sm bg-[#101010] p-5 rounded-xl ring-1 ring-white/20 shadow-md">
-                              <h5 class="text-blue-300 text-left font-semibold text-sm mb-2 uppercase tracking-wider">
+                            <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
+                              <h5 class="font-semibold text-blue-300 text-left font-semibold text-lg mb-2 tracking-wider">
                                 Posology
                               </h5>
                               <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
@@ -631,8 +631,8 @@
 
                           </div>
                           <!-- ⚠️ Precautions -->
-                          <div class="w-full text-sm bg-[#101010] p-5 rounded-xl ring-1 ring-white/20 shadow-md mt-5">
-                            <h5 class="text-blue-300 text-left font-semibold text-sm mb-2 uppercase tracking-wider">
+                          <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md mt-5">
+                            <h5 class="font-semibold text-blue-300 text-left font-semibold text-lg mb-2 tracking-wider">
                               Precautions
                             </h5>
 

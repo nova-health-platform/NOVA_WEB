@@ -130,7 +130,17 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       "predicted_disease": "hyperkalemia",
       "treatment": {
         "disease_treatment": {
-          
+          "administration_route": "NaN",
+            "alternative": "Communication aids",
+            "dosage": "NaN",
+            "driving_restrictions": "NaN",
+            "frequency": "Regular sessions as advised by a therapist",
+            "notes": "Early intervention can improve outcomes",
+            "otc_medications": "NaN",
+            "prescription_medications": "Speech therapy is the primary treatment",
+            "recommended_duration": "Long-term, ongoing",
+            "side_effects": "NaN",
+            "treatment_type": "Symptomatic"
         },
         "symptom_treatments": {
           "difficulty_speaking": {

@@ -133,7 +133,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
           "administration_route": "NaN",
             "alternative": "Communication aids",
             "dosage": "NaN",
-            "driving_restrictions": "NaN",
+            "driving_restrictions": "allowed",
             "frequency": "Regular sessions as advised by a therapist",
             "notes": "Early intervention can improve outcomes",
             "otc_medications": "NaN",

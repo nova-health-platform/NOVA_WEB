@@ -4,6 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Chart, registerables } from 'chart.js';
 
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+import annotationPlugin from 'chartjs-plugin-annotation';
+
+Chart.register(ChartDataLabels, annotationPlugin);
+
 interface ClarificationItem {
   symptom: string;
   question: string;
@@ -106,12 +111,14 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
   get hasSymptomTreatments(): boolean {
     return !!this.response?.treatment?.symptom_treatments &&
-          Object.keys(this.response.treatment.symptom_treatments).length > 0;
+      Object.keys(this.response.treatment.symptom_treatments).length > 0;
   }
 
   simulateFakeResponse(): void {
-    this.response = 
-        {
+    this.age = 24;
+    this.sex = 'Male';
+    this.response =
+    {
       "bmi": 24.69,
       "confidence": 0.3188423216342926,
       "disease_info": {
@@ -119,7 +126,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         "chronic_or_acute": "Acute.",
         "complications": "Cardiac arrhythmias, muscle weakness, paralysis.",
         "contagious": "No.",
-        "demographics": "Male: 20%, Female: 80%; 0\u20135 years: 80%, 5\u201310: 20%, 10\u201315: %, 15\u201320: %, 20\u201325: %, 30\u201335: %, 35\u201340: %, 40\u201345: %, 45\u201350: %, 55\u201360: %, 60\u201365: %, 65+ years: %.",
+        "demographics": "Male: 20%, Female: 80%; 0\u20135 years: 0%, 5\u201310: 5%, 10\u201315: 10%, 15\u201320: 15%, 20\u201325: 20%, 30\u201335: 30%, 35\u201340: 25%, 40\u201345: 10%, 45\u201350: 5%, 55\u201360: %, 60\u201365: %, 65+ years: %.",
         "description": "Hyperkalemia is a medical condition characterized by high levels of potassium in the blood. It can be caused by kidney disease, certain medications, or conditions that affect potassium regulation in the body. Symptoms may include shortness of breath, depressive or psychotic symptoms, sharp chest pain, dizziness, difficulty in swallowing, feeling ill, vomiting, nausea, weakness, and decreased heart rate. Treatment may involve medications, dietary changes, or dialysis in severe cases.",
         "prevention": "Monitoring potassium levels regularly and following a balanced diet low in potassium.",
         "related_diseases": "Hypokalemia, electrolyte imbalance.",
@@ -131,16 +138,16 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       "treatment": {
         "disease_treatment": {
           "administration_route": "NaN",
-            "alternative": "Communication aids",
-            "dosage": "NaN",
-            "driving_restrictions": "allowed",
-            "frequency": "Regular sessions as advised by a therapist",
-            "notes": "Early intervention can improve outcomes",
-            "otc_medications": "NaN",
-            "prescription_medications": "Speech therapy is the primary treatment",
-            "recommended_duration": "Long-term, ongoing",
-            "side_effects": "NaN",
-            "treatment_type": "Symptomatic"
+          "alternative": "Communication aids",
+          "dosage": "NaN",
+          "driving_restrictions": "allowed",
+          "frequency": "Regular sessions as advised by a therapist",
+          "notes": "Early intervention can improve outcomes",
+          "otc_medications": "NaN",
+          "prescription_medications": "Speech therapy is the primary treatment",
+          "recommended_duration": "Long-term, ongoing",
+          "side_effects": "NaN",
+          "treatment_type": "Symptomatic"
         },
         "symptom_treatments": {
           "difficulty_speaking": {
@@ -781,7 +788,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     isAgeDataValid: boolean
   } {
     const clean = demographics.replace(/\\u2013/g, '-').replace(/\b(\w+):\s?%(?!\d)/g, '$1: 0%');
-    
+
     const genderRegex = /(Male|Female):\s?(\d+)%/gi;
     const ageRegex = /(\d{1,2}\+?|\d{1,2}-\d{1,2})\s?(?:years)?:\s?(\d+)%/gi;
 
@@ -845,6 +852,16 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     const ageCanvas = document.getElementById('ageChart') as HTMLCanvasElement | null;
 
     if (isGenderDataValid && genderCanvas) {
+      let highlightIndexGender = -1;
+      if (this.sex) {
+        highlightIndexGender = genderData.labels.findIndex(label =>
+          label.toLowerCase() === this.sex.toLowerCase()
+        );
+      }
+
+      const highlightBorderColorGender = 'yellow'; // Personnalisable
+      const highlightBorderWidthGender = 2; // Personnalisable
+
       new Chart(genderCanvas, {
         type: 'pie',
         data: {
@@ -852,28 +869,97 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
           datasets: [{
             data: genderData.values,
             backgroundColor: ['rgb(185, 85, 247)', 'rgb(247, 85, 239)'],
-            borderWidth: 0,
-            hoverOffset: 4
+            borderColor: genderData.values.map((_, i) =>
+              i === highlightIndexGender ? highlightBorderColorGender : 'transparent'
+            ),
+            borderWidth: genderData.values.map((_, i) =>
+              i === highlightIndexGender ? highlightBorderWidthGender : 0
+            ),
+            hoverOffset: 6
           }]
         },
         options: {
           responsive: true,
           plugins: {
-            legend: { position: 'bottom', labels: { color: 'white' } }
+            legend: { display: false }, // ✅ Légende supprimée
+            datalabels: {
+              color: 'white',
+              font: { weight: 'bold', size: 12 },
+              align: 'center',
+              formatter: (value: number, context) => {
+                const label = context.chart.data.labels?.[context.dataIndex];
+                return value > 0 ? `${label}\n${value}%` : ''; // ✅ Nom + % avec retour à la ligne
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: (context) => {
+                  const value = context.parsed; // La valeur correspond au pourcentage
+                  return `${value}% of total cases`;
+                }
+              }
+            }
+
+          },
+          layout: { padding: 0 },
+          elements: {
+            arc: {
+              spacing: 0.35
+            }
           }
-        }
+        },
+        plugins: [ChartDataLabels]
       });
     }
 
+
+
+    /** ✅ AGE BAR CHART */
     if (isAgeDataValid && ageCanvas) {
+      const customAgeLabels = [
+        '0-5', '6-10', '11-15', '16-20', '21-25', '26-30',
+        '31-35', '36-40', '41-45', '46-50', '51-55',
+        '56-60', '61-65', '65+'
+      ];
+
+      // ✅ Étape 1 : Déterminer l'index basé sur l'âge de l'utilisateur
+      let highlightIndex = -1;
+      if (this.age !== null) {
+        const userAge = this.age;
+        for (let i = 0; i < customAgeLabels.length; i++) {
+          const label = customAgeLabels[i];
+          if (label.includes('+')) {
+            const min = parseInt(label);
+            if (userAge >= min) {
+              highlightIndex = i;
+            }
+          } else {
+            const [min, max] = label.split('-').map(n => parseInt(n));
+            if (userAge >= min && userAge <= max) {
+              highlightIndex = i;
+              break;
+            }
+          }
+        }
+      }
+
+      const highlightBorderColor = 'yellow';
+      const highlightBorderWidth = 2;
+
       new Chart(ageCanvas, {
         type: 'bar',
         data: {
-          labels: ageData.labels,
+          labels: customAgeLabels,
           datasets: [{
             label: 'Age Distribution (%)',
             data: ageData.values,
-            backgroundColor: 'rgb(247, 85, 239)',
+            backgroundColor: 'rgb(185, 85, 247)',
+            borderColor: ageData.values.map((_, i) =>
+              i === highlightIndex ? highlightBorderColor : 'transparent'
+            ),
+            borderWidth: ageData.values.map((_, i) =>
+              i === highlightIndex ? highlightBorderWidth : 0
+            ),
             borderRadius: 4
           }]
         },
@@ -881,16 +967,49 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
           responsive: true,
           maintainAspectRatio: false,
           scales: {
-            x: { ticks: { color: 'white' } },
-            y: { ticks: { color: 'white' }, beginAtZero: true }
+            x: {
+              title: {
+                display: true,
+                text: 'Age Groups',
+                color: 'white',
+                font: { size: 12, weight: 'bold' }
+              },
+              ticks: { color: 'white' }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Percentage (%)',
+                color: 'white',
+                font: { size: 12, weight: 'bold' }
+              },
+              ticks: { color: 'white' },
+              beginAtZero: true,
+              suggestedMax: Math.max(...ageData.values) + 5
+            }
           },
           plugins: {
-            legend: { display: false }
+            legend: { display: false },
+            datalabels: {
+              color: 'white',
+              anchor: 'end',
+              align: 'top',
+              font: { weight: 'bold' },
+              formatter: (value: number) => value > 0 ? value + '%' : ''
+            },
+            tooltip: {
+              callbacks: {
+                label: (context) => `${context.parsed.y}% of total cases`
+              }
+            }
           }
-        }
+        },
+        plugins: [ChartDataLabels]
       });
     }
+
   }
+
 
 
   splitTreatmentKeys(keys: string[]): [string[], string[]] {
@@ -898,10 +1017,10 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     return [keys.slice(0, mid), keys.slice(mid)];
   }
 
-  
+
   setInitialActiveTab(): void {
     const hasGeneral = !!this.response?.treatment?.disease_treatment &&
-                      Object.keys(this.response.treatment.disease_treatment).length > 0;
+      Object.keys(this.response.treatment.disease_treatment).length > 0;
 
     const symptoms = this.getSymptomList(this.response?.treatment?.symptom_treatments);
 

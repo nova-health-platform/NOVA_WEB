@@ -266,7 +266,7 @@
 
         <!-- Boutons -->
         <div class="flex justify-end">
-          <div class="mt-4 bg-white/3 p-2 rounded-xl shadow-xl flex gap-2">
+          <div class="mt-4 bg-white/3 p-2 rounded-xl flex gap-2">
             <button (click)="resetBodySelection()"
               class="cursor-pointer rounded-md px-5 py-2.5 text-sm font-medium bg-pink-500/10 border-2 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
               Reset
@@ -280,7 +280,7 @@
         </div>
       </div>
 
-      <div *ngIf="currentClarification" class="w-min mx-auto p-6 text-center bg-white/1 rounded-xl shadow-xl -mt-35">
+      <div *ngIf="currentClarification" class="w-min mx-auto p-6 text-center bg-white/1 rounded-xl -mt-35">
         <div class="text-xl font-semibold mb-6 text-white whitespace-nowrap px-6">
           {{ currentClarification.question }}
         </div>
@@ -300,7 +300,7 @@
           offer an accurate, data-driven health insight.
         </p>
         <div>
-          <div class="bg-white/3 p-3 rounded-xl shadow-xl max-w-6xl mx-auto text-white">
+          <div class="bg-white/3 p-3 rounded-xl max-w-6xl mx-auto text-white">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
               <!-- LEFT COLUMN -->
               <div class="flex flex-col h-full gap-4">
@@ -474,48 +474,53 @@
               age groups and genders are most commonly affected. The data is based on aggregated clinical patterns and
               helps contextualize the diagnosis within a broader population profile.
             </p>
-            <div class="max-w-6xl mx-auto mt-8 text-white">
-              <div class="bg-white/3 p-3 rounded-xl shadow-xl">
-                <div class="grid gap-4" [ngClass]="getDemographicsGridClass()">
 
-                  <!-- Pie Chart (2/5) -->
+            <div class="max-w-6xl mx-auto mt-8 text-white">
+              <div class="bg-white/3 p-3 rounded-xl">
+                <div class="grid grid-cols-5 gap-4 items-stretch">
+
+                  <!-- ✅ Gender Distribution -->
                   <div class="col-span-2" *ngIf="showGenderChart">
                     <div
-                      class="bg-purple-500/10 p-4 rounded-xl shadow-md h-100 flex flex-col border border-purple-500/80">
+                      class="bg-purple-500/10 p-4 rounded-xl shadow-md border border-purple-500/80 h-full flex flex-col justify-between">
+
+                      <!-- Titre -->
                       <h3 class="text-2xl font-bold mb-5 text-white text-left">Gender Distribution</h3>
-                      <div class="rounded-xl shadow">
-                        <div
-                          class=" h-full w-full bg-purple-500/10 rounded-xl flex-grow flex justify-center items-center overflow-hidden">
-                          <div class="w-49 h-49 mt-4 mb-2">
-                            <canvas id="genderChart" class="w-full h-full"></canvas>
-                          </div>
+
+                      <!-- Graph avec hauteur fixe -->
+                      <div class="bg-purple-500/10 rounded-xl h-70 flex items-center justify-center p-4">
+                        <div class="w-full aspect-square max-w-[250px]">
+                          <canvas id="genderChart" class="w-full h-full"></canvas>
                         </div>
                       </div>
-                      <div class="overflow-x-auto rounded-xl shadow mt-4">
-                        <div class="min-w-full text-sm text-left text-white table-auto rounded-xl bg-purple-500/10">
-                          <p class="px-4 py-3 text-justify">This pie chart represents the distribution of disease cases
-                            between the sexes (men and women).</p>
-                        </div>
+
+                      <!-- Description uniforme -->
+                      <div
+                        class="rounded-xl shadow mt-4 bg-purple-500/10 p-4 text-center min-h-[60px] flex items-center justify-center">
+                        <p class="text-sm">This pie chart represents the distribution of disease cases between the sexes
+                          (men and women).</p>
                       </div>
                     </div>
                   </div>
 
-                  <!-- Bar Chart (3/5) -->
+                  <!-- ✅ Age Distribution -->
                   <div class="col-span-3" *ngIf="showAgeChart">
                     <div
-                      class="bg-purple-500/10 p-4 rounded-xl shadow-md h-100 flex flex-col border border-purple-500/80">
-                      <h3 class="text-2xl font-bold mb-5 text-white text-left">Age Distribution</h3>
-                      <div class="flex-grow relative rounded-xl">
-                        <div class="absolute inset-0 w-full h-full bg-purple-500/10 rounded-xl">
-                          <canvas id="ageChart" class="mx-4 my-2"></canvas>
+                      class="bg-purple-500/10 p-4 rounded-xl shadow-md border border-purple-500/80 h-full flex flex-col justify-between">
 
-                        </div>
+                      <!-- Titre -->
+                      <h3 class="text-2xl font-bold mb-5 text-white text-left">Age Distribution</h3>
+
+                      <!-- Graph (même hauteur que celui de gauche) -->
+                      <div class="bg-purple-500/10 rounded-xl h-70 flex items-center justify-center py-4 px-2">
+                        <canvas id="ageChart" class="w-full h-full"></canvas>
                       </div>
-                      <div class="overflow-x-auto rounded-xl shadow mt-4">
-                        <div class="min-w-full text-sm text-left text-white table-auto rounded-xl bg-purple-500/10">
-                          <p class="px-4 py-3 text-justify">This bar chart shows the frequency of cases by age group,
-                            highlighting the groups most affected.</p>
-                        </div>
+
+                      <!-- Description uniforme -->
+                      <div
+                        class="rounded-xl shadow mt-4 bg-purple-500/10 p-4 text-center h-full flex items-center justify-center">
+                        <p class="text-sm">This bar chart shows the frequency of cases by age group, highlighting the
+                          groups most affected.</p>
                       </div>
                     </div>
                   </div>
@@ -524,7 +529,6 @@
               </div>
             </div>
           </div>
-
         </div>
 
 
@@ -540,7 +544,7 @@
               dosages, duration, and alternatives to help guide patient care decisions.
             </p>
             <div class="max-w-6xl mx-auto mt-8 text-white">
-              <div class="bg-white/3 p-3 rounded-xl shadow-xl">
+              <div class="bg-white/3 p-3 rounded-xl">
                 <div class="flex flex-col">
                   <div class="flex gap-4 items-stretch">
 
@@ -698,26 +702,26 @@
 
                               <!-- 💊 Médicaments -->
                               <div class="w-full text-sm shadow-md p-4 rounded-xl bg-blue-700/20">
-                                <h5 class="font-semibold text-blue-300 text-left text-lg mb-2 tracking-wider">
+                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
                                   Medications
                                 </h5>
                                 <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-400">OTC Medications</div>
+                                  <div class="font-semibold text-blue-300">OTC Medications</div>
                                   <div class="text-right">{{
                                     response.treatment.symptom_treatments[symptom].otc_medications }}</div>
                                 </div>
                                 <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-400">Prescription</div>
+                                  <div class="font-semibold text-blue-300">Prescription</div>
                                   <div class="text-right">{{
                                     response.treatment.symptom_treatments[symptom].prescription_medications }}</div>
                                 </div>
                                 <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-400">Alternative</div>
+                                  <div class="font-semibold text-blue-300">Alternative</div>
                                   <div class="text-right">{{ response.treatment.symptom_treatments[symptom].alternative
                                     }}</div>
                                 </div>
                                 <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-400">Type</div>
+                                  <div class="font-semibold text-blue-300">Type</div>
                                   <div class="text-right">{{
                                     response.treatment.symptom_treatments[symptom].treatment_type }}</div>
                                 </div>
@@ -725,26 +729,26 @@
 
                               <!-- 📋 Posologie -->
                               <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
-                                <h5 class="font-semibold text-blue-300 text-left text-lg mb-2 tracking-wider">
+                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
                                   Posology
                                 </h5>
                                 <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-400">Dosage</div>
+                                  <div class="font-semibold text-blue-300">Dosage</div>
                                   <div class="text-right">{{ response.treatment.symptom_treatments[symptom].dosage }}
                                   </div>
                                 </div>
                                 <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-400">Frequency</div>
+                                  <div class="font-semibold text-blue-300">Frequency</div>
                                   <div class="text-right">{{ response.treatment.symptom_treatments[symptom].frequency }}
                                   </div>
                                 </div>
                                 <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-400">Duration</div>
+                                  <div class="font-semibold text-blue-300">Duration</div>
                                   <div class="text-right">{{
                                     response.treatment.symptom_treatments[symptom].recommended_duration }}</div>
                                 </div>
                                 <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-400">Route</div>
+                                  <div class="font-semibold text-blue-300">Route</div>
                                   <div class="text-right">{{
                                     response.treatment.symptom_treatments[symptom].administration_route }}</div>
                                 </div>
@@ -754,19 +758,19 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
                               <!-- ⚠️ Bloc Precautions -->
                               <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
-                                <h5 class="font-semibold text-blue-300 text-left text-lg mb-2 tracking-wider">
+                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
                                   Precautions
                                 </h5>
 
                                 <div class="space-y-2">
                                   <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
-                                    <div class="font-semibold text-blue-400">Side Effects</div>
+                                    <div class="font-semibold text-blue-300">Side Effects</div>
                                     <div class="text-right">{{
                                       response.treatment.symptom_treatments[symptom].side_effects }}</div>
                                   </div>
                                   <div
                                     class="col-span-2 border-b border-white/10 py-2 flex justify-between items-center">
-                                    <div class="font-semibold text-blue-400">Driving</div>
+                                    <div class="font-semibold text-blue-300">Driving</div>
                                     <div class="text-right">
                                       <span [ngClass]="{
             'bg-green-500 text-white': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('allowed'),
@@ -790,10 +794,10 @@
 
                               <!-- 📝 Bloc Notes -->
                               <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
-                                <h5 class="font-semibold text-blue-300 text-left text-lg mb-2 tracking-wider">
+                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
                                   Notes
                                 </h5>
-                                <p class="text-white/90 italic mt-1">{{
+                                <p class="text-white">{{
                                   response.treatment.symptom_treatments[symptom].notes }}</p>
                               </div>
                             </div>
@@ -811,7 +815,7 @@
           </div>
         </div>
         <div class="flex justify-end">
-          <div class="mt-4 bg-white/3 p-2 rounded-xl shadow-xl flex gap-2">
+          <div class="mt-4 bg-white/3 p-2 rounded-xl flex gap-2">
             <button (click)="resetForm()"
               class="cursor-pointer rounded-md px-5 py-2.5 text-sm font-medium bg-pink-500/10 border-2 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
               Analyze other symptoms

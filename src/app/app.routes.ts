@@ -10,6 +10,13 @@ import { Gad7Component } from './psy-test/gad7/gad7.component';
 import { Dass21Component } from './psy-test/dass21/dass21.component';
 import { IsiComponent } from './psy-test/isi/isi.component';
 import { BurnoutComponent } from './psy-test/burnout/burnout.component';
+import { SubscriptionComponent } from './subscription/subscription.component';
+import { SuccessComponent } from './subscription_success/subscription_success.component';
+import { CancelComponent } from './subscription_cancel/subscription_cancel.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
+import { AccountComponent } from './account/account.component';
+import { AuthGuard } from './guards/auth.guards';
 
 // Définition des routes
 export const routes: Routes = [
@@ -17,6 +24,18 @@ export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
 
     { path: 'home', component: HomeComponent },
+
+    { path: 'login', component: LoginComponent },
+
+    { path: 'register', component: RegisterComponent },
+
+    { path: 'account', component: AccountComponent, canActivate: [AuthGuard] },
+
+    { path: 'subscription', component: SubscriptionComponent },
+
+    { path: 'success', component: SuccessComponent },
+
+    { path: 'cancel', component: CancelComponent },
 
     { path: 'analysis', component: AnalysisComponent },
 

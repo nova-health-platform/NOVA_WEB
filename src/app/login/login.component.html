@@ -1,0 +1,22 @@
+<section class="min-h-screen flex justify-center items-center bg-[#101010] text-white">
+  <div class="bg-white/10 p-8 rounded-2xl shadow-xl w-full max-w-md">
+    <h1 class="text-3xl font-bold mb-6 text-center">Login</h1>
+
+    <div *ngIf="errorMessage" class="bg-red-500/20 text-red-400 p-3 rounded mb-4">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="bg-green-500/20 text-green-400 p-3 rounded mb-4">{{ successMessage }}</div>
+
+    <form (ngSubmit)="login()" class="space-y-5">
+      <input [(ngModel)]="username" name="username" placeholder="Username" class="w-full px-4 py-3 bg-[#101010] border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-pink-500" required>
+      <input [(ngModel)]="password" name="password" type="password" placeholder="Password" class="w-full px-4 py-3 bg-[#101010] border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-pink-500" required>
+
+      <button [disabled]="loading" type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 rounded-lg">
+        {{ loading ? 'Logging in...' : 'Login' }}
+      </button>
+    </form>
+
+    <p class="mt-4 text-sm text-center text-gray-400">
+      Don't have an account?
+      <a href="/register" class="text-pink-400 hover:underline">Register</a>
+    </p>
+  </div>
+</section>

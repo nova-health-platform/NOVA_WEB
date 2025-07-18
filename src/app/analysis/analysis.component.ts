@@ -6,6 +6,8 @@ import { Chart, registerables } from 'chart.js';
 
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 Chart.register(ChartDataLabels, annotationPlugin);
 
@@ -217,7 +219,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.loadSymptoms();
     this.loadSvgPaths();
 
-    this.simulateFakeResponse();
+    //this.simulateFakeResponse();
 
     // Anime la jauge si des données sont présentes
     setTimeout(() => {
@@ -859,8 +861,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         );
       }
 
-      const highlightBorderColorGender = 'yellow'; // Personnalisable
-      const highlightBorderWidthGender = 2; // Personnalisable
+      const highlightBorderColorGender = 'yellow';
+      const highlightBorderWidthGender = 2;
 
       new Chart(genderCanvas, {
         type: 'pie',
@@ -881,14 +883,14 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         options: {
           responsive: true,
           plugins: {
-            legend: { display: false }, // ✅ Légende supprimée
+            legend: { display: false },
             datalabels: {
               color: 'white',
               font: { weight: 'bold', size: 12 },
               align: 'center',
               formatter: (value: number, context) => {
                 const label = context.chart.data.labels?.[context.dataIndex];
-                return value > 0 ? `${label}\n${value}%` : ''; // ✅ Nom + % avec retour à la ligne
+                return value > 0 ? `${label}\n${value}%` : '';
               }
             },
             tooltip: {
@@ -922,7 +924,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         '56-60', '61-65', '65+'
       ];
 
-      // ✅ Étape 1 : Déterminer l'index basé sur l'âge de l'utilisateur
       let highlightIndex = -1;
       if (this.age !== null) {
         const userAge = this.age;
@@ -1031,6 +1032,148 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     } else {
       this.activeTab = '';
     }
+  }
+
+  downloadResultPDF(): void {
+    const doc = new jsPDF();
+    const today = new Date().toLocaleDateString();
+
+    /** ✅ Informations patient */
+    //const patientName = this.response?.patient_name || 'Not assigned';
+    const patientAge = this.age ? `${this.age} years` : 'Not assigned';
+    const patientGender = this.sex || 'Not assigned';
+
+    /** ✅ Diagnostic principal */
+    const disease = this.response?.predicted_disease
+      ? this.formatDiseaseLabel(this.response.predicted_disease)
+      : 'Unknown';
+    const confidence = this.response?.confidence
+      ? `${(this.response.confidence * 100).toFixed(2)}%`
+      : 'Unknown';
+    const description = this.response?.disease_info?.description || 'Not available';
+    const advice = this.response?.disease_info?.advice || 'No advice provided';
+
+    /** ✅ Indicateurs cliniques */
+    const severity = this.response?.disease_info?.severity_level || 'Unknown';
+    const contagious = this.response?.disease_info?.contagious || 'Unknown';
+    const course = this.response?.disease_info?.chronic_or_acute || 'Unknown';
+
+    /** ✅ HEADER avec Nova branding */
+    doc.setFillColor(44, 62, 80);
+    doc.rect(0, 0, 210, 30, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Nova Health Assistant', 15, 20);
+    doc.setFontSize(11);
+    doc.text(`Medical Analysis Report - ${today}`, 200, 20, { align: 'right' });
+
+    /** ✅ Patient Info */
+    doc.setTextColor(0);
+    doc.setFontSize(14);
+    doc.text('Patient Information', 15, 45);
+    doc.setFontSize(11);
+    //doc.text(`Name: ${patientName}`, 15, 55);
+    doc.text(`Age: ${patientAge}`, 15, 63);
+    doc.text(`Gender: ${patientGender}`, 15, 71);
+
+    /** ✅ Diagnostic principal */
+    doc.setFontSize(14);
+    doc.text('Diagnostic Result', 15, 85);
+    doc.setFontSize(11);
+    doc.text(`Disease: ${disease}`, 15, 95);
+    doc.text(`Confidence: ${confidence}`, 15, 103);
+
+    /** ✅ Indicateurs cliniques */
+    doc.setFontSize(14);
+    doc.text('Clinical Indicators', 15, 118);
+    doc.setFontSize(11);
+    doc.text(`Severity: ${severity}`, 15, 128);
+    doc.text(`Contagious: ${contagious}`, 15, 136);
+    doc.text(`Course: ${course}`, 15, 144);
+
+    /** ✅ Description */
+    doc.setFontSize(14);
+    doc.text('Disease Description', 15, 160);
+    doc.setFontSize(10);
+    doc.text(doc.splitTextToSize(description, 180), 15, 168);
+
+    /** ✅ Recommended Actions */
+    doc.setFontSize(14);
+    doc.text('Recommended Actions', 15, 190);
+    doc.setFontSize(10);
+    doc.text(doc.splitTextToSize(advice, 180), 15, 198);
+
+    /** ✅ Traitement général */
+    const treatment = this.response?.treatment?.disease_treatment || {};
+    autoTable(doc, {
+      startY: 220,
+      head: [['General Treatment Details', 'Value']],
+      body: [
+        ['OTC Medications', treatment.otc_medications || 'Not available'],
+        ['Prescription', treatment.prescription_medications || 'Not available'],
+        ['Alternative', treatment.alternative || 'Not available'],
+        ['Type', treatment.treatment_type || 'Not available'],
+        ['Dosage', treatment.dosage || 'Not available'],
+        ['Frequency', treatment.frequency || 'Not available'],
+        ['Duration', treatment.recommended_duration || 'Not available'],
+        ['Route', treatment.administration_route || 'Not available'],
+        ['Notes', treatment.notes || 'Not available'],
+      ],
+      theme: 'striped',
+      headStyles: { fillColor: [41, 128, 185], textColor: 255 },
+      bodyStyles: { textColor: 50 },
+    });
+
+    /** ✅ Traitements spécifiques par symptôme */
+    /** ✅ Traitements spécifiques par symptôme (enchaînés dans le PDF) */
+    if (this.response?.treatment?.symptom_treatments) {
+      const symptoms = Object.keys(this.response.treatment.symptom_treatments || {});
+      let currentY = (doc as any).lastAutoTable?.finalY || 240; // Démarrage sous le tableau précédent
+
+      symptoms.forEach((symptom) => {
+        const sympData = this.response?.treatment?.symptom_treatments?.[symptom] || {};
+
+        // ✅ Titre du bloc
+        doc.setFontSize(13);
+        doc.setTextColor(44, 62, 80);
+        doc.text(`Symptom Treatment: ${this.formatSymptom(symptom)}`, 15, currentY + 10);
+
+        // ✅ Tableau
+        autoTable(doc, {
+          startY: currentY + 15,
+          head: [['Detail', 'Value']],
+          body: [
+            ['OTC Medications', sympData.otc_medications || 'Not available'],
+            ['Prescription', sympData.prescription_medications || 'Not available'],
+            ['Alternative', sympData.alternative || 'Not available'],
+            ['Type', sympData.treatment_type || 'Not available'],
+            ['Dosage', sympData.dosage || 'Not available'],
+            ['Frequency', sympData.frequency || 'Not available'],
+            ['Duration', sympData.recommended_duration || 'Not available'],
+            ['Route', sympData.administration_route || 'Not available'],
+            ['Notes', sympData.notes || 'Not available'],
+          ],
+          theme: 'striped',
+          margin: { left: 15, right: 15 },
+          headStyles: { fillColor: [52, 152, 219], textColor: 255, fontSize: 11 },
+          bodyStyles: { textColor: 50, fontSize: 10 },
+        });
+
+        // ✅ Mise à jour pour le prochain bloc
+        currentY = (doc as any).lastAutoTable.finalY;
+      });
+    }
+
+
+    /** ✅ Footer */
+    const pageHeight = doc.internal.pageSize.height;
+    doc.setFontSize(10);
+    doc.setTextColor(150);
+    doc.text(`Generated by Nova AI Health Assistant`, 105, pageHeight - 10, { align: 'center' });
+
+    /** ✅ Téléchargement */
+    doc.save(`Nova_Analysis_${today}.pdf`);
   }
 
   submitSymptomsToApi(): void {

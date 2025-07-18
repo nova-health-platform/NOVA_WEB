@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { routes } from './app.routes'; // Import des routes
+import { routes } from './app.routes';
 
 import { HomeComponent } from './home/home.component';
 import { AnalysisComponent } from './analysis/analysis.component';

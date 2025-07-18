@@ -705,22 +705,22 @@
                                 <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
                                   Medications
                                 </h5>
-                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
                                   <div class="font-semibold text-blue-300">OTC Medications</div>
                                   <div class="text-right">{{
                                     response.treatment.symptom_treatments[symptom].otc_medications }}</div>
                                 </div>
-                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
                                   <div class="font-semibold text-blue-300">Prescription</div>
                                   <div class="text-right">{{
                                     response.treatment.symptom_treatments[symptom].prescription_medications }}</div>
                                 </div>
-                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
                                   <div class="font-semibold text-blue-300">Alternative</div>
                                   <div class="text-right">{{ response.treatment.symptom_treatments[symptom].alternative
                                     }}</div>
                                 </div>
-                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
                                   <div class="font-semibold text-blue-300">Type</div>
                                   <div class="text-right">{{
                                     response.treatment.symptom_treatments[symptom].treatment_type }}</div>
@@ -732,22 +732,22 @@
                                 <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
                                   Posology
                                 </h5>
-                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
                                   <div class="font-semibold text-blue-300">Dosage</div>
                                   <div class="text-right">{{ response.treatment.symptom_treatments[symptom].dosage }}
                                   </div>
                                 </div>
-                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
                                   <div class="font-semibold text-blue-300">Frequency</div>
                                   <div class="text-right">{{ response.treatment.symptom_treatments[symptom].frequency }}
                                   </div>
                                 </div>
-                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
                                   <div class="font-semibold text-blue-300">Duration</div>
                                   <div class="text-right">{{
                                     response.treatment.symptom_treatments[symptom].recommended_duration }}</div>
                                 </div>
-                                <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
                                   <div class="font-semibold text-blue-300">Route</div>
                                   <div class="text-right">{{
                                     response.treatment.symptom_treatments[symptom].administration_route }}</div>
@@ -763,13 +763,13 @@
                                 </h5>
 
                                 <div class="space-y-2">
-                                  <div class="col-span-2 border-b border-white/10 py-2 flex justify-between">
+                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
                                     <div class="font-semibold text-blue-300">Side Effects</div>
                                     <div class="text-right">{{
                                       response.treatment.symptom_treatments[symptom].side_effects }}</div>
                                   </div>
                                   <div
-                                    class="col-span-2 border-b border-white/10 py-2 flex justify-between items-center">
+                                    class="col-span-2 border-b border-white/20 py-2 flex justify-between items-center">
                                     <div class="font-semibold text-blue-300">Driving</div>
                                     <div class="text-right">
                                       <span [ngClass]="{
@@ -791,7 +791,6 @@
                                   </div>
                                 </div>
                               </div>
-
                               <!-- 📝 Bloc Notes -->
                               <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
                                 <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
@@ -801,12 +800,9 @@
                                   response.treatment.symptom_treatments[symptom].notes }}</p>
                               </div>
                             </div>
-
-
                           </div>
                         </div>
                       </div>
-
                     </div>
                   </div>
                 </div>
@@ -814,11 +810,17 @@
             </div>
           </div>
         </div>
-        <div class="flex justify-end">
-          <div class="mt-4 bg-white/3 p-2 rounded-xl flex gap-2">
+        <div class="flex justify-end gap-4">
+          <div class="mt-4 bg-white/3 p-2 rounded-xl">
+            <button (click)="downloadResultPDF()"
+              class="cursor-pointer rounded-md px-5 py-2.5 text-sm font-medium bg-blue-700/10 border-1 border-blue-700 text-white hover:bg-blue-700 hover:text-white">
+              Download My Result
+            </button>
+          </div>
+          <div class="mt-4 bg-white/3 p-2 rounded-xl">
             <button (click)="resetForm()"
-              class="cursor-pointer rounded-md px-5 py-2.5 text-sm font-medium bg-pink-500/10 border-2 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
-              Analyze other symptoms
+              class="cursor-pointer rounded-md px-5 py-2.5 text-sm font-medium bg-pink-500/10 border-1 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
+              Analyze Other Symptoms
             </button>
           </div>
         </div>

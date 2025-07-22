@@ -18,6 +18,14 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoggedIn$ = this.authService.isLoggedIn();
+
+    this.authService.menuCloseEvent.subscribe(() => {
+      this.menuOpen = false;
+    });
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
   }
 
   toggleMenu(): void {

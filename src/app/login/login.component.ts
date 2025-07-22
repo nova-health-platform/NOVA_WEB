@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +17,7 @@ export class LoginComponent {
   errorMessage = '';
   successMessage = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   login() {
     if (!this.username || !this.password) {
@@ -29,23 +29,11 @@ export class LoginComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.http.post<any>('http://localhost:5000/api/login', {
-      username: this.username,
-      password: this.password
-    }).subscribe({
-      next: (res) => {
+    this.authService.login(this.username, this.password).subscribe({
+      next: () => {
         this.loading = false;
-        if (res.access_token && res.refresh_token) {
-          // ✅ Stock tokens + user
-          localStorage.setItem('access_token', res.access_token);
-          localStorage.setItem('refresh_token', res.refresh_token);
-          localStorage.setItem('user', JSON.stringify(res.user));
-
-          this.successMessage = 'Login successful!';
-          setTimeout(() => this.router.navigate(['/']), 1000);
-        } else {
-          this.errorMessage = 'Invalid response from server.';
-        }
+        this.successMessage = 'Login successful!';
+        setTimeout(() => this.router.navigate(['/home']), 500);
       },
       error: (err) => {
         this.loading = false;

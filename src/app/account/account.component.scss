@@ -1,0 +1,13 @@
+/* styles.css */
+.input-field {
+  @apply w-full px-4 py-2 rounded-lg bg-[#101010] border border-gray-600 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+.fixed.inset-0 {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}

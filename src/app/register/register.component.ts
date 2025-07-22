@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service'; // Vérifie le chemin
 
 @Component({
   selector: 'app-register',
@@ -18,7 +18,7 @@ export class RegisterComponent {
   errorMessage = '';
   successMessage = '';
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   register() {
     if (!this.username || !this.email || !this.password) {
@@ -30,15 +30,11 @@ export class RegisterComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.http.post<any>('http://localhost:5000/api/register', {
-      username: this.username,
-      email: this.email,
-      password: this.password
-    }).subscribe({
+    this.authService.register(this.username, this.email, this.password).subscribe({
       next: () => {
         this.loading = false;
-        this.successMessage = 'Registration successful! Redirecting to login...';
-        setTimeout(() => this.router.navigate(['/login']), 1500);
+        this.successMessage = 'Registration successful! Redirecting...';
+        setTimeout(() => this.router.navigate(['/home']), 1000); // ✅ Redirige vers la home après inscription
       },
       error: (err) => {
         this.loading = false;

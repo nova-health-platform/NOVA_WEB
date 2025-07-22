@@ -1,0 +1,177 @@
+<section class="min-h-screen bg-[#101010] flex justify-center items-start pt-24 pb-12 px-6 text-white">
+  <div class="max-w-6xl w-full space-y-10">
+
+    <!-- ✅ Infos utilisateur + Abonnement -->
+    <div class="bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-2xl shadow-lg">
+      <h2 class="text-2xl font-semibold mb-4">Account Details</h2>
+      <div *ngIf="user" class="grid md:grid-cols-2 gap-4">
+        <p><span class="text-pink-400 font-medium">Username:</span> {{ user.username }}</p>
+        <p><span class="text-pink-400 font-medium">Email:</span> {{ user.email }}</p>
+        <p>
+          <span class="text-pink-400 font-medium">Plan:</span>
+          <span [ngClass]="{
+            'text-green-400': user.subscription_plan === 'enterprise',
+            'text-yellow-400': user.subscription_plan === 'premium',
+            'text-gray-400': user.subscription_plan === 'free'
+          }">
+            {{ user.subscription_plan | titlecase }}
+          </span>
+        </p>
+        <p><span class="text-pink-400 font-medium">Joined:</span> {{ user.created_at | date }}</p>
+      </div>
+
+      <!-- ✅ Upgrade bouton -->
+      <div class="mt-4 text-right">
+        <a routerLink="/subscription"
+          class="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-lg text-white font-semibold">
+          Upgrade Plan
+        </a>
+      </div>
+    </div>
+
+    <!-- ✅ Profils -->
+    <div class="bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-2xl shadow-lg">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-semibold">Profiles</h2>
+        <span class="text-gray-400 text-sm">Max profiles : {{ user?.max_profiles || 1 }}</span>
+      </div>
+
+      <ul class="space-y-3">
+        <li *ngFor="let profile of profiles"
+          class="flex justify-between items-center p-4 bg-gray-800 rounded-xl hover:bg-gray-700 transition">
+          <div>
+            <p class="font-semibold">{{ profile.first_name }} {{ profile.last_name }}</p>
+            <p class="text-sm text-gray-400">
+              Born: {{ profile.birth_date | date:'dd/MM/yyyy' }} | {{ profile.sex }}
+            </p>
+          </div>
+          <div class="flex gap-2">
+            <button (click)="editProfile(profile)"
+              class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm">
+              Edit
+            </button>
+            <button (click)="deleteProfile(profile.id)"
+              class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+              Delete
+            </button>
+          </div>
+        </li>
+      </ul>
+
+      <!-- ✅ Add Profile -->
+      <div *ngIf="profiles.length < (user?.max_profiles || 1)" class="mt-6 bg-gray-900 p-4 rounded-xl">
+
+        <h3 class="text-lg mb-3 font-semibold">Add Profile</h3>
+        <form (ngSubmit)="createProfile()" class="grid md:grid-cols-3 gap-3">
+
+          <!-- Prénom -->
+          <input [(ngModel)]="newProfile.first_name" name="first_name" placeholder="First Name"
+            class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+
+          <!-- Nom -->
+          <input [(ngModel)]="newProfile.last_name" name="last_name" placeholder="Last Name"
+            class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+
+          <!-- Date de naissance -->
+          <input [(ngModel)]="newProfile.birth_date" name="birth_date" type="date"
+            class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+
+          <!-- Genre -->
+          <select [(ngModel)]="newProfile.sex" name="sex"
+            class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+            <option value="" disabled>Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+
+          <!-- Poids -->
+          <input [(ngModel)]="newProfile.weight" name="weight" type="number" placeholder="Weight (kg)"
+            class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+
+          <!-- Taille -->
+          <input [(ngModel)]="newProfile.height" name="height" type="number" placeholder="Height (cm)"
+            class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+
+          <!-- Bouton -->
+          <button type="submit" [disabled]="!isFormValid() || profiles.length >= user?.max_profiles" [ngClass]="{
+    'bg-pink-500 hover:bg-pink-600': isFormValid() && profiles.length < user?.max_profiles,
+    'bg-gray-600 cursor-not-allowed pointer-events-none': !isFormValid() || profiles.length >= user?.max_profiles
+  }" class="col-span-3 text-white p-3 rounded-lg font-semibold transition">
+            Add Profile
+          </button>
+
+        </form>
+      </div>
+
+    </div>
+
+    <!-- ✅ Historique -->
+    <div *ngIf="user?.subscription_plan !== 'free'"
+      class="bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-2xl shadow-lg">
+      <h2 class="text-2xl font-semibold mb-4">Analysis History</h2>
+      <ul class="space-y-3">
+        <li *ngFor="let h of history" class="p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition">
+          <p class="text-sm text-gray-400 mb-2">
+            Profile: {{ h.profile_id }} | Date: {{ h.created_at | date:'short' }}
+          </p>
+          <pre class="text-xs bg-gray-900 p-3 rounded-lg overflow-x-auto">{{ h.analysis_data | json }}</pre>
+        </li>
+      </ul>
+      <p *ngIf="user.subscription_plan === 'premium'" class="text-gray-400 text-sm mt-2">
+        Showing last 50 analyses per profile.
+      </p>
+    </div>
+
+    <!-- ✅ Message si Free -->
+    <div *ngIf="user?.subscription_plan === 'free'" class="text-center text-gray-400">
+      <p>No history available for Free accounts.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ✅ Modal pour éditer un profil -->
+<div *ngIf="showEditModal"
+  class="fixed inset-0 bg-black/50 backdrop-blur-md flex justify-center items-center z-50 transition-opacity duration-300">
+  <div class="bg-gray-900 rounded-xl p-6 max-w-lg w-full relative">
+    <button (click)="closeEditModal()"
+      class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
+
+    <h2 class="text-2xl font-semibold mb-4 text-white">Edit Profile</h2>
+    <form (ngSubmit)="updateProfile()" class="grid gap-3">
+
+      <input [(ngModel)]="selectedProfile.first_name" name="edit_first_name" placeholder="First Name"
+        class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+
+      <input [(ngModel)]="selectedProfile.last_name" name="edit_last_name" placeholder="Last Name"
+        class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+
+      <input [(ngModel)]="selectedProfile.birth_date" name="edit_birth_date" type="date"
+        class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+
+      <select [(ngModel)]="selectedProfile.sex" name="edit_sex"
+        class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+      </select>
+
+      <input [(ngModel)]="selectedProfile.weight" name="edit_weight" type="number" placeholder="Weight (kg)"
+        class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+
+      <input [(ngModel)]="selectedProfile.height" name="edit_height" type="number" placeholder="Height (cm)"
+        class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+
+      <button type="submit" [disabled]="isUpdating"
+        class="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-lg font-semibold flex justify-center items-center gap-2">
+
+        <span *ngIf="!isUpdating">Update Profile</span>
+        <svg *ngIf="isUpdating" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+          viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8z"></path>
+        </svg>
+      </button>
+
+    </form>
+  </div>
+</div>

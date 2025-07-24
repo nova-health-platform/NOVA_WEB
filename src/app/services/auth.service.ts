@@ -22,16 +22,26 @@ export class AuthService {
     return this.loggedIn.asObservable();
   }
 
-  /** ✅ Enregistre un utilisateur */
-  register(username: string, email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/register`, { username, email, password }).pipe(
+  /** ✅ Enregistre un utilisateur avec les nouveaux champs */
+  register(data: {
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
+    phone?: string;
+    country?: string;
+    region?: string;
+    consent_rgpd?: boolean;
+    consent_hipaa?: boolean;
+  }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, data).pipe(
       tap((res: any) => this.storeTokens(res))
     );
   }
 
   /** ✅ Connecte un utilisateur */
-  login(username: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, { username, password }).pipe(
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/login`, { email, password }).pipe(
       tap((res: any) => this.storeTokens(res))
     );
   }
@@ -80,10 +90,12 @@ export class AuthService {
     );
   }
 
+  /** ✅ Récupère les infos utilisateur */
   getCurrentUser(): Observable<any> {
     return this.http.get(`${this.apiUrl}/me`);
   }
 
+  /** ✅ Vérifie la session */
   checkSession() {
     return this.http.get('http://localhost:5000/api/me', {
       headers: { Authorization: `Bearer ${this.getToken()}` }
@@ -94,6 +106,5 @@ export class AuthService {
         return of(false);
       })
     );
-}
-
+  }
 }

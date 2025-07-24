@@ -11,7 +11,7 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './login.component.html'
 })
 export class LoginComponent {
-  username = '';
+  email = '';
   password = '';
   loading = false;
   errorMessage = '';
@@ -20,8 +20,8 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   login() {
-    if (!this.username || !this.password) {
-      this.errorMessage = 'Please enter username and password.';
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Please enter email and password.';
       return;
     }
 
@@ -29,7 +29,7 @@ export class LoginComponent {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.authService.login(this.username, this.password).subscribe({
+    this.authService.login(this.email, this.password).subscribe({
       next: () => {
         this.loading = false;
         this.successMessage = 'Login successful!';

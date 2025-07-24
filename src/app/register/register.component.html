@@ -6,12 +6,32 @@
     <div *ngIf="successMessage" class="bg-green-500/20 text-green-400 p-3 rounded mb-4">{{ successMessage }}</div>
 
     <form (ngSubmit)="register()" class="space-y-5">
-      <input [(ngModel)]="username" name="username" placeholder="Username"
-             class="w-full px-4 py-3 bg-[#101010] border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-pink-500" required>
-      <input [(ngModel)]="email" name="email" type="email" placeholder="Email"
-             class="w-full px-4 py-3 bg-[#101010] border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-pink-500" required>
-      <input [(ngModel)]="password" name="password" type="password" placeholder="Password"
-             class="w-full px-4 py-3 bg-[#101010] border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-pink-500" required>
+      <input [(ngModel)]="first_name" name="first_name" placeholder="First Name" class="input" required>
+      <input [(ngModel)]="last_name" name="last_name" placeholder="Last Name" class="input" required>
+      <input [(ngModel)]="email" name="email" type="email" placeholder="Email" class="input" required>
+      <input [(ngModel)]="password" name="password" type="password" placeholder="Password" class="input" required>
+      <input [(ngModel)]="phone" name="phone" type="text" placeholder="Phone" class="input">
+
+      <!-- Liste déroulante pays avec recherche -->
+      <div>
+        <input type="text" [(ngModel)]="country" name="country" placeholder="Country"
+               (input)="filterCountries($event)"
+               class="input" autocomplete="off" required>
+        <div *ngIf="filteredCountries.length > 0" class="bg-gray-800 max-h-40 overflow-y-auto rounded mt-1">
+          <div *ngFor="let c of filteredCountries" (click)="country = c.name; filteredCountries=[]"
+               class="p-2 hover:bg-pink-500 hover:text-white cursor-pointer">
+            {{ c.name }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Consentements -->
+      <div class="flex items-center">
+        <input type="checkbox" [(ngModel)]="consent_rgpd" name="consent_rgpd" class="mr-2"> RGPD Consent
+      </div>
+      <div class="flex items-center">
+        <input type="checkbox" [(ngModel)]="consent_hipaa" name="consent_hipaa" class="mr-2"> HIPAA Consent
+      </div>
 
       <button [disabled]="loading" type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 rounded-lg">
         {{ loading ? 'Registering...' : 'Register' }}

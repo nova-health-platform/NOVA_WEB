@@ -3,29 +3,47 @@
 
     <!-- ✅ Infos utilisateur + Abonnement -->
     <div class="bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-2xl shadow-lg">
-      <h2 class="text-2xl font-semibold mb-4">Account Details</h2>
-      <div *ngIf="user" class="grid md:grid-cols-2 gap-4">
-        <p><span class="text-pink-400 font-medium">Username:</span> {{ user.username }}</p>
-        <p><span class="text-pink-400 font-medium">Email:</span> {{ user.email }}</p>
-        <p>
-          <span class="text-pink-400 font-medium">Plan:</span>
-          <span [ngClass]="{
-            'text-green-400': user.subscription_plan === 'enterprise',
-            'text-yellow-400': user.subscription_plan === 'premium',
-            'text-gray-400': user.subscription_plan === 'free'
-          }">
-            {{ user.subscription_plan | titlecase }}
-          </span>
-        </p>
-        <p><span class="text-pink-400 font-medium">Joined:</span> {{ user.created_at | date }}</p>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-semibold">Account Details</h2>
+        <div class="flex gap-2">
+          <button (click)="openEditAccountModal()"
+            class="text-sm bg-pink-500 hover:bg-pink-600 px-3 py-2 rounded-lg text-white">
+            Edit Account
+          </button>
+          <button (click)="openResetPasswordModal()"
+            class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg text-white">
+            Reset Password
+          </button>
+        </div>
       </div>
 
-      <!-- ✅ Upgrade bouton -->
-      <div class="mt-4 text-right">
-        <a routerLink="/subscription"
-          class="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-lg text-white font-semibold">
-          Upgrade Plan
-        </a>
+      <div *ngIf="user" class="grid md:grid-cols-2 gap-6">
+        <div class="space-y-2">
+          <p><span class="text-pink-400 font-medium">Name:</span> {{ user.first_name }} {{ user.last_name }}</p>
+          <p><span class="text-pink-400 font-medium">Email:</span> {{ user.email }}</p>
+          <p><span class="text-pink-400 font-medium">Phone:</span> {{ user.phone || 'N/A' }}</p>
+          <p><span class="text-pink-400 font-medium">Country:</span> {{ user.country }}</p>
+        </div>
+        <div class="space-y-2">
+          <p>
+            <span class="text-pink-400 font-medium">Plan:</span>
+            <span [ngClass]="{
+              'text-green-400': user.subscription_plan === 'enterprise',
+              'text-yellow-400': user.subscription_plan === 'premium',
+              'text-gray-400': user.subscription_plan === 'free'
+            }">
+              {{ user.subscription_plan | titlecase }}
+            </span>
+          </p>
+          <p><span class="text-pink-400 font-medium">Joined:</span> {{ user.created_at | date:'longDate' }}</p>
+          <p><span class="text-pink-400 font-medium">Subscription Start:</span>
+            {{ user.subscription_start ? (user.subscription_start | date:'longDate') : 'N/A' }}
+          </p>
+          <p><span class="text-pink-400 font-medium">Subscription End:</span>
+            {{ user.subscription_end ? (user.subscription_end | date:'longDate') : 'N/A' }}
+          </p>
+          <p><span class="text-pink-400 font-medium">Max Profiles:</span> {{ user.max_profiles }}</p>
+        </div>
       </div>
     </div>
 
@@ -60,49 +78,116 @@
 
       <!-- ✅ Add Profile -->
       <div *ngIf="profiles.length < (user?.max_profiles || 1)" class="mt-6 bg-gray-900 p-4 rounded-xl">
-
         <h3 class="text-lg mb-3 font-semibold">Add Profile</h3>
-        <form (ngSubmit)="createProfile()" class="grid md:grid-cols-3 gap-3">
+        <form (ngSubmit)="createProfile()" class="grid gap-3">
 
-          <!-- Prénom -->
+          <!-- Champs obligatoires -->
           <input [(ngModel)]="newProfile.first_name" name="first_name" placeholder="First Name"
-            class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
-
-          <!-- Nom -->
+            class="p-3 rounded-lg bg-gray-800 text-white" required>
           <input [(ngModel)]="newProfile.last_name" name="last_name" placeholder="Last Name"
-            class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
-
-          <!-- Date de naissance -->
+            class="p-3 rounded-lg bg-gray-800 text-white" required>
           <input [(ngModel)]="newProfile.birth_date" name="birth_date" type="date"
-            class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
-
-          <!-- Genre -->
-          <select [(ngModel)]="newProfile.sex" name="sex"
-            class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+            class="p-3 rounded-lg bg-gray-800 text-white" required>
+          <select [(ngModel)]="newProfile.sex" name="sex" class="p-3 rounded-lg bg-gray-800 text-white" required>
             <option value="" disabled>Select Gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
           </select>
-
-          <!-- Poids -->
           <input [(ngModel)]="newProfile.weight" name="weight" type="number" placeholder="Weight (kg)"
-            class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
-
-          <!-- Taille -->
+            class="p-3 rounded-lg bg-gray-800 text-white">
           <input [(ngModel)]="newProfile.height" name="height" type="number" placeholder="Height (cm)"
-            class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+            class="p-3 rounded-lg bg-gray-800 text-white">
 
-          <!-- Bouton -->
-          <button type="submit" [disabled]="!isFormValid() || profiles.length >= user?.max_profiles" [ngClass]="{
-    'bg-pink-500 hover:bg-pink-600': isFormValid() && profiles.length < user?.max_profiles,
-    'bg-gray-600 cursor-not-allowed pointer-events-none': !isFormValid() || profiles.length >= user?.max_profiles
-  }" class="col-span-3 text-white p-3 rounded-lg font-semibold transition">
-            Add Profile
+          <!-- ✅ Bouton pour afficher les champs avancés -->
+          <button type="button" (click)="toggleAdvanced()"
+            class="col-span-3 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg">
+            {{ showAdvanced ? 'Hide Advanced Details' : 'Add Advanced Details' }}
           </button>
 
+          <!-- ✅ Section déroulante -->
+          <div *ngIf="showAdvanced" class="col-span-3 space-y-4 bg-gray-800 p-4 rounded-lg">
+
+            <!-- Allergies -->
+            <h4 class="text-lg font-semibold text-pink-400">Allergies</h4>
+            <div *ngFor="let allergy of newProfile.allergies; let i=index" class="flex gap-2">
+              <input [(ngModel)]="allergy.substance" placeholder="Substance" name="allergy_{{i}}"
+                class="p-2 rounded bg-gray-900 text-white">
+              <input [(ngModel)]="allergy.severity" placeholder="Severity" name="severity_{{i}}"
+                class="p-2 rounded bg-gray-900 text-white">
+              <button type="button" (click)="removeItem('allergies', i)" class="text-red-400">X</button>
+            </div>
+            <button type="button" (click)="addItemToNewProfile('allergies')" class="bg-pink-500 px-3 py-1 rounded">+ Add
+              Allergy</button>
+
+            <!-- Chronic Conditions -->
+            <h4 class="text-lg font-semibold text-pink-400">Chronic Conditions</h4>
+            <div *ngFor="let cond of newProfile.chronic_conditions; let i=index" class="flex gap-2">
+              <input [(ngModel)]="cond.condition_name" placeholder="Condition Name" name="condition_{{i}}"
+                class="p-2 rounded bg-gray-900 text-white">
+              <input [(ngModel)]="cond.diagnosed_date" type="date" name="diagnosed_{{i}}"
+                class="p-2 rounded bg-gray-900 text-white">
+              <button type="button" (click)="removeItem('chronic_conditions', i)" class="text-red-400">X</button>
+            </div>
+            <button type="button" (click)="addItemToNewProfile('chronic_conditions')"
+              class="bg-pink-500 px-3 py-1 rounded">+ Add Condition</button>
+
+            <!-- Surgeries -->
+            <h4 class="text-lg font-semibold text-pink-400">Surgeries</h4>
+            <div *ngFor="let surg of newProfile.surgeries; let i=index" class="flex gap-2">
+              <input [(ngModel)]="surg.surgery_type" placeholder="Surgery Type" name="surgery_{{i}}"
+                class="p-2 rounded bg-gray-900 text-white">
+              <input [(ngModel)]="surg.surgery_date" type="date" name="surgery_date_{{i}}"
+                class="p-2 rounded bg-gray-900 text-white">
+              <button type="button" (click)="removeItem('surgeries', i)" class="text-red-400">X</button>
+            </div>
+            <button type="button" (click)="addItemToNewProfile('surgeries')" class="bg-pink-500 px-3 py-1 rounded">+ Add
+              Surgery</button>
+
+            <!-- Family History -->
+            <h4 class="text-lg font-semibold text-pink-400">Family History</h4>
+            <div *ngFor="let fam of newProfile.family_history; let i=index" class="flex gap-2">
+              <input [(ngModel)]="fam.relation" placeholder="Relation" name="relation_{{i}}"
+                class="p-2 rounded bg-gray-900 text-white">
+              <input [(ngModel)]="fam.condition" placeholder="Condition" name="condition_fam_{{i}}"
+                class="p-2 rounded bg-gray-900 text-white">
+              <button type="button" (click)="removeItem('family_history', i)" class="text-red-400">X</button>
+            </div>
+            <button type="button" (click)="addItemToNewProfile('family_history')"
+              class="bg-pink-500 px-3 py-1 rounded">+ Add Family History</button>
+
+            <!-- Vaccinations -->
+            <h4 class="text-lg font-semibold text-pink-400">Vaccinations</h4>
+            <div *ngFor="let vac of newProfile.vaccinations; let i=index" class="flex gap-2">
+              <input [(ngModel)]="vac.vaccine_name" placeholder="Vaccine Name" name="vaccine_{{i}}"
+                class="p-2 rounded bg-gray-900 text-white">
+              <input [(ngModel)]="vac.vaccination_date" type="date" name="vacc_date_{{i}}"
+                class="p-2 rounded bg-gray-900 text-white">
+              <button type="button" (click)="removeItem('vaccinations', i)" class="text-red-400">X</button>
+            </div>
+            <button type="button" (click)="addItemToNewProfile('vaccinations')" class="bg-pink-500 px-3 py-1 rounded">+
+              Add Vaccination</button>
+
+            <!-- Medications -->
+            <h4 class="text-lg font-semibold text-pink-400">Medications</h4>
+            <div *ngFor="let med of newProfile.medications; let i=index" class="flex gap-2">
+              <input [(ngModel)]="med.medication_name" placeholder="Medication Name" name="med_{{i}}"
+                class="p-2 rounded bg-gray-900 text-white">
+              <input [(ngModel)]="med.dosage" placeholder="Dosage" name="dosage_{{i}}"
+                class="p-2 rounded bg-gray-900 text-white">
+              <button type="button" (click)="removeItem('medications', i)" class="text-red-400">X</button>
+            </div>
+            <button type="button" (click)="addItemToNewProfile('medications')" class="bg-pink-500 px-3 py-1 rounded">+
+              Add Medication</button>
+
+          </div>
+
+          <!-- Bouton final -->
+          <button type="submit"
+            class="col-span-3 bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-lg font-semibold mt-4">
+            Add Profile
+          </button>
         </form>
       </div>
-
     </div>
 
     <!-- ✅ Historique -->
@@ -117,12 +202,8 @@
           <pre class="text-xs bg-gray-900 p-3 rounded-lg overflow-x-auto">{{ h.analysis_data | json }}</pre>
         </li>
       </ul>
-      <p *ngIf="user.subscription_plan === 'premium'" class="text-gray-400 text-sm mt-2">
-        Showing last 50 analyses per profile.
-      </p>
     </div>
 
-    <!-- ✅ Message si Free -->
     <div *ngIf="user?.subscription_plan === 'free'" class="text-center text-gray-400">
       <p>No history available for Free accounts.</p>
     </div>
@@ -130,48 +211,211 @@
   </div>
 </section>
 
-<!-- ✅ Modal pour éditer un profil -->
-<div *ngIf="showEditModal"
-  class="fixed inset-0 bg-black/50 backdrop-blur-md flex justify-center items-center z-50 transition-opacity duration-300">
+<!-- ✅ Modal Edit Account -->
+<div *ngIf="showEditAccountModal"
+  class="fixed inset-0 bg-black/50 backdrop-blur-md flex justify-center items-center z-50">
   <div class="bg-gray-900 rounded-xl p-6 max-w-lg w-full relative">
+    <button (click)="closeEditAccountModal()"
+      class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
+
+    <h2 class="text-2xl font-semibold mb-4 text-white">Edit Account Details</h2>
+    <form (ngSubmit)="updateAccount()" class="grid gap-4">
+      <input [(ngModel)]="user.first_name" name="first_name" placeholder="First Name"
+        class="p-3 rounded-lg bg-gray-800 text-white" required>
+      <input [(ngModel)]="user.last_name" name="last_name" placeholder="Last Name"
+        class="p-3 rounded-lg bg-gray-800 text-white" required>
+      <input [(ngModel)]="user.phone" name="phone" placeholder="Phone" class="p-3 rounded-lg bg-gray-800 text-white">
+
+      <!-- ✅ Auto-complétion pour pays -->
+      <input [(ngModel)]="countrySearch" (input)="filterCountries()" name="countrySearch" placeholder="Search Country"
+        class="p-3 rounded-lg bg-gray-800 text-white">
+
+      <select [(ngModel)]="user.country" name="country" class="p-3 rounded-lg bg-gray-800 text-white">
+        <option *ngFor="let c of filteredCountries" [value]="c.name">{{ c.name }}</option>
+      </select>
+
+      <button type="submit"
+        class="bg-blue-600 hover:bg-blue-500 text-white p-3 rounded-lg font-semibold flex justify-center items-center gap-2">
+        Save Changes
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ✅ Modal Edit Profile -->
+<div *ngIf="showEditModal" class="fixed inset-0 bg-black/50 backdrop-blur-md flex justify-center items-center z-50">
+  <div class="bg-gray-900 rounded-xl p-6 max-w-3xl w-full relative overflow-y-auto max-h-[90vh]">
     <button (click)="closeEditModal()"
       class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
 
     <h2 class="text-2xl font-semibold mb-4 text-white">Edit Profile</h2>
-    <form (ngSubmit)="updateProfile()" class="grid gap-3">
 
-      <input [(ngModel)]="selectedProfile.first_name" name="edit_first_name" placeholder="First Name"
-        class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+    <form (ngSubmit)="updateProfile()" class="grid gap-4">
+      <!-- ✅ Infos de base -->
+      <div class="grid md:grid-cols-2 gap-3">
+        <input [(ngModel)]="selectedProfile.first_name" name="edit_first_name" placeholder="First Name"
+          class="p-3 rounded-lg bg-gray-800 text-white" required>
 
-      <input [(ngModel)]="selectedProfile.last_name" name="edit_last_name" placeholder="Last Name"
-        class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+        <input [(ngModel)]="selectedProfile.last_name" name="edit_last_name" placeholder="Last Name"
+          class="p-3 rounded-lg bg-gray-800 text-white" required>
+      </div>
 
-      <input [(ngModel)]="selectedProfile.birth_date" name="edit_birth_date" type="date"
-        class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+      <div class="grid md:grid-cols-3 gap-3">
+        <input [(ngModel)]="selectedProfile.birth_date" name="edit_birth_date" type="date"
+          class="p-3 rounded-lg bg-gray-800 text-white" required>
 
-      <select [(ngModel)]="selectedProfile.sex" name="edit_sex"
-        class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-      </select>
+        <select [(ngModel)]="selectedProfile.sex" name="edit_sex" class="p-3 rounded-lg bg-gray-800 text-white"
+          required>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
 
-      <input [(ngModel)]="selectedProfile.weight" name="edit_weight" type="number" placeholder="Weight (kg)"
-        class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+        <input [(ngModel)]="selectedProfile.weight" name="edit_weight" type="number" placeholder="Weight (kg)"
+          class="p-3 rounded-lg bg-gray-800 text-white" required>
+      </div>
 
       <input [(ngModel)]="selectedProfile.height" name="edit_height" type="number" placeholder="Height (cm)"
-        class="p-3 rounded-lg bg-gray-800 text-white focus:ring-2 focus:ring-pink-500" required>
+        class="p-3 rounded-lg bg-gray-800 text-white" required>
 
-      <button type="submit" [disabled]="isUpdating"
-        class="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-lg font-semibold flex justify-center items-center gap-2">
-
-        <span *ngIf="!isUpdating">Update Profile</span>
-        <svg *ngIf="isUpdating" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
-          viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8z"></path>
-        </svg>
+      <!-- ✅ Bouton pour afficher les champs avancés -->
+      <button type="button" (click)="toggleAdvancedFields()"
+        class="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg">
+        {{ showAdvancedFields ? 'Hide Advanced Fields' : 'Show Advanced Fields' }}
       </button>
 
+      <!-- ✅ Champs avancés -->
+      <div *ngIf="showAdvancedFields" class="space-y-6 mt-4">
+        <!-- Allergies -->
+        <div>
+          <h3 class="text-lg font-semibold mb-2">Allergies</h3>
+          <div *ngFor="let allergy of selectedProfile.allergies; let i=index" class="grid md:grid-cols-4 gap-2 mb-2">
+            <input [(ngModel)]="allergy.allergy_type" name="edit_allergy_type_{{i}}" placeholder="Type"
+              class="p-2 bg-gray-800 rounded-lg text-white">
+            <input [(ngModel)]="allergy.substance" name="edit_allergy_substance_{{i}}" placeholder="Substance"
+              class="p-2 bg-gray-800 rounded-lg text-white">
+            <input [(ngModel)]="allergy.severity" name="edit_allergy_severity_{{i}}" placeholder="Severity"
+              class="p-2 bg-gray-800 rounded-lg text-white">
+            <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.allergies, i)"
+              class="bg-red-500 p-2 rounded-lg">X</button>
+          </div>
+          <button type="button"
+            (click)="addItemToSelectedProfile(selectedProfile.allergies, {allergy_type:'',substance:'',severity:''})"
+            class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Allergy</button>
+        </div>
+
+        <!-- Chronic Conditions -->
+        <div>
+          <h3 class="text-lg font-semibold mb-2">Chronic Conditions</h3>
+          <div *ngFor="let cond of selectedProfile.chronic_conditions; let i=index"
+            class="grid md:grid-cols-4 gap-2 mb-2">
+            <input [(ngModel)]="cond.condition_name" name="edit_condition_name_{{i}}" placeholder="Condition"
+              class="p-2 bg-gray-800 rounded-lg text-white">
+            <input [(ngModel)]="cond.diagnosed_date" name="edit_condition_date_{{i}}" type="date"
+              class="p-2 bg-gray-800 rounded-lg text-white">
+            <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.chronic_conditions, i)"
+              class="bg-red-500 p-2 rounded-lg">X</button>
+          </div>
+          <button type="button"
+            (click)="addItemToSelectedProfile(selectedProfile.chronic_conditions, {condition_name:'',diagnosed_date:''})"
+            class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Condition</button>
+        </div>
+      </div>
+
+      <!-- Surgeries -->
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Surgeries</h3>
+        <div *ngFor="let surg of selectedProfile.surgeries; let i=index" class="grid md:grid-cols-4 gap-2 mb-2">
+          <input [(ngModel)]="surg.surgery_type" name="edit_surgery_type_{{i}}" placeholder="Surgery Type"
+            class="p-2 bg-gray-800 rounded-lg text-white">
+          <input [(ngModel)]="surg.surgery_date" name="edit_surgery_date_{{i}}" type="date"
+            class="p-2 bg-gray-800 rounded-lg text-white">
+          <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.surgeries, i)"
+            class="bg-red-500 p-2 rounded-lg">X</button>
+        </div>
+        <button type="button"
+          (click)="addItemToSelectedProfile(selectedProfile.surgeries, {surgery_type:'', surgery_date:''})"
+          class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Surgery</button>
+      </div>
+
+      <!-- Family History -->
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Family History</h3>
+        <div *ngFor="let fam of selectedProfile.family_history; let i=index" class="grid md:grid-cols-4 gap-2 mb-2">
+          <input [(ngModel)]="fam.relation" name="edit_relation_{{i}}" placeholder="Relation"
+            class="p-2 bg-gray-800 rounded-lg text-white">
+          <input [(ngModel)]="fam.condition" name="edit_condition_fam_{{i}}" placeholder="Condition"
+            class="p-2 bg-gray-800 rounded-lg text-white">
+          <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.family_history, i)"
+            class="bg-red-500 p-2 rounded-lg">X</button>
+        </div>
+        <button type="button"
+          (click)="addItemToSelectedProfile(selectedProfile.family_history, {relation:'', condition:''})"
+          class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Family History</button>
+      </div>
+
+      <!-- Vaccinations -->
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Vaccinations</h3>
+        <div *ngFor="let vac of selectedProfile.vaccinations; let i=index" class="grid md:grid-cols-4 gap-2 mb-2">
+          <input [(ngModel)]="vac.vaccine_name" name="edit_vaccine_name_{{i}}" placeholder="Vaccine Name"
+            class="p-2 bg-gray-800 rounded-lg text-white">
+          <input [(ngModel)]="vac.vaccination_date" name="edit_vaccination_date_{{i}}" type="date"
+            class="p-2 bg-gray-800 rounded-lg text-white">
+          <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.vaccinations, i)"
+            class="bg-red-500 p-2 rounded-lg">X</button>
+        </div>
+        <button type="button"
+          (click)="addItemToSelectedProfile(selectedProfile.vaccinations, {vaccine_name:'', vaccination_date:''})"
+          class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Vaccination</button>
+      </div>
+
+      <!-- Medications -->
+      <div>
+        <h3 class="text-lg font-semibold mb-2">Medications</h3>
+        <div *ngFor="let med of selectedProfile.medications; let i=index" class="grid md:grid-cols-4 gap-2 mb-2">
+          <input [(ngModel)]="med.medication_name" name="edit_med_name_{{i}}" placeholder="Medication Name"
+            class="p-2 bg-gray-800 rounded-lg text-white">
+          <input [(ngModel)]="med.dosage" name="edit_dosage_{{i}}" placeholder="Dosage"
+            class="p-2 bg-gray-800 rounded-lg text-white">
+          <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.medications, i)"
+            class="bg-red-500 p-2 rounded-lg">X</button>
+        </div>
+        <button type="button"
+          (click)="addItemToSelectedProfile(selectedProfile.medications, {medication_name:'', dosage:''})"
+          class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Medication</button>
+      </div>
+
+
+      <!-- ✅ Bouton Update -->
+      <button type="submit" [disabled]="isUpdating"
+        class="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-lg font-semibold">
+        <span *ngIf="!isUpdating">Update Profile</span>
+        <span *ngIf="isUpdating">Updating...</span>
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ✅ Modal Reset Password -->
+<div *ngIf="showResetPasswordModal"
+  class="fixed inset-0 bg-black/50 backdrop-blur-md flex justify-center items-center z-50">
+  <div class="bg-gray-900 rounded-xl p-6 max-w-lg w-full relative">
+    <button (click)="closeResetPasswordModal()"
+      class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
+
+    <h2 class="text-2xl font-semibold mb-4 text-white">Reset Password</h2>
+    <form (ngSubmit)="resetPassword()" class="grid gap-4">
+      <input [(ngModel)]="resetData.old_password" name="old_password" type="password" placeholder="Current Password"
+        class="p-3 rounded-lg bg-gray-800 text-white" required>
+      <input [(ngModel)]="resetData.new_password" name="new_password" type="password" placeholder="New Password"
+        class="p-3 rounded-lg bg-gray-800 text-white" required>
+      <input [(ngModel)]="resetData.confirm_password" name="confirm_password" type="password"
+        placeholder="Confirm New Password" class="p-3 rounded-lg bg-gray-800 text-white" required>
+      <button type="submit" [disabled]="isResetting"
+        class="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-lg font-semibold">
+        <span *ngIf="!isResetting">Update Password</span>
+        <span *ngIf="isResetting">Updating...</span>
+      </button>
     </form>
   </div>
 </div>

@@ -1,0 +1,19 @@
+{
+  "vaccines": [
+    "COVID-19",
+    "Influenza",
+    "Hepatitis A",
+    "Hepatitis B",
+    "MMR (Measles, Mumps, Rubella)",
+    "Polio",
+    "Tetanus",
+    "Diphtheria",
+    "Pertussis",
+    "HPV (Human Papillomavirus)",
+    "Varicella (Chickenpox)",
+    "Meningococcal",
+    "Pneumococcal",
+    "Yellow Fever",
+    "Rabies"
+  ]
+}

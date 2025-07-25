@@ -1,0 +1,12 @@
+[
+  { "name": "Diabetes" },
+  { "name": "Hypertension" },
+  { "name": "Asthma" },
+  { "name": "COPD" },
+  { "name": "Heart Disease" },
+  { "name": "Kidney Disease" },
+  { "name": "Thyroid Disorder" },
+  { "name": "Epilepsy" },
+  { "name": "Cancer" },
+  { "name": "Other" }
+]

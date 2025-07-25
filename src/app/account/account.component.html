@@ -1,194 +1,580 @@
-<section class="min-h-screen bg-[#101010] flex justify-center items-start pt-24 pb-12 px-6 text-white">
+<section class="min-h-screen bg-[#101010] flex justify-center items-start pt-30 pb-12 px-6 text-white">
   <div class="max-w-6xl w-full space-y-10">
 
-    <!-- ✅ Infos utilisateur + Abonnement -->
     <div class="bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-2xl shadow-lg">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-semibold">Account Details</h2>
-        <div class="flex gap-2">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
+        <div>
+          <h2 class="text-3xl font-bold text-white">Account Overview</h2>
+          <p class="text-gray-400 text-sm">Manage your account settings and subscription details</p>
+        </div>
+        <div class="flex gap-3">
           <button (click)="openEditAccountModal()"
-            class="text-sm bg-pink-500 hover:bg-pink-600 px-3 py-2 rounded-lg text-white">
-            Edit Account
+            class="flex items-center gap-2 text-sm bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-lg text-white font-medium transition">
+            <i class="fas fa-user-edit"></i> Edit Account
           </button>
           <button (click)="openResetPasswordModal()"
-            class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg text-white">
-            Reset Password
+            class="flex items-center gap-2 text-sm bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg text-white font-medium transition">
+            <i class="fas fa-key"></i> Reset Password
           </button>
         </div>
       </div>
 
-      <div *ngIf="user" class="grid md:grid-cols-2 gap-6">
-        <div class="space-y-2">
-          <p><span class="text-pink-400 font-medium">Name:</span> {{ user.first_name }} {{ user.last_name }}</p>
-          <p><span class="text-pink-400 font-medium">Email:</span> {{ user.email }}</p>
-          <p><span class="text-pink-400 font-medium">Phone:</span> {{ user.phone || 'N/A' }}</p>
-          <p><span class="text-pink-400 font-medium">Country:</span> {{ user.country }}</p>
+      <!-- Account Info -->
+      <div *ngIf="user" class="grid md:grid-cols-2 gap-8 mt-4">
+        <!-- Left Column -->
+        <div class="space-y-4">
+          <div class="flex items-center gap-3">
+            <div>
+              <p class="text-xl font-semibold text-white">{{ user.first_name }} {{ user.last_name }}</p>
+              <p class="text-gray-400 text-sm">Member since {{ user.created_at | date:'longDate' }}</p>
+            </div>
+          </div>
+          <div class="text-gray-300 space-y-2">
+            <p><i class="fas fa-envelope text-pink-400 mr-2"></i> <span class="font-medium">Email:</span> {{ user.email
+              }}
+            </p>
+            <p><i class="fas fa-phone text-pink-400 mr-2"></i> <span class="font-medium">Phone:</span>
+              {{ user.phone || 'N/A' }}</p>
+            <p><i class="fas fa-globe text-pink-400 mr-2"></i> <span class="font-medium">Country:</span>
+              {{ user.country || 'N/A' }}</p>
+          </div>
         </div>
-        <div class="space-y-2">
-          <p>
-            <span class="text-pink-400 font-medium">Plan:</span>
-            <span [ngClass]="{
-              'text-green-400': user.subscription_plan === 'enterprise',
-              'text-yellow-400': user.subscription_plan === 'premium',
-              'text-gray-400': user.subscription_plan === 'free'
-            }">
-              {{ user.subscription_plan | titlecase }}
-            </span>
-          </p>
-          <p><span class="text-pink-400 font-medium">Joined:</span> {{ user.created_at | date:'longDate' }}</p>
-          <p><span class="text-pink-400 font-medium">Subscription Start:</span>
-            {{ user.subscription_start ? (user.subscription_start | date:'longDate') : 'N/A' }}
-          </p>
-          <p><span class="text-pink-400 font-medium">Subscription End:</span>
-            {{ user.subscription_end ? (user.subscription_end | date:'longDate') : 'N/A' }}
-          </p>
-          <p><span class="text-pink-400 font-medium">Max Profiles:</span> {{ user.max_profiles }}</p>
+
+        <!-- Right Column -->
+        <div class="bg-gray-800 p-4 rounded-xl border border-gray-700">
+          <h3 class="text-lg font-semibold text-white mb-4">Subscription Details</h3>
+
+          <!-- ✅ Grid 2 colonnes -->
+          <div class="grid grid-cols-2 gap-4 text-gray-300">
+            <p><span class="font-medium">Plan: </span>
+              <span [ngClass]="{
+            'text-green-400': user.subscription_plan === 'enterprise',
+            'text-yellow-400': user.subscription_plan === 'premium',
+            'text-gray-400': user.subscription_plan === 'free'
+          }">{{ user.subscription_plan | titlecase }}</span>
+            </p>
+            <p><span class="font-medium">Max Profiles:</span> {{ user.max_profiles }}</p>
+
+            <p><span class="font-medium">Start Date:</span>
+              {{ user.subscription_start ? (user.subscription_start | date:'longDate') : 'N/A' }}
+            </p>
+            <p><span class="font-medium">End Date:</span>
+              {{ user.subscription_end ? (user.subscription_end | date:'longDate') : 'N/A' }}
+            </p>
+          </div>
+
+          <!-- Upgrade Button -->
+          <div class="mt-6 text-center">
+            <a routerLink="/subscription"
+              class="block w-full text-center bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-lg text-white font-semibold">
+              Upgrade Plan
+            </a>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- ✅ Profils -->
+
     <div class="bg-gradient-to-br from-gray-900 to-gray-800 p-6 rounded-2xl shadow-lg">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-2xl font-semibold">Profiles</h2>
-        <span class="text-gray-400 text-sm">Max profiles : {{ user?.max_profiles || 1 }}</span>
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-6">
+        <div>
+          <h2 class="text-3xl font-bold text-white">Profiles</h2>
+          <p class="text-gray-400 text-sm">Manage all patient profiles for analysis</p>
+        </div>
+        <span class="text-gray-400 text-sm bg-gray-700 px-3 py-1 rounded-lg">
+          Max: {{ user?.max_profiles || 1 }}
+        </span>
       </div>
 
-      <ul class="space-y-3">
-        <li *ngFor="let profile of profiles"
-          class="flex justify-between items-center p-4 bg-gray-800 rounded-xl hover:bg-gray-700 transition">
+      <!-- Liste des profils -->
+      <div *ngIf="profiles.length > 0; else noProfiles" class="space-y-4">
+        <div *ngFor="let profile of profiles"
+          class="p-4 bg-gray-800 rounded-xl shadow-md flex justify-between items-center hover:bg-gray-700 transition group">
           <div>
-            <p class="font-semibold">{{ profile.first_name }} {{ profile.last_name }}</p>
-            <p class="text-sm text-gray-400">
-              Born: {{ profile.birth_date | date:'dd/MM/yyyy' }} | {{ profile.sex }}
+            <h3 class="text-lg font-semibold text-white">{{ profile.first_name }} {{ profile.last_name }}</h3>
+            <p class="text-gray-400 text-sm">
+              <i class="fas fa-birthday-cake text-pink-400"></i> Born: {{ profile.birth_date | date:'dd/MM/yyyy' }} |
+              <i class="fas fa-venus-mars text-pink-400"></i> {{ profile.sex }}
+            </p>
+            <p class="text-gray-500 text-xs mt-1">
+              Weight: {{ profile.weight }} kg | Height: {{ profile.height }} cm
             </p>
           </div>
-          <div class="flex gap-2">
+          <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition">
             <button (click)="editProfile(profile)"
               class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm">
-              Edit
+              <i class="fas fa-edit">Edit</i>
             </button>
-            <button (click)="deleteProfile(profile.id)"
+            <button (click)="openDeleteModal(profile)"
               class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
-              Delete
+              <i class="fas fa-trash"></i> Delete
             </button>
+
           </div>
-        </li>
-      </ul>
+        </div>
+      </div>
 
-      <!-- ✅ Add Profile -->
-      <div *ngIf="profiles.length < (user?.max_profiles || 1)" class="mt-6 bg-gray-900 p-4 rounded-xl">
-        <h3 class="text-lg mb-3 font-semibold">Add Profile</h3>
-        <form (ngSubmit)="createProfile()" class="grid gap-3">
+      <!-- Aucun profil -->
+      <ng-template #noProfiles>
+        <p class="text-gray-400 text-center py-6">No profiles created yet. Start by adding one below.</p>
+      </ng-template>
 
-          <!-- Champs obligatoires -->
-          <input [(ngModel)]="newProfile.first_name" name="first_name" placeholder="First Name"
-            class="p-3 rounded-lg bg-gray-800 text-white" required>
-          <input [(ngModel)]="newProfile.last_name" name="last_name" placeholder="Last Name"
-            class="p-3 rounded-lg bg-gray-800 text-white" required>
-          <input [(ngModel)]="newProfile.birth_date" name="birth_date" type="date"
-            class="p-3 rounded-lg bg-gray-800 text-white" required>
-          <select [(ngModel)]="newProfile.sex" name="sex" class="p-3 rounded-lg bg-gray-800 text-white" required>
-            <option value="" disabled>Select Gender</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </select>
-          <input [(ngModel)]="newProfile.weight" name="weight" type="number" placeholder="Weight (kg)"
-            class="p-3 rounded-lg bg-gray-800 text-white">
-          <input [(ngModel)]="newProfile.height" name="height" type="number" placeholder="Height (cm)"
-            class="p-3 rounded-lg bg-gray-800 text-white">
+      <!-- ✅ Formulaire Ajout Profil -->
+      <!-- ✅ Formulaire Ajout Profil -->
+      <div *ngIf="profiles.length < (user?.max_profiles || 1)" class="mt-8 bg-gray-900 p-6 rounded-xl shadow-lg">
+        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+          <i class="fas fa-user-plus text-pink-400"></i> Add Profile
+        </h3>
 
-          <!-- ✅ Bouton pour afficher les champs avancés -->
+        <form (ngSubmit)="createProfile()" class="space-y-6">
+
+          <!-- ✅ Basic Information -->
+          <div class="grid md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-white text-sm mb-2">First Name</label>
+              <input [(ngModel)]="newProfile.first_name" name="first_name" placeholder="First Name"
+                class="w-full p-3 rounded-lg bg-gray-800 text-white" required>
+            </div>
+            <div>
+              <label class="block text-white text-sm mb-2">Last Name</label>
+              <input [(ngModel)]="newProfile.last_name" name="last_name" placeholder="Last Name"
+                class="w-full p-3 rounded-lg bg-gray-800 text-white" required>
+            </div>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-white text-sm mb-2">Birth Date</label>
+              <input [(ngModel)]="newProfile.birth_date" name="birth_date" type="date"
+                class="w-full p-3 rounded-lg bg-gray-800 text-white" required>
+            </div>
+            <div>
+              <label class="block text-white text-sm mb-2">Gender</label>
+              <select [(ngModel)]="newProfile.sex" name="sex" class="w-full p-3 rounded-lg bg-gray-800 text-white"
+                required>
+                <option value="" disabled>Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-white text-sm mb-2">Weight (kg)</label>
+              <input [(ngModel)]="newProfile.weight" name="weight" type="number" placeholder="Weight"
+                class="w-full p-3 rounded-lg bg-gray-800 text-white">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-white text-sm mb-2">Height (cm)</label>
+            <input [(ngModel)]="newProfile.height" name="height" type="number" placeholder="Height"
+              class="w-full p-3 rounded-lg bg-gray-800 text-white">
+          </div>
+
+          <!-- ✅ Toggle Advanced Fields -->
           <button type="button" (click)="toggleAdvanced()"
-            class="col-span-3 bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg">
+            class="w-full bg-gray-700 hover:bg-gray-600 text-white py-2 rounded-lg flex justify-center items-center gap-2">
+            <i class="fas" [ngClass]="showAdvanced ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
             {{ showAdvanced ? 'Hide Advanced Details' : 'Add Advanced Details' }}
           </button>
 
-          <!-- ✅ Section déroulante -->
-          <div *ngIf="showAdvanced" class="col-span-3 space-y-4 bg-gray-800 p-4 rounded-lg">
+          <!-- ✅ Advanced Medical Details -->
+          <div *ngIf="showAdvanced" class="bg-gray-800 p-6 rounded-xl space-y-8">
+            <h4 class="text-pink-400 text-xl font-bold mb-6 border-b border-gray-700 pb-2">
+              Advanced Medical Details
+            </h4>
 
-            <!-- Allergies -->
-            <h4 class="text-lg font-semibold text-pink-400">Allergies</h4>
-            <div *ngFor="let allergy of newProfile.allergies; let i=index" class="flex gap-2">
-              <input [(ngModel)]="allergy.substance" placeholder="Substance" name="allergy_{{i}}"
-                class="p-2 rounded bg-gray-900 text-white">
-              <input [(ngModel)]="allergy.severity" placeholder="Severity" name="severity_{{i}}"
-                class="p-2 rounded bg-gray-900 text-white">
-              <button type="button" (click)="removeItem('allergies', i)" class="text-red-400">X</button>
+            <div class="space-y-6">
+
+              <!-- ✅ Allergies Section -->
+              <div class="bg-gray-900 p-4 rounded-lg shadow-md">
+                <h5 class="text-lg font-semibold text-white flex items-center gap-2 mb-2">
+                  <i class="fas fa-allergies text-pink-400"></i> Allergies
+                </h5>
+                <p class="text-gray-400 text-sm mb-4">Select allergy type, substance, and severity level.</p>
+
+                <!-- ✅ Loader -->
+                <div *ngIf="loadingAllergyTypes" class="text-gray-400 text-sm mb-3">
+                  Loading allergy types...
+                </div>
+
+                <!-- ✅ Allergies List -->
+                <div *ngFor="let allergy of newProfile.allergies; let i=index"
+                  class="space-y-3 mb-4 border-b border-gray-700 pb-3">
+
+                  <!-- ✅ Allergy Type -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Allergy Type</label>
+                    <select [(ngModel)]="allergy.allergy_type" [ngModelOptions]="{standalone: true}"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                      <option value="" disabled>Select Allergy Type</option>
+                      <option *ngFor="let type of allergyTypes" [value]="type.name">{{ type.name }}</option>
+                    </select>
+
+
+                  </div>
+
+                  <!-- ✅ Substance -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Substance</label>
+                    <input [(ngModel)]="allergy.substance" placeholder="e.g., Peanuts"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  </div>
+
+                  <!-- ✅ Severity (Radio Buttons) -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Severity</label>
+                    <div class="flex gap-4">
+                      <label class="flex items-center gap-2 cursor-pointer text-white">
+                        <input type="radio" [(ngModel)]="allergy.severity" name="severity_{{i}}" value="Mild"
+                          class="accent-pink-500"> Mild
+                      </label>
+                      <label class="flex items-center gap-2 cursor-pointer text-white">
+                        <input type="radio" [(ngModel)]="allergy.severity" name="severity_{{i}}" value="Moderate"
+                          class="accent-pink-500"> Moderate
+                      </label>
+                      <label class="flex items-center gap-2 cursor-pointer text-white">
+                        <input type="radio" [(ngModel)]="allergy.severity" name="severity_{{i}}" value="Severe"
+                          class="accent-pink-500"> Severe
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- ✅ Delete Button -->
+                  <div>
+                    <button type="button" (click)="removeItem('allergies', i)"
+                      class="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-lg">
+                      Delete Allergy
+                    </button>
+                  </div>
+                </div>
+
+                <!-- ✅ Add Allergy Button -->
+                <button type="button" (click)="addItemToNewProfile('allergies')"
+                  class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-lg py-2">
+                  + Add Allergy
+                </button>
+              </div>
+
+
+              <div class="bg-gray-900 p-4 rounded-lg shadow-md">
+                <h5 class="text-lg font-semibold text-white mb-2">
+                  <i class="fas fa-heartbeat text-pink-400"></i> Chronic Conditions
+                </h5>
+                <p class="text-gray-400 text-sm mb-3">Add chronic conditions and diagnosed date.</p>
+
+                <div *ngFor="let cond of newProfile.chronic_conditions; let i = index"
+                  class="space-y-3 mb-4 border-b border-gray-700 pb-4">
+
+                  <!-- ✅ Select Type -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Condition Type</label>
+                    <select [(ngModel)]="cond.condition_name" name="condition_name_{{i}}"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                      <option value="" disabled>Select Condition</option>
+                      <option *ngFor="let type of chronicConditionTypes" [value]="type.name">{{ type.name }}</option>
+                    </select>
+                  </div>
+
+                  <!-- ✅ Input Other -->
+                  <div *ngIf="cond.condition_name === 'Other'">
+                    <label class="block text-white text-sm mb-1">Specify Other Condition</label>
+                    <input [(ngModel)]="cond.other_details" name="other_condition_{{i}}" placeholder="Enter condition"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  </div>
+
+                  <!-- ✅ Date -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Diagnosed Date</label>
+                    <input [(ngModel)]="cond.diagnosed_date" name="diagnosed_date_{{i}}" type="date"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  </div>
+
+                  <!-- ✅ Delete Button -->
+                  <button type="button" (click)="removeItem('chronic_conditions', i)"
+                    class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2">Delete Condition</button>
+                </div>
+
+                <!-- ✅ Add Button -->
+                <button type="button" (click)="addItemToNewProfile('chronic_conditions')"
+                  class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-lg py-2">+ Add Condition</button>
+              </div>
+
+
+              <!-- ✅ Surgeries -->
+              <div class="bg-gray-900 p-4 rounded-lg shadow-md">
+                <h5 class="text-lg font-semibold text-white mb-2">
+                  <i class="fas fa-user-md text-pink-400"></i> Surgeries
+                </h5>
+                <p class="text-gray-400 text-sm mb-3">
+                  Enter surgery type, date of surgery, and any additional details.
+                </p>
+
+                <div *ngFor="let surg of newProfile.surgeries; let i=index"
+                  class="space-y-3 mb-4 border-b border-gray-700 pb-4">
+
+                  <!-- ✅ Surgery Type -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Surgery Type</label>
+                    <input [(ngModel)]="surg.surgery_type" name="surgery_type_{{i}}" placeholder="e.g., Appendectomy"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  </div>
+
+                  <!-- ✅ Surgery Date -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Surgery Date</label>
+                    <input [(ngModel)]="surg.surgery_date" name="surgery_date_{{i}}" type="date"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  </div>
+
+                  <!-- ✅ Other Details -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Other Details</label>
+                    <textarea [(ngModel)]="surg.other_details" name="surgery_other_{{i}}"
+                      placeholder="Additional details (optional)"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full"></textarea>
+                  </div>
+
+                  <!-- ✅ Delete Button -->
+                  <button type="button" (click)="removeItem('surgeries', i)"
+                    class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2 mt-2 w-full">
+                    Delete Surgery
+                  </button>
+                </div>
+
+                <!-- ✅ Add Button -->
+                <button type="button" (click)="addItemToNewProfile('surgeries')"
+                  class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-lg py-2">
+                  + Add Surgery
+                </button>
+              </div>
+
+
+              <!-- ✅ Family History -->
+              <div class="bg-gray-900 p-4 rounded-lg shadow-md">
+                <h5 class="text-lg font-semibold text-white mb-2">
+                  <i class="fas fa-users text-pink-400"></i> Family History
+                </h5>
+                <p class="text-gray-400 text-sm mb-3">Select relation and condition, and add extra details if necessary.
+                </p>
+
+                <div *ngFor="let fam of newProfile.family_history; let i=index"
+                  class="space-y-3 mb-4 border-b border-gray-700 pb-4">
+
+                  <!-- ✅ Relation -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Relation</label>
+                    <select [(ngModel)]="fam.relation" name="relation_{{i}}"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                      <option value="" disabled>Select Relation</option>
+                      <option *ngFor="let rel of familyRelations" [value]="rel">{{ rel }}</option>
+                    </select>
+                  </div>
+
+                  <!-- ✅ Condition -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Condition</label>
+                    <select [(ngModel)]="fam.condition" name="condition_{{i}}"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                      <option value="" disabled>Select Condition</option>
+                      <option *ngFor="let cond of familyConditions" [value]="cond">{{ cond }}</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <!-- ✅ Other Condition Field -->
+                  <div *ngIf="fam.condition === 'Other'">
+                    <label class="block text-white text-sm mb-1">Specify Other Condition</label>
+                    <input [(ngModel)]="fam.other_condition" placeholder="Enter condition"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  </div>
+
+                  <!-- ✅ Other Details -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Additional Details</label>
+                    <textarea [(ngModel)]="fam.other_details" placeholder="Additional details"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full"></textarea>
+                  </div>
+
+                  <!-- ✅ Delete Button -->
+                  <button type="button" (click)="removeItem('family_history', i)"
+                    class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2 mt-2 w-full">
+                    Delete Family History
+                  </button>
+                </div>
+
+                <!-- ✅ Add Button -->
+                <button type="button" (click)="addItemToNewProfile('family_history')"
+                  class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-lg py-2">
+                  + Add Family History
+                </button>
+              </div>
+
+
+              <!-- ✅ Vaccinations -->
+              <div class="bg-gray-900 p-4 rounded-lg shadow-md">
+                <h5 class="text-lg font-semibold text-white mb-2">
+                  <i class="fas fa-syringe text-pink-400"></i> Vaccinations
+                </h5>
+                <p class="text-gray-400 text-sm mb-3">Select vaccine, date, dose number, and add additional details if
+                  needed.</p>
+
+                <div *ngFor="let vac of newProfile.vaccinations; let i = index"
+                  class="space-y-3 mb-4 border-b border-gray-700 pb-4">
+
+                  <!-- ✅ Vaccine Name -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Vaccine Name</label>
+                    <select [(ngModel)]="vac.vaccine_name" name="vaccine_{{i}}"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                      <option value="" disabled>Select Vaccine</option>
+                      <option *ngFor="let v of vaccinationList" [value]="v">{{ v }}</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <!-- ✅ Show "Other" field if selected -->
+                  <div *ngIf="vac.vaccine_name === 'Other'">
+                    <label class="block text-white text-sm mb-1">Other Vaccine Name</label>
+                    <input [(ngModel)]="vac.other_details" placeholder="Specify vaccine name" name="vaccine_other_{{i}}"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  </div>
+
+                  <!-- ✅ Vaccination Date -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Vaccination Date</label>
+                    <input [(ngModel)]="vac.vaccination_date" type="date" name="vaccination_date_{{i}}"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  </div>
+
+                  <!-- ✅ Dose Number -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Dose Number</label>
+                    <input [(ngModel)]="vac.dose_number" type="number" placeholder="e.g., 1" name="dose_{{i}}"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  </div>
+
+                  <!-- ✅ Additional Info -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Additional Details</label>
+                    <textarea [(ngModel)]="vac.notes" placeholder="Any additional information" name="notes_{{i}}"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full"></textarea>
+                  </div>
+
+                  <!-- ✅ Delete Button -->
+                  <button type="button" (click)="removeItem('vaccinations', i)"
+                    class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2 mt-2 w-full">
+                    Delete Vaccination
+                  </button>
+                </div>
+
+                <!-- ✅ Add Vaccination Button -->
+                <button type="button" (click)="addItemToNewProfile('vaccinations')"
+                  class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-lg py-2">
+                  + Add Vaccination
+                </button>
+              </div>
+
+
+
+              <!-- ✅ Medications -->
+              <div class="bg-gray-900 p-4 rounded-lg shadow-md">
+                <h5 class="text-lg font-semibold text-white mb-2">
+                  <i class="fas fa-pills text-pink-400"></i> Medications
+                </h5>
+                <p class="text-gray-400 text-sm mb-3">Add medication name, dosage, frequency, and additional details.
+                </p>
+
+                <div *ngFor="let med of newProfile.medications; let i=index"
+                  class="space-y-3 mb-4 border-b border-gray-700 pb-4">
+
+                  <!-- ✅ Medication Name -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Medication Name</label>
+                    <input [(ngModel)]="med.medication_name" name="medication_name_{{i}}" placeholder="e.g., Aspirin"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full" required>
+                  </div>
+
+                  <!-- ✅ Dosage (Value + Unit) -->
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="block text-white text-sm mb-1">Dosage Value</label>
+                      <input [(ngModel)]="med.dosage_value" name="dosage_value_{{i}}" type="number"
+                        placeholder="e.g., 500" class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                    </div>
+                    <div>
+                      <label class="block text-white text-sm mb-1">Unit</label>
+                      <select [(ngModel)]="med.dosage_unit" name="dosage_unit_{{i}}"
+                        class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                        <option value="mg">mg</option>
+                        <option value="ml">ml</option>
+                        <option value="g">g</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- ✅ Frequency -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Frequency</label>
+                    <div class="flex flex-wrap items-center gap-4">
+                      <label class="text-white flex items-center gap-2">
+                        <input type="radio" [(ngModel)]="med.frequency" name="frequency_{{i}}" value="Once daily"> Once
+                        daily
+                      </label>
+                      <label class="text-white flex items-center gap-2">
+                        <input type="radio" [(ngModel)]="med.frequency" name="frequency_{{i}}" value="Twice daily">
+                        Twice daily
+                      </label>
+                      <label class="text-white flex items-center gap-2">
+                        <input type="radio" [(ngModel)]="med.frequency" name="frequency_{{i}}" value="Every X hours">
+                        Every X hours
+                      </label>
+                    </div>
+                    <!-- ✅ Show input if "Every X hours" -->
+                    <div *ngIf="med.frequency === 'Every X hours'" class="mt-2">
+                      <input [(ngModel)]="med.frequency_hours" name="frequency_hours_{{i}}" type="number"
+                        placeholder="e.g., 6" class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                    </div>
+                  </div>
+
+                  <!-- ✅ Additional Details -->
+                  <div>
+                    <label class="block text-white text-sm mb-1">Other Details</label>
+                    <textarea [(ngModel)]="med.other_details" name="other_details_{{i}}" placeholder="Additional info"
+                      class="p-3 rounded-lg bg-gray-800 text-white w-full"></textarea>
+                  </div>
+
+                  <!-- ✅ Delete Button -->
+                  <button type="button" (click)="removeItem('medications', i)"
+                    class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2 mt-2 w-full">
+                    Delete Medication
+                  </button>
+                </div>
+
+                <!-- ✅ Add Medication -->
+                <button type="button" (click)="addItemToNewProfile('medications')"
+                  class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-lg py-2">
+                  + Add Medication
+                </button>
+              </div>
+
+
+
             </div>
-            <button type="button" (click)="addItemToNewProfile('allergies')" class="bg-pink-500 px-3 py-1 rounded">+ Add
-              Allergy</button>
-
-            <!-- Chronic Conditions -->
-            <h4 class="text-lg font-semibold text-pink-400">Chronic Conditions</h4>
-            <div *ngFor="let cond of newProfile.chronic_conditions; let i=index" class="flex gap-2">
-              <input [(ngModel)]="cond.condition_name" placeholder="Condition Name" name="condition_{{i}}"
-                class="p-2 rounded bg-gray-900 text-white">
-              <input [(ngModel)]="cond.diagnosed_date" type="date" name="diagnosed_{{i}}"
-                class="p-2 rounded bg-gray-900 text-white">
-              <button type="button" (click)="removeItem('chronic_conditions', i)" class="text-red-400">X</button>
-            </div>
-            <button type="button" (click)="addItemToNewProfile('chronic_conditions')"
-              class="bg-pink-500 px-3 py-1 rounded">+ Add Condition</button>
-
-            <!-- Surgeries -->
-            <h4 class="text-lg font-semibold text-pink-400">Surgeries</h4>
-            <div *ngFor="let surg of newProfile.surgeries; let i=index" class="flex gap-2">
-              <input [(ngModel)]="surg.surgery_type" placeholder="Surgery Type" name="surgery_{{i}}"
-                class="p-2 rounded bg-gray-900 text-white">
-              <input [(ngModel)]="surg.surgery_date" type="date" name="surgery_date_{{i}}"
-                class="p-2 rounded bg-gray-900 text-white">
-              <button type="button" (click)="removeItem('surgeries', i)" class="text-red-400">X</button>
-            </div>
-            <button type="button" (click)="addItemToNewProfile('surgeries')" class="bg-pink-500 px-3 py-1 rounded">+ Add
-              Surgery</button>
-
-            <!-- Family History -->
-            <h4 class="text-lg font-semibold text-pink-400">Family History</h4>
-            <div *ngFor="let fam of newProfile.family_history; let i=index" class="flex gap-2">
-              <input [(ngModel)]="fam.relation" placeholder="Relation" name="relation_{{i}}"
-                class="p-2 rounded bg-gray-900 text-white">
-              <input [(ngModel)]="fam.condition" placeholder="Condition" name="condition_fam_{{i}}"
-                class="p-2 rounded bg-gray-900 text-white">
-              <button type="button" (click)="removeItem('family_history', i)" class="text-red-400">X</button>
-            </div>
-            <button type="button" (click)="addItemToNewProfile('family_history')"
-              class="bg-pink-500 px-3 py-1 rounded">+ Add Family History</button>
-
-            <!-- Vaccinations -->
-            <h4 class="text-lg font-semibold text-pink-400">Vaccinations</h4>
-            <div *ngFor="let vac of newProfile.vaccinations; let i=index" class="flex gap-2">
-              <input [(ngModel)]="vac.vaccine_name" placeholder="Vaccine Name" name="vaccine_{{i}}"
-                class="p-2 rounded bg-gray-900 text-white">
-              <input [(ngModel)]="vac.vaccination_date" type="date" name="vacc_date_{{i}}"
-                class="p-2 rounded bg-gray-900 text-white">
-              <button type="button" (click)="removeItem('vaccinations', i)" class="text-red-400">X</button>
-            </div>
-            <button type="button" (click)="addItemToNewProfile('vaccinations')" class="bg-pink-500 px-3 py-1 rounded">+
-              Add Vaccination</button>
-
-            <!-- Medications -->
-            <h4 class="text-lg font-semibold text-pink-400">Medications</h4>
-            <div *ngFor="let med of newProfile.medications; let i=index" class="flex gap-2">
-              <input [(ngModel)]="med.medication_name" placeholder="Medication Name" name="med_{{i}}"
-                class="p-2 rounded bg-gray-900 text-white">
-              <input [(ngModel)]="med.dosage" placeholder="Dosage" name="dosage_{{i}}"
-                class="p-2 rounded bg-gray-900 text-white">
-              <button type="button" (click)="removeItem('medications', i)" class="text-red-400">X</button>
-            </div>
-            <button type="button" (click)="addItemToNewProfile('medications')" class="bg-pink-500 px-3 py-1 rounded">+
-              Add Medication</button>
-
           </div>
 
-          <!-- Bouton final -->
+          <!-- ✅ Submit -->
           <button type="submit"
-            class="col-span-3 bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-lg font-semibold mt-4">
+            class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-semibold mt-4">
             Add Profile
           </button>
         </form>
       </div>
+
+
     </div>
+
 
     <!-- ✅ Historique -->
     <div *ngIf="user?.subscription_plan !== 'free'"
@@ -244,157 +630,423 @@
 
 <!-- ✅ Modal Edit Profile -->
 <div *ngIf="showEditModal" class="fixed inset-0 bg-black/50 backdrop-blur-md flex justify-center items-center z-50">
-  <div class="bg-gray-900 rounded-xl p-6 max-w-3xl w-full relative overflow-y-auto max-h-[90vh]">
-    <button (click)="closeEditModal()"
-      class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
+  <div class="bg-gray-900 rounded-xl shadow-xl w-full max-w-3xl flex flex-col max-h-[90vh]">
 
-    <h2 class="text-2xl font-semibold mb-4 text-white">Edit Profile</h2>
+    <!-- ✅ HEADER FIXED -->
+    <div class="flex justify-between items-center p-6 border-b border-gray-700">
+      <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+        <i class="fas fa-user-edit text-pink-400"></i> Edit Profile
+      </h2>
+      <button (click)="closeEditModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+    </div>
 
-    <form (ngSubmit)="updateProfile()" class="grid gap-4">
-      <!-- ✅ Infos de base -->
-      <div class="grid md:grid-cols-2 gap-3">
-        <input [(ngModel)]="selectedProfile.first_name" name="edit_first_name" placeholder="First Name"
-          class="p-3 rounded-lg bg-gray-800 text-white" required>
+    <!-- ✅ SCROLLABLE CONTENT -->
+    <div class="overflow-y-auto p-6 space-y-6">
 
-        <input [(ngModel)]="selectedProfile.last_name" name="edit_last_name" placeholder="Last Name"
-          class="p-3 rounded-lg bg-gray-800 text-white" required>
+      <!-- ✅ Basic Info -->
+      <div>
+        <label class="block text-white font-medium mb-2">First Name</label>
+        <input [(ngModel)]="selectedProfile.first_name" name="edit_first_name"
+          class="w-full p-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 mb-4">
       </div>
 
-      <div class="grid md:grid-cols-3 gap-3">
-        <input [(ngModel)]="selectedProfile.birth_date" name="edit_birth_date" type="date"
-          class="p-3 rounded-lg bg-gray-800 text-white" required>
-
-        <select [(ngModel)]="selectedProfile.sex" name="edit_sex" class="p-3 rounded-lg bg-gray-800 text-white"
-          required>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-        </select>
-
-        <input [(ngModel)]="selectedProfile.weight" name="edit_weight" type="number" placeholder="Weight (kg)"
-          class="p-3 rounded-lg bg-gray-800 text-white" required>
+      <div>
+        <label class="block text-white font-medium mb-2">Last Name</label>
+        <input [(ngModel)]="selectedProfile.last_name" name="edit_last_name"
+          class="w-full p-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 mb-4">
       </div>
 
-      <input [(ngModel)]="selectedProfile.height" name="edit_height" type="number" placeholder="Height (cm)"
-        class="p-3 rounded-lg bg-gray-800 text-white" required>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-white font-medium mb-2">Birth Date</label>
+          <input [(ngModel)]="selectedProfile.birth_date" name="edit_birth_date" type="date"
+            class="w-full p-3 rounded-lg bg-gray-800 text-white">
+        </div>
+        <div>
+          <label class="block text-white font-medium mb-2">Gender</label>
+          <select [(ngModel)]="selectedProfile.sex" name="edit_sex"
+            class="w-full p-3 rounded-lg bg-gray-800 text-white">
+            <option value="male" class="text-black">Male</option>
+            <option value="female" class="text-black">Female</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-white font-medium mb-2">Weight (kg)</label>
+          <input [(ngModel)]="selectedProfile.weight" name="edit_weight" type="number"
+            class="w-full p-3 rounded-lg bg-gray-800 text-white">
+        </div>
+      </div>
 
-      <!-- ✅ Bouton pour afficher les champs avancés -->
+      <div>
+        <label class="block text-white font-medium mb-2">Height (cm)</label>
+        <input [(ngModel)]="selectedProfile.height" name="edit_height" type="number"
+          class="w-full p-3 rounded-lg bg-gray-800 text-white">
+      </div>
+
+      <!-- ✅ Toggle Advanced -->
       <button type="button" (click)="toggleAdvancedFields()"
-        class="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-lg">
-        {{ showAdvancedFields ? 'Hide Advanced Fields' : 'Show Advanced Fields' }}
+        class="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-lg flex justify-center items-center gap-2 mt-4">
+        <i class="fas" [ngClass]="showAdvancedFields ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+        {{ showAdvancedFields ? 'Hide Advanced Details' : 'Show Advanced Details' }}
       </button>
 
-      <!-- ✅ Champs avancés -->
-      <div *ngIf="showAdvancedFields" class="space-y-6 mt-4">
-        <!-- Allergies -->
-        <div>
-          <h3 class="text-lg font-semibold mb-2">Allergies</h3>
-          <div *ngFor="let allergy of selectedProfile.allergies; let i=index" class="grid md:grid-cols-4 gap-2 mb-2">
-            <input [(ngModel)]="allergy.allergy_type" name="edit_allergy_type_{{i}}" placeholder="Type"
-              class="p-2 bg-gray-800 rounded-lg text-white">
-            <input [(ngModel)]="allergy.substance" name="edit_allergy_substance_{{i}}" placeholder="Substance"
-              class="p-2 bg-gray-800 rounded-lg text-white">
-            <input [(ngModel)]="allergy.severity" name="edit_allergy_severity_{{i}}" placeholder="Severity"
-              class="p-2 bg-gray-800 rounded-lg text-white">
-            <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.allergies, i)"
-              class="bg-red-500 p-2 rounded-lg">X</button>
+      <!-- ✅ Advanced Medical Details -->
+      <div *ngIf="showAdvancedFields" class="mt-6 space-y-6">
+        <h4 class="text-pink-400 text-xl font-bold border-b border-gray-700 pb-2">
+          Advanced Medical Details
+        </h4>
+
+        <!-- ✅ One Card per Section -->
+        <div class="space-y-6">
+
+          <!-- ✅ Allergies -->
+          <div class="bg-gray-900 p-5 rounded-lg shadow-md">
+            <h5 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+              <i class="fas fa-allergies text-pink-400"></i> Allergies
+            </h5>
+            <p class="text-gray-400 text-sm mb-4">Select allergy type, substance, and severity.</p>
+            <div *ngFor="let allergy of selectedProfile.allergies; let i=index"
+              class="space-y-3 mb-4 border-b border-gray-700 pb-3">
+              <!-- Type -->
+              <div>
+                <label class="block text-white text-sm mb-1">Allergy Type</label>
+                <select [(ngModel)]="allergy.allergy_type" name="edit_allergy_type_{{i}}"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  <option value="" disabled>Select Allergy Type</option>
+                  <option *ngFor="let type of allergyTypes" [value]="type.name">{{ type.name }}</option>
+                </select>
+              </div>
+              <div *ngIf="allergy.allergy_type === 'Other'">
+                <label class="block text-white text-sm mb-1">Specify Allergy Type</label>
+                <input [(ngModel)]="allergy.other_details" class="p-3 rounded-lg bg-gray-800 text-white w-full">
+              </div>
+              <!-- Substance -->
+              <div>
+                <label class="block text-white text-sm mb-1">Substance</label>
+                <input [(ngModel)]="allergy.substance" class="p-3 rounded-lg bg-gray-800 text-white w-full">
+              </div>
+              <!-- Severity -->
+              <div>
+                <label class="block text-white text-sm mb-1">Severity</label>
+                <div class="flex gap-4">
+                  <label class="flex items-center gap-2 text-white">
+                    <input type="radio" [(ngModel)]="allergy.severity" name="edit_severity_{{i}}" value="Mild"
+                      class="accent-pink-500"> Mild
+                  </label>
+                  <label class="flex items-center gap-2 text-white">
+                    <input type="radio" [(ngModel)]="allergy.severity" name="edit_severity_{{i}}" value="Moderate"
+                      class="accent-pink-500"> Moderate
+                  </label>
+                  <label class="flex items-center gap-2 text-white">
+                    <input type="radio" [(ngModel)]="allergy.severity" name="edit_severity_{{i}}" value="Severe"
+                      class="accent-pink-500"> Severe
+                  </label>
+                </div>
+              </div>
+              <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.allergies, i)"
+                class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2 w-full">Delete Allergy</button>
+            </div>
+            <button type="button"
+              (click)="addItemToSelectedProfile(selectedProfile.allergies,{allergy_type:'',substance:'',severity:''})"
+              class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-lg py-2 mt-2">+ Add Allergy</button>
           </div>
-          <button type="button"
-            (click)="addItemToSelectedProfile(selectedProfile.allergies, {allergy_type:'',substance:'',severity:''})"
-            class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Allergy</button>
-        </div>
 
-        <!-- Chronic Conditions -->
-        <div>
-          <h3 class="text-lg font-semibold mb-2">Chronic Conditions</h3>
-          <div *ngFor="let cond of selectedProfile.chronic_conditions; let i=index"
-            class="grid md:grid-cols-4 gap-2 mb-2">
-            <input [(ngModel)]="cond.condition_name" name="edit_condition_name_{{i}}" placeholder="Condition"
-              class="p-2 bg-gray-800 rounded-lg text-white">
-            <input [(ngModel)]="cond.diagnosed_date" name="edit_condition_date_{{i}}" type="date"
-              class="p-2 bg-gray-800 rounded-lg text-white">
-            <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.chronic_conditions, i)"
-              class="bg-red-500 p-2 rounded-lg">X</button>
+          <!-- ✅ Chronic Conditions -->
+          <div class="bg-gray-900 p-5 rounded-lg shadow-md">
+            <h5 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+              <i class="fas fa-heartbeat text-pink-400"></i> Chronic Conditions
+            </h5>
+            <p class="text-gray-400 text-sm mb-4">Select condition and diagnosed date.</p>
+            <div *ngFor="let cond of selectedProfile.chronic_conditions; let i=index"
+              class="space-y-3 mb-4 border-b border-gray-700 pb-3">
+              <div>
+                <label class="block text-white text-sm mb-1">Condition Type</label>
+                <select [(ngModel)]="cond.condition_name" class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  <option value="" disabled>Select Condition</option>
+                  <option *ngFor="let type of chronicConditionTypes" [value]="type.name">{{ type.name }}</option>
+                </select>
+              </div>
+              <div *ngIf="cond.condition_name === 'Other'">
+                <input [(ngModel)]="cond.other_details" placeholder="Specify condition"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+              </div>
+              <div>
+                <label class="block text-white text-sm mb-1">Diagnosed Date</label>
+                <input [(ngModel)]="cond.diagnosed_date" type="date"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+              </div>
+              <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.chronic_conditions, i)"
+                class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2 w-full">Delete Condition</button>
+            </div>
+            <button type="button"
+              (click)="addItemToSelectedProfile(selectedProfile.chronic_conditions,{condition_name:'',diagnosed_date:''})"
+              class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-lg py-2 mt-2">+ Add Condition</button>
           </div>
-          <button type="button"
-            (click)="addItemToSelectedProfile(selectedProfile.chronic_conditions, {condition_name:'',diagnosed_date:''})"
-            class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Condition</button>
+
+          <!-- ✅ Surgeries -->
+          <div class="bg-gray-900 p-5 rounded-lg shadow-md">
+            <h5 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+              <i class="fas fa-user-md text-pink-400"></i> Surgeries
+            </h5>
+            <p class="text-gray-400 text-sm mb-4">Enter surgery type, date of surgery, and additional details.</p>
+
+            <div *ngFor="let surg of selectedProfile.surgeries; let i=index"
+              class="space-y-3 mb-4 border-b border-gray-700 pb-4">
+              <!-- Surgery Type -->
+              <div>
+                <label class="block text-white text-sm mb-1">Surgery Type</label>
+                <input [(ngModel)]="surg.surgery_type" name="edit_surgery_type_{{i}}" placeholder="e.g., Appendectomy"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+              </div>
+
+              <!-- Surgery Date -->
+              <div>
+                <label class="block text-white text-sm mb-1">Surgery Date</label>
+                <input [(ngModel)]="surg.surgery_date" name="edit_surgery_date_{{i}}" type="date"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+              </div>
+
+              <!-- Other Details -->
+              <div>
+                <label class="block text-white text-sm mb-1">Other Details</label>
+                <textarea [(ngModel)]="surg.other_details" name="edit_surgery_other_{{i}}" placeholder="Additional info"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full"></textarea>
+              </div>
+
+              <!-- Delete Button -->
+              <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.surgeries, i)"
+                class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2 w-full">
+                Delete Surgery
+              </button>
+            </div>
+
+            <button type="button"
+              (click)="addItemToSelectedProfile(selectedProfile.surgeries,{surgery_type:'',surgery_date:'',other_details:''})"
+              class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-lg py-2">
+              + Add Surgery
+            </button>
+          </div>
+
+
+          <!-- ✅ Family History -->
+          <div class="bg-gray-900 p-5 rounded-lg shadow-md">
+            <h5 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+              <i class="fas fa-users text-pink-400"></i> Family History
+            </h5>
+            <p class="text-gray-400 text-sm mb-4">Select relation, condition, and provide extra details if necessary.
+            </p>
+
+            <div *ngFor="let fam of selectedProfile.family_history; let i=index"
+              class="space-y-3 mb-4 border-b border-gray-700 pb-4">
+              <!-- Relation -->
+              <div>
+                <label class="block text-white text-sm mb-1">Relation</label>
+                <select [(ngModel)]="fam.relation" name="edit_relation_{{i}}"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  <option value="" disabled>Select Relation</option>
+                  <option *ngFor="let rel of familyRelations" [value]="rel">{{ rel }}</option>
+                </select>
+              </div>
+
+              <!-- Condition -->
+              <div>
+                <label class="block text-white text-sm mb-1">Condition</label>
+                <select [(ngModel)]="fam.condition" name="edit_condition_{{i}}"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  <option value="" disabled>Select Condition</option>
+                  <option *ngFor="let cond of familyConditions" [value]="cond">{{ cond }}</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <!-- Other Condition -->
+              <div *ngIf="fam.condition === 'Other'">
+                <label class="block text-white text-sm mb-1">Specify Other Condition</label>
+                <input [(ngModel)]="fam.other_condition" name="edit_other_condition_{{i}}" placeholder="Enter condition"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+              </div>
+
+              <!-- Additional Details -->
+              <div>
+                <label class="block text-white text-sm mb-1">Additional Details</label>
+                <textarea [(ngModel)]="fam.other_details" name="edit_family_details_{{i}}"
+                  placeholder="Additional details" class="p-3 rounded-lg bg-gray-800 text-white w-full"></textarea>
+              </div>
+
+              <!-- Delete Button -->
+              <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.family_history, i)"
+                class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2 w-full">
+                Delete Family History
+              </button>
+            </div>
+
+            <button type="button"
+              (click)="addItemToSelectedProfile(selectedProfile.family_history,{relation:'',condition:'',other_condition:'',other_details:''})"
+              class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-lg py-2">
+              + Add Family History
+            </button>
+          </div>
+
+
+          <!-- ✅ Vaccinations -->
+          <div class="bg-gray-900 p-5 rounded-lg shadow-md">
+            <h5 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+              <i class="fas fa-syringe text-pink-400"></i> Vaccinations
+            </h5>
+            <p class="text-gray-400 text-sm mb-4">Select vaccine, date, dose, and additional info.</p>
+
+            <div *ngFor="let vac of selectedProfile.vaccinations; let i=index"
+              class="space-y-3 mb-4 border-b border-gray-700 pb-4">
+              <!-- Vaccine -->
+              <div>
+                <label class="block text-white text-sm mb-1">Vaccine Name</label>
+                <select [(ngModel)]="vac.vaccine_name" name="edit_vaccine_name_{{i}}"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                  <option value="" disabled>Select Vaccine</option>
+                  <option *ngFor="let v of vaccinationList" [value]="v">{{ v }}</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div *ngIf="vac.vaccine_name === 'Other'">
+                <label class="block text-white text-sm mb-1">Other Vaccine Name</label>
+                <input [(ngModel)]="vac.other_details" placeholder="Specify vaccine name"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+              </div>
+
+              <!-- Vaccination Date -->
+              <div>
+                <label class="block text-white text-sm mb-1">Vaccination Date</label>
+                <input [(ngModel)]="vac.vaccination_date" type="date"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+              </div>
+
+              <!-- Dose Number -->
+              <div>
+                <label class="block text-white text-sm mb-1">Dose Number</label>
+                <input [(ngModel)]="vac.dose_number" type="number" placeholder="e.g., 1"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+              </div>
+
+              <!-- Additional Info -->
+              <div>
+                <label class="block text-white text-sm mb-1">Additional Details</label>
+                <textarea [(ngModel)]="vac.notes" placeholder="Any extra information"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full"></textarea>
+              </div>
+
+              <!-- Delete Button -->
+              <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.vaccinations, i)"
+                class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2 w-full">
+                Delete Vaccination
+              </button>
+            </div>
+
+            <button type="button"
+              (click)="addItemToSelectedProfile(selectedProfile.vaccinations,{vaccine_name:'',vaccination_date:'',dose_number:'',notes:''})"
+              class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-lg py-2">
+              + Add Vaccination
+            </button>
+          </div>
+
+
+          <!-- ✅ Medications -->
+          <div class="bg-gray-900 p-5 rounded-lg shadow-md">
+            <h5 class="text-lg font-semibold text-white mb-2 flex items-center gap-2">
+              <i class="fas fa-pills text-pink-400"></i> Medications
+            </h5>
+            <p class="text-gray-400 text-sm mb-4">Add medication name, dosage, frequency, and details.</p>
+
+            <div *ngFor="let med of selectedProfile.medications; let i=index"
+              class="space-y-3 mb-4 border-b border-gray-700 pb-4">
+              <!-- Medication Name -->
+              <div>
+                <label class="block text-white text-sm mb-1">Medication Name</label>
+                <input [(ngModel)]="med.medication_name" placeholder="e.g., Aspirin"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full">
+              </div>
+
+              <!-- Dosage Value + Unit -->
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-white text-sm mb-1">Dosage Value</label>
+                  <input [(ngModel)]="med.dosage_value" type="number" placeholder="e.g., 500"
+                    class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                </div>
+                <div>
+                  <label class="block text-white text-sm mb-1">Unit</label>
+                  <select [(ngModel)]="med.dosage_unit" class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                    <option value="mg">mg</option>
+                    <option value="ml">ml</option>
+                    <option value="g">g</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Frequency -->
+              <div>
+                <label class="block text-white text-sm mb-1">Frequency</label>
+                <div class="flex flex-wrap items-center gap-4">
+                  <label class="text-white flex items-center gap-2">
+                    <input type="radio" [(ngModel)]="med.frequency" name="edit_frequency_{{i}}" value="Once daily"> Once
+                    daily
+                  </label>
+                  <label class="text-white flex items-center gap-2">
+                    <input type="radio" [(ngModel)]="med.frequency" name="edit_frequency_{{i}}" value="Twice daily">
+                    Twice daily
+                  </label>
+                  <label class="text-white flex items-center gap-2">
+                    <input type="radio" [(ngModel)]="med.frequency" name="edit_frequency_{{i}}" value="Every X hours">
+                    Every X hours
+                  </label>
+                </div>
+                <!-- Show input if "Every X hours" -->
+                <div *ngIf="med.frequency === 'Every X hours'" class="mt-2">
+                  <input [(ngModel)]="med.frequency_hours" type="number" placeholder="e.g., 6"
+                    class="p-3 rounded-lg bg-gray-800 text-white w-full">
+                </div>
+              </div>
+
+              <!-- Additional Details -->
+              <div>
+                <label class="block text-white text-sm mb-1">Additional Details</label>
+                <textarea [(ngModel)]="med.other_details" placeholder="Additional info"
+                  class="p-3 rounded-lg bg-gray-800 text-white w-full"></textarea>
+              </div>
+
+              <!-- Delete Button -->
+              <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.medications, i)"
+                class="bg-red-500 hover:bg-red-600 text-white rounded-lg px-4 py-2 mt-2 w-full">
+                Delete Medication
+              </button>
+            </div>
+
+            <button type="button"
+              (click)="addItemToSelectedProfile(selectedProfile.medications,{medication_name:'',dosage_value:'',dosage_unit:'mg',frequency:'',frequency_hours:'',other_details:''})"
+              class="w-full bg-pink-500 hover:bg-pink-600 text-white rounded-lg py-2">
+              + Add Medication
+            </button>
+          </div>
+
+
+
         </div>
       </div>
+    </div>
 
-      <!-- Surgeries -->
-      <div>
-        <h3 class="text-lg font-semibold mb-2">Surgeries</h3>
-        <div *ngFor="let surg of selectedProfile.surgeries; let i=index" class="grid md:grid-cols-4 gap-2 mb-2">
-          <input [(ngModel)]="surg.surgery_type" name="edit_surgery_type_{{i}}" placeholder="Surgery Type"
-            class="p-2 bg-gray-800 rounded-lg text-white">
-          <input [(ngModel)]="surg.surgery_date" name="edit_surgery_date_{{i}}" type="date"
-            class="p-2 bg-gray-800 rounded-lg text-white">
-          <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.surgeries, i)"
-            class="bg-red-500 p-2 rounded-lg">X</button>
-        </div>
-        <button type="button"
-          (click)="addItemToSelectedProfile(selectedProfile.surgeries, {surgery_type:'', surgery_date:''})"
-          class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Surgery</button>
-      </div>
-
-      <!-- Family History -->
-      <div>
-        <h3 class="text-lg font-semibold mb-2">Family History</h3>
-        <div *ngFor="let fam of selectedProfile.family_history; let i=index" class="grid md:grid-cols-4 gap-2 mb-2">
-          <input [(ngModel)]="fam.relation" name="edit_relation_{{i}}" placeholder="Relation"
-            class="p-2 bg-gray-800 rounded-lg text-white">
-          <input [(ngModel)]="fam.condition" name="edit_condition_fam_{{i}}" placeholder="Condition"
-            class="p-2 bg-gray-800 rounded-lg text-white">
-          <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.family_history, i)"
-            class="bg-red-500 p-2 rounded-lg">X</button>
-        </div>
-        <button type="button"
-          (click)="addItemToSelectedProfile(selectedProfile.family_history, {relation:'', condition:''})"
-          class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Family History</button>
-      </div>
-
-      <!-- Vaccinations -->
-      <div>
-        <h3 class="text-lg font-semibold mb-2">Vaccinations</h3>
-        <div *ngFor="let vac of selectedProfile.vaccinations; let i=index" class="grid md:grid-cols-4 gap-2 mb-2">
-          <input [(ngModel)]="vac.vaccine_name" name="edit_vaccine_name_{{i}}" placeholder="Vaccine Name"
-            class="p-2 bg-gray-800 rounded-lg text-white">
-          <input [(ngModel)]="vac.vaccination_date" name="edit_vaccination_date_{{i}}" type="date"
-            class="p-2 bg-gray-800 rounded-lg text-white">
-          <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.vaccinations, i)"
-            class="bg-red-500 p-2 rounded-lg">X</button>
-        </div>
-        <button type="button"
-          (click)="addItemToSelectedProfile(selectedProfile.vaccinations, {vaccine_name:'', vaccination_date:''})"
-          class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Vaccination</button>
-      </div>
-
-      <!-- Medications -->
-      <div>
-        <h3 class="text-lg font-semibold mb-2">Medications</h3>
-        <div *ngFor="let med of selectedProfile.medications; let i=index" class="grid md:grid-cols-4 gap-2 mb-2">
-          <input [(ngModel)]="med.medication_name" name="edit_med_name_{{i}}" placeholder="Medication Name"
-            class="p-2 bg-gray-800 rounded-lg text-white">
-          <input [(ngModel)]="med.dosage" name="edit_dosage_{{i}}" placeholder="Dosage"
-            class="p-2 bg-gray-800 rounded-lg text-white">
-          <button type="button" (click)="removeItemFromSelectedProfile(selectedProfile.medications, i)"
-            class="bg-red-500 p-2 rounded-lg">X</button>
-        </div>
-        <button type="button"
-          (click)="addItemToSelectedProfile(selectedProfile.medications, {medication_name:'', dosage:''})"
-          class="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-lg">Add Medication</button>
-      </div>
-
-
-      <!-- ✅ Bouton Update -->
+    <!-- ✅ Footer Fixe -->
+    <div class="p-6 border-t border-gray-700">
       <button type="submit" [disabled]="isUpdating"
-        class="bg-pink-500 hover:bg-pink-600 text-white p-3 rounded-lg font-semibold">
+        class="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-semibold transition">
         <span *ngIf="!isUpdating">Update Profile</span>
         <span *ngIf="isUpdating">Updating...</span>
       </button>
-    </form>
+    </div>
   </div>
 </div>
+
+
+
 
 <!-- ✅ Modal Reset Password -->
 <div *ngIf="showResetPasswordModal"
@@ -417,5 +1069,45 @@
         <span *ngIf="isResetting">Updating...</span>
       </button>
     </form>
+  </div>
+</div>
+
+<!-- ✅ Modal Delete Profile -->
+<div *ngIf="showDeleteModal" class="fixed inset-0 bg-black/50 backdrop-blur-md flex justify-center items-center z-50">
+
+  <div class="bg-gray-900 rounded-xl p-6 max-w-md w-full relative shadow-lg">
+
+    <!-- Close button -->
+    <button (click)="closeDeleteModal()"
+      class="absolute top-3 right-3 text-gray-400 hover:text-white text-xl">&times;</button>
+
+    <!-- Header -->
+    <div class="flex items-center gap-3 mb-4">
+      <div class="bg-red-500 text-white rounded-full p-3">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h2 class="text-2xl font-semibold text-white">Confirm Deletion</h2>
+    </div>
+
+    <!-- Message -->
+    <p class="text-gray-300 mb-6">
+      Are you sure you want to delete
+      <span class="text-pink-400 font-semibold">{{ profileToDelete?.first_name }} {{ profileToDelete?.last_name
+        }}</span>?
+      <br>
+      <span class="text-red-400 font-medium">This action cannot be undone.</span>
+    </p>
+
+    <!-- Buttons -->
+    <div class="flex justify-end gap-3">
+      <button (click)="closeDeleteModal()"
+        class="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white font-medium">
+        Cancel
+      </button>
+      <button (click)="confirmDeleteProfile()"
+        class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium">
+        Yes, Delete
+      </button>
+    </div>
   </div>
 </div>

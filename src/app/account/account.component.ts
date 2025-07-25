@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -64,17 +64,97 @@ export class AccountComponent implements OnInit {
   filteredCountries: any[] = [];
   countrySearch = '';
 
+  showDeleteModal = false;
+  profileToDelete: any = null;
+
+  allergyTypes: any[] = [];
+  loadingAllergyTypes = false;
+
+  chronicConditionTypes: any[] = [];
+  loadingChronicConditions = false;
+
+  familyRelations: string[] = [];
+  familyConditions: string[] = [];
+
+  vaccinationList: string[] = [];
+
+  medicationList: string[] = [];
+
   /** ✅ URL API (centralisée) */
   private apiUrl = 'http://localhost:5000/api';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.loadUser();
     this.loadProfiles();
     this.loadHistory();
     this.loadCountries();
+    this.loadAllergyTypes();
+    this.loadChronicConditionTypes();
+    this.loadFamilyHistoryOptions();
+    this.loadVaccinationList();
+    this.loadMedicationList();
   }
+
+  loadMedicationList() {
+    this.http.get<{ medications: string[] }>('assets/medications.json').subscribe({
+      next: (data) => {
+        this.medicationList = data.medications;
+      },
+      error: () => console.error('Erreur lors du chargement des médicaments')
+    });
+  }
+
+  loadVaccinationList() {
+    this.http.get<{ vaccines: string[] }>('assets/vaccinations.json').subscribe({
+      next: (data) => {
+        this.vaccinationList = data.vaccines;
+        console.log('Vaccines loaded:', this.vaccinationList);
+      },
+      error: () => console.error('Erreur lors du chargement des vaccins')
+    });
+  }
+
+  loadFamilyHistoryOptions() {
+    this.http.get<any>('assets/family_history.json').subscribe({
+      next: (data) => {
+        this.familyRelations = data.relations;
+        this.familyConditions = data.conditions;
+      },
+      error: () => console.error('Erreur lors du chargement des options Family History')
+    });
+  }
+
+  loadChronicConditionTypes() {
+    this.loadingChronicConditions = true;
+    this.http.get<any[]>('assets/chronic_conditions.json').subscribe({
+      next: (data) => {
+        this.chronicConditionTypes = data;
+        this.loadingChronicConditions = false;
+      },
+      error: () => {
+        console.error('Erreur lors du chargement des conditions chroniques');
+        this.loadingChronicConditions = false;
+      }
+    });
+  }
+
+  loadAllergyTypes() {
+    this.loadingAllergyTypes = true;
+    this.http.get<any[]>('assets/allergies.json').subscribe({
+      next: (data) => {
+        this.allergyTypes = data;
+        this.loadingAllergyTypes = false;
+        this.cdr.detectChanges(); // ✅ Force l'UI à se mettre à jour
+      },
+      error: () => {
+        console.error('Erreur lors du chargement des types d’allergies');
+        this.loadingAllergyTypes = false;
+      }
+    });
+  }
+
 
   /** ✅ Charger la liste des pays */
   loadCountries() {
@@ -162,15 +242,18 @@ export class AccountComponent implements OnInit {
   /** ✅ Ajouter un élément dynamique dans le nouveau profil */
   addItemToNewProfile(type: string) {
     const itemMap: any = {
-      allergies: { substance: '', severity: '' },
-      chronic_conditions: { condition_name: '', diagnosed_date: '' },
-      surgeries: { surgery_type: '', surgery_date: '' },
-      family_history: { relation: '', condition: '' },
-      vaccinations: { vaccine_name: '', vaccination_date: '' },
-      medications: { medication_name: '', dosage: '' }
+      allergies: { allergy_type: '', other_details: '', substance: '', severity: '' },
+      chronic_conditions: { condition_name: '', other_details: '', diagnosed_date: '' },
+      surgeries: { surgery_type: '', other_details: '', surgery_date: '' },
+      family_history: { relation: '', condition: '', other_condition: '', other_details: '' },
+      vaccinations: { vaccine_name: '', other_details: '', vaccination_date: '', dose_number: '' },
+      medications: { medication_name: '', other_details: '', dosage: '', frequency: '', frequency_other_details: '' }
     };
     this.newProfile[type].push(itemMap[type]);
   }
+
+
+
 
   /** ✅ Supprimer un élément dynamique dans le nouveau profil */
   removeItem(type: string, index: number) {
@@ -315,6 +398,35 @@ export class AccountComponent implements OnInit {
         this.isResetting = false;
         alert('Failed to update password.');
       }
+    });
+  }
+
+  /** ✅ Ouvrir le modal */
+  openDeleteModal(profile: any) {
+    this.profileToDelete = profile;
+    this.showDeleteModal = true;
+    this.lockScroll();
+  }
+
+  /** ✅ Fermer le modal */
+  closeDeleteModal() {
+    this.profileToDelete = null;
+    this.showDeleteModal = false;
+    this.unlockScroll();
+  }
+
+  /** ✅ Confirmer la suppression */
+  confirmDeleteProfile() {
+    if (!this.profileToDelete) return;
+
+    this.http.delete(`${this.apiUrl}/profiles/${this.profileToDelete.id}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+    }).subscribe({
+      next: () => {
+        this.loadProfiles();
+        this.closeDeleteModal();
+      },
+      error: () => alert('Failed to delete profile.')
     });
   }
 

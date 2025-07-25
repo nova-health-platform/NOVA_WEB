@@ -1,0 +1,22 @@
+{
+  "relations": [
+    "Father",
+    "Mother",
+    "Brother",
+    "Sister",
+    "Grandfather",
+    "Grandmother",
+    "Uncle",
+    "Aunt",
+    "Other"
+  ],
+  "conditions": [
+    "Heart Disease",
+    "Diabetes",
+    "Cancer",
+    "Hypertension",
+    "Stroke",
+    "Asthma",
+    "Alzheimer"
+  ]
+}

@@ -1,0 +1,10 @@
+[
+  { "name": "Food" },
+  { "name": "Drug" },
+  { "name": "Pet" },
+  { "name": "Insect" },
+  { "name": "Latex" },
+  { "name": "Mold" },
+  { "name": "Pollen" },
+  { "name": "Other" }
+]

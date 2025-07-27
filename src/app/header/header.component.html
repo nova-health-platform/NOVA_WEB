@@ -1,4 +1,9 @@
-<header class="bg-[#101010] fixed w-full z-50">
+<header class="fixed w-[calc(100%-2rem)] mx-[1rem] z-50 transition-all duration-300 backdrop-blur-md mt-1"
+  [ngClass]="{
+    'bg-white/10 shadow-md rounded-3xl': isScrolled,
+    'bg-transparent': !isScrolled
+  }"
+>
   <div class="mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 items-center justify-between">
       <div class="flex-1 md:flex md:items-center md:gap-12">

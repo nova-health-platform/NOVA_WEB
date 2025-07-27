@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../services/auth.service'; // Assure-toi du bon chemin
+import { AuthService } from '../services/auth.service';
 import { Observable } from 'rxjs';
 
 @Component({
@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 export class HeaderComponent implements OnInit {
   isLoggedIn$!: Observable<boolean>;
   menuOpen = false;
+  isScrolled = false;
 
   constructor(private authService: AuthService, private router: RouterModule) {}
 
@@ -35,4 +36,10 @@ export class HeaderComponent implements OnInit {
   logout(): void {
     this.authService.logout();
   }
+
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.isScrolled = window.scrollY > 50;
+  }
+
 }

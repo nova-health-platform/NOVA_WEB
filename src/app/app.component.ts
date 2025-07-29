@@ -7,6 +7,9 @@ import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 
+import AOS from 'aos';
+
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -22,4 +25,11 @@ import { FooterComponent } from './footer/footer.component';
 })
 export class AppComponent {
   title = 'WEB_NOVA';
+
+  ngOnInit(): void {
+    AOS.init({
+      duration: 1000,
+      once: true
+    });
+  }
 }

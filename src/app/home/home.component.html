@@ -1,32 +1,62 @@
-<section class="pt-5 mx-5">
-    <div class="flex relative z-20 items-center overflow-hidden">
-        <div class="container mx-auto px-6 flex relative pt-16">
-            <div class="sm:w-2/3 lg:w-2/5 flex flex-col relative z-20">
-                <span class="w-90 h-0.5 bg-white mb-6">
-                </span>
-                <h1
-                    class="font-bebas-neue uppercase text-6xl sm:text-4xl font-black flex flex-col leading-none text-white mb-8">
-                    Understanding your health means protecting your life.
-                </h1>
-                <p class="bg-pink-500/10 border-3 border-pink-500 mr-10 rounded-lg p-2 italic text-sm sm:text-base text-white md:text-1xl">
+<section class="relative w-full min-h-screen flex items-center justify-center px-6 sm:px-10 lg:px-20 overflow-hidden"
+    data-aos="fade-up">
+
+    <div
+        class="absolute inset-0 bg-[url('/assets/grid.png')] bg-no-repeat bg-center bg-[length:400%_15%] translate-y-80 -z-20 select-none pointer-events-none">
+    </div>
+
+    <canvas id="splineCanvas" class="absolute inset-0 w-full h-full -z-10 scale-80 -translate-y-20" data-aos="zoom-in">
+    </canvas>
+<!-- Aura floue dans le fond -->
+<div class="absolute top-1/3 left-1/2 w-[300px] h-[300px] -translate-x-1/2 -z-30 rounded-full bg-pink-500/20 blur-3xl opacity-20 animate-pulse"></div>
+
+    <div
+        class="relative z-20 max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-2 items-center -translate-y-10 pointer-events-none">
+
+        <div class="max-w-lg mx-auto lg:mx-0 text-center lg:text-left" data-aos="fade-right">
+            <span class="inline-block w-24 h-0.5 bg-white mb-4"></span>
+
+            <h1
+                class="font-bebas-neue text-4xl sm:text-5xl lg:text-6xl font-black uppercase text-white leading-tight mb-6">
+                Understanding your health<br />
+                <span class="text-pink-500">means protecting your life.</span>
+            </h1>
+
+            <div class="bg-white/5 rounded-xl p-2 mb-6">
+                <p class="bg-pink-500/10 border border-pink-500 rounded-lg p-4 italic text-white text-sm sm:text-base">
                     “A smart assistant that analyzes your symptoms, informs you about possible illnesses and helps you
-                    better understand your health.” 💙🔍
+                    better understand your health.” 💙
                 </p>
-                <div class="flex mt-8">
+            </div>
+
+            <div class="flex flex-wrap justify-center lg:justify-start gap-4" data-aos="zoom-in-up">
+                <!-- Box autour du bouton 1 -->
+                <div class="bg-white/3 rounded-xl p-2">
                     <a href="/analysis"
-                        class="uppercase py-2 px-4 rounded-lg bg-pink-500 border-2 border-transparent text-white text-md mr-4 hover:bg-pink-400">
+                        class="pointer-events-auto uppercase py-2 px-6 rounded-lg bg-pink-500 text-white font-semibold hover:bg-pink-400 transition block">
                         Get started
                     </a>
+                </div>
+
+                <!-- Box autour du bouton 2 -->
+                <div class="bg-white/3 rounded-xl p-2">
                     <a (click)="scrollTo('read_more')"
-                        class="animate-pulse uppercase py-2 px-4 rounded-lg bg-pink-500/10 border-3 border-pink-500 text-pink-500 dark:text-white hover:bg-pink-500 hover:text-white text-md">
+                        class="pointer-events-auto uppercase bg-pink-500/10 py-2 px-6 rounded-lg border border-pink-500 text-white hover:bg-pink-500 hover:text-white transition animate-pulse block">
                         Read more
                     </a>
                 </div>
             </div>
-            <div class="hidden sm:block w-140 relative">
-                <img src="assets/nova_axolotl.png" class="" />
-            </div>
         </div>
+
+        <div class="flex justify-center lg:justify-end" data-aos="fade-left">
+            <img src="assets/nova_axolotl.png" alt="Nova mascot"
+                class="w-[220px] sm:w-[300px] md:w-[350px] lg:w-[400px] xl:w-[460px] max-w-full drop-shadow-xl translate-y-40" />
+        </div>
+    </div>
+
+    <div
+        class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm animate-bounce opacity-50 pointer-events-none">
+        ↓ Scroll down
     </div>
 </section>
 
@@ -63,7 +93,8 @@
                 </div>
 
                 <p class="mt-2 line-clamp-4 text-gray-100">
-                    Describe your symptoms and let the intelligent algorithm identify potential illnesses while providing you with tailored recommendations.
+                    Describe your symptoms and let the intelligent algorithm identify potential illnesses while
+                    providing you with tailored recommendations.
                 </p>
 
                 <a href="/analysis" class="group mt-4 inline-flex items-center gap-1 text-sm font-medium text-white">
@@ -95,7 +126,8 @@
                 </div>
 
                 <p class="mt-2 line-clamp-4 text-gray-100">
-                    Use the camera to analyze an area of ​​your body (skin, redness, swelling, etc.) and obtain a preliminary assessment before consulting a professional.
+                    Use the camera to analyze an area of ​​your body (skin, redness, swelling, etc.) and obtain a
+                    preliminary assessment before consulting a professional.
                 </p>
 
                 <a href="/skinCheck" class="group mt-4 inline-flex items-center gap-1 text-sm font-medium text-white">
@@ -129,10 +161,12 @@
                 </div>
 
                 <p class="mt-2 line-clamp-4 text-gray-100">
-                    Quickly find information about a medication: dosage, side effects, contraindications and available alternatives.
+                    Quickly find information about a medication: dosage, side effects, contraindications and available
+                    alternatives.
                 </p>
 
-                <a href="/medecineCheck" class="group mt-4 inline-flex items-center gap-1 text-sm font-medium text-white">
+                <a href="/medecineCheck"
+                    class="group mt-4 inline-flex items-center gap-1 text-sm font-medium text-white">
                     Try it now
 
                     <span aria-hidden="true" class="block transition-all group-hover:ms-0.5 rtl:rotate-180">
@@ -161,7 +195,8 @@
                 </div>
 
                 <p class="mt-2 line-clamp-4 text-gray-100">
-                    Track your analysis and search history, receive tailored advice and access features that concern you more quickly.
+                    Track your analysis and search history, receive tailored advice and access features that concern you
+                    more quickly.
                 </p>
 
                 <a href="#" class="group mt-4 inline-flex items-center gap-1 text-sm font-medium text-white">
@@ -235,74 +270,85 @@
             </div>
         </div>
     </div>
-    <div class="absolute inset-0 m-auto max-w-xs h-[357px] blur-[118px] sm:max-w-md md:max-w-lg"
-        style="background:radial-gradient(1.89deg, rgba(34, 78, 95, 0.4) -1000%, rgba(191, 227, 205, 0.26) 1500.74%, rgba(34, 140, 165, 0.41) 56.49%, rgba(28, 47, 99, 0.11) 1150.91%)">
-    </div>
 </section>
 
 
 <section class="sm:pt-40 lg:pt-55">
     <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div class="max-w-xl mx-auto text-center xl:max-w-2xl">
-            <h2 class="text-4xl text-white font-extrabold mx-auto md:text-6xl lg:text-5xl">What makes Nova unique and reassuring?</h2>
+            <h2 class="text-4xl text-white font-extrabold mx-auto md:text-6xl lg:text-5xl">What makes Nova unique and
+                reassuring?</h2>
             <hr class="mt-9 h-0.5 border-t-0 bg-pink-500/90" />
-            <p class="line-clamp-4 text-gray-200 mt-5">Une technologie intelligente, sécurisée et accessible, conçue pour vous accompagner en toute confiance.</p>
+            <p class="line-clamp-4 text-gray-200 mt-5">Une technologie intelligente, sécurisée et accessible, conçue
+                pour vous accompagner en toute confiance.</p>
 
         </div>
         <div
             class="grid max-w-8xl lg:max-w-8xl grid-cols-1 mx-auto mt-4 text-center gap-y-10 sm:gap-x-10 sm:grid-cols-2 lg:grid-cols-3 sm:mt-12 lg:mt-10 sm:text-left">
             <div class="relative">
-                <div class="relative border-3 border-pink-500 overflow-hidden bg-pink-500/10 shadow-md rounded-xl h-full">
+                <div
+                    class="relative border-3 border-pink-500 overflow-hidden bg-pink-500/10 shadow-md rounded-xl h-full">
                     <div class="p-9">
                         <h1 class="text-4xl">🔒</h1>
                         <h3 class="mt-6 text-2xl font-bold text-white sm:mt-10">Confidentiality and Security</h3>
-                        <p class="mt-6 text-base text-gray-100">Data is protected and anonymized to guarantee user confidentiality.</p>
+                        <p class="mt-6 text-base text-gray-100">Data is protected and anonymized to guarantee user
+                            confidentiality.</p>
                     </div>
                 </div>
             </div>
             <div class="relative">
-                <div class="relative border-3 border-pink-500 overflow-hidden bg-pink-500/10 shadow-md rounded-xl h-full">
+                <div
+                    class="relative border-3 border-pink-500 overflow-hidden bg-pink-500/10 shadow-md rounded-xl h-full">
                     <div class="p-9">
                         <h1 class="text-4xl">✅</h1>
                         <h3 class="mt-6 text-2xl font-bold text-white sm:mt-10">Reliability of Analyzes</h3>
-                        <p class="mt-6 text-base text-gray-100">The tool is based on a validated medical database and an efficient algorithm.</p>
+                        <p class="mt-6 text-base text-gray-100">The tool is based on a validated medical database and an
+                            efficient algorithm.</p>
                     </div>
                 </div>
             </div>
             <div class="relative">
-                <div class="relative border-3 border-pink-500 overflow-hidden bg-pink-500/10 shadow-md rounded-xl h-full">
+                <div
+                    class="relative border-3 border-pink-500 overflow-hidden bg-pink-500/10 shadow-md rounded-xl h-full">
                     <div class="p-9">
                         <h1 class="text-4xl">🎯</h1>
                         <h3 class="mt-6 text-2xl font-bold text-white sm:mt-10">Ease of Use</h3>
-                        <p class="mt-6 text-base text-gray-100">Intuitive interface allowing rapid analysis and accessible to all.
+                        <p class="mt-6 text-base text-gray-100">Intuitive interface allowing rapid analysis and
+                            accessible to all.
                         </p>
                     </div>
                 </div>
             </div>
             <div class="relative">
-                <div class="relative border-3 border-pink-500 overflow-hidden bg-pink-500/10 shadow-md rounded-xl h-full">
+                <div
+                    class="relative border-3 border-pink-500 overflow-hidden bg-pink-500/10 shadow-md rounded-xl h-full">
                     <div class="p-9">
                         <h1 class="text-4xl">⚕️</h1>
                         <h3 class="mt-6 text-2xl font-bold text-white sm:mt-10">Absence of Medical Diagnosis</h3>
-                        <p class="mt-6 text-base text-gray-100">The tool informs and guides, but is not intended to replace a health professional.</p>
+                        <p class="mt-6 text-base text-gray-100">The tool informs and guides, but is not intended to
+                            replace a health professional.</p>
                     </div>
                 </div>
             </div>
             <div class="relative">
-                <div class="relative border-3 border-pink-500 overflow-hidden bg-pink-500/10 shadow-md rounded-xl h-full">
+                <div
+                    class="relative border-3 border-pink-500 overflow-hidden bg-pink-500/10 shadow-md rounded-xl h-full">
                     <div class="p-9">
                         <h1 class="text-4xl">📊</h1>
                         <h3 class="mt-6 text-2xl font-bold text-white sm:mt-10">Personalized Monitoring</h3>
-                        <p class="mt-6 text-base text-gray-100">History of analyzes and recommendations adapted to each user.</p>
+                        <p class="mt-6 text-base text-gray-100">History of analyzes and recommendations adapted to each
+                            user.</p>
                     </div>
                 </div>
             </div>
             <div class="relative">
-                <div class="relative border-3 border-pink-500 overflow-hidden bg-pink-500/10 shadow-md rounded-xl h-full">
+                <div
+                    class="relative border-3 border-pink-500 overflow-hidden bg-pink-500/10 shadow-md rounded-xl h-full">
                     <div class="p-9">
                         <h1 class="text-4xl">🌍</h1>
                         <h3 class="mt-6 text-2xl font-bold text-white sm:mt-10">Multiplatform Accessibility</h3>
-                        <p class="mt-6 text-base text-gray-100">Available on web and mobile for easy access at any time.</p>
+                        <p class="mt-6 text-base text-gray-100">Available on web and mobile for easy access at any time.
+                        </p>
                     </div>
                 </div>
             </div>
@@ -319,17 +365,22 @@
             <p class="line-clamp-4 text-gray-200 mt-5">Do you have any questions? We have the answers!</p>
         </div>
     </div>
-    <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 divide-y divide-pink-500 bg-pink-500/10 rounded-xl border-3 border-pink-500 mt-12">
+    <div
+        class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 divide-y divide-pink-500 bg-pink-500/10 rounded-xl border-3 border-pink-500 mt-12">
         <details class="group p-6 [&_summary::-webkit-details-marker]:hidden">
             <summary class="flex cursor-pointer items-center justify-between gap-1.5 text-gray-900 dark:text-white">
                 <h2 class="text-lg font-medium">Lorem ipsum dolor sit amet consectetur adipisicing?</h2>
 
                 <span class="relative size-5 shrink-0">
-                    <svg class="absolute inset-0 size-5 opacity-100 group-open:opacity-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                    <svg class="absolute inset-0 size-5 opacity-100 group-open:opacity-0" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 9-7 7-7-7" />
                     </svg>
-                    <svg class="absolute inset-0 size-5 opacity-0 group-open:opacity-100" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7"/>
+                    <svg class="absolute inset-0 size-5 opacity-0 group-open:opacity-100" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m5 15 7-7 7 7" />
                     </svg>
                 </span>
             </summary>
@@ -346,11 +397,15 @@
                 <h2 class="text-lg font-medium">Lorem ipsum dolor sit amet consectetur adipisicing?</h2>
 
                 <span class="relative size-5 shrink-0">
-                    <svg class="absolute inset-0 size-5 opacity-100 group-open:opacity-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/>
+                    <svg class="absolute inset-0 size-5 opacity-100 group-open:opacity-0" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 9-7 7-7-7" />
                     </svg>
-                    <svg class="absolute inset-0 size-5 opacity-0 group-open:opacity-100" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7"/>
+                    <svg class="absolute inset-0 size-5 opacity-0 group-open:opacity-100" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m5 15 7-7 7 7" />
                     </svg>
                 </span>
             </summary>

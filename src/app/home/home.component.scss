@@ -1,0 +1,10 @@
+section {
+  scroll-snap-align: center;
+  scroll-margin-block: 0;
+  padding-block: 60px;
+}
+
+html,
+body {
+  overscroll-behavior-y: contain;
+}

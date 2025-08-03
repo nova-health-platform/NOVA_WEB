@@ -6,15 +6,16 @@
         <div
             class="absolute inset-0 bg-[url('/assets/grid.png')] bg-no-repeat bg-center bg-[length:400%_15%] translate-y-80 -z-20 select-none pointer-events-none">
         </div>
+        
         <div
-            class="absolute inset-0 bg-[url('/assets/nova_logo.png')] bg-no-repeat bg-center bg-[length:1600px] opacity-1 -z-20 select-none pointer-events-none">
+            class="absolute inset-0 bg-[url('/assets/nova_logo.png')] bg-no-repeat bg-center bg-[length:1600px] opacity-0.5 -z-20 select-none pointer-events-none">
         </div>
 
 
         <canvas id="splineCanvas_aura" class="absolute inset-0 w-full h-full -z-10 scale-80 -translate-y-20"
             data-aos="zoom-in">
         </canvas>
-        <!-- Aura floue dans le fond -->
+
         <div
             class="absolute top-1/3 left-1/2 w-[300px] h-[300px] -translate-x-1/2 -z-30 rounded-full bg-pink-500/20 blur-3xl opacity-20 animate-pulse">
         </div>
@@ -61,7 +62,7 @@
 
             <div class="flex justify-center lg:justify-end" data-aos="fade-left">
                 <img src="assets/nova_axolotl.png" alt="Nova mascot"
-                    class="w-[220px] sm:w-[300px] md:w-[350px] lg:w-[400px] xl:w-[460px] max-w-full drop-shadow-xl translate-y-40" />
+                    class="w-[220px] sm:w-[300px] md:w-[350px] lg:w-[400px] xl:w-[460px] max-w-full drop-shadow-xl translate-y-40 blur-sm" />
             </div>
         </div>
 
@@ -89,76 +90,80 @@
 
             <div class="container mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-16">
 
-                <!-- Tool 1 -->
-                <article
-                    class="w-full rounded-xl border border-pink-500/30 bg-white/5 backdrop-blur-md p-6 shadow-md py-18"
-                    data-aos="fade-up" data-aos-delay="100">
+                <div data-aos="fade-up" data-aos-delay="100">
+                    <article
+                        class="w-full h-full rounded-xl border border-pink-500/30 bg-white/5 backdrop-blur-md px-6 shadow-md py-18 cursor-pointer transition-all duration-300 ease-in-out hover:bg-pink-500/10 hover:scale-105 group">
 
-                    <div class="flex justify-center mb-5">
-                        <div
-                            class="flex items-center justify-center w-14 h-14 rounded-md bg-pink-500/10 border border-pink-500/30 shadow-inner">
-                            <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"
-                                class="w-13 h-13 p-2 text-pink-500">
-                                <path fill="currentColor"
-                                    d="M44.5,22.1l-4.7-1.4a3.7,3.7,0,0,1-2.5-2.2,3.5,3.5,0,0,1,.2-3.3l2.4-4.4a2.1,2.1,0,0,0-.3-2.4,2.1,2.1,0,0,0-2.4-.3l-4.4,2.4a3.5,3.5,0,0,1-3.3.2,3.7,3.7,0,0,1-2.2-2.5L25.9,3.4a2,2,0,0,0-3.8,0L20.7,8.2a3.7,3.7,0,0,1-2.2,2.5,3.5,3.5,0,0,1-3.3-.2L10.8,8.1a2.1,2.1,0,0,0-2.4.3,2.1,2.1,0,0,0-.3,2.4l2.4,4.4a3.5,3.5,0,0,1,.2,3.3,3.7,3.7,0,0,1-2.5,2.2L3.5,22.1a2,2,0,0,0,0,3.8l4.7,1.4a3.7,3.7,0,0,1,2.5,2.2,3.5,3.5,0,0,1-.2,3.3L8.1,37.2a2.1,2.1,0,0,0,.3,2.4,2.1,2.1,0,0,0,2.4.3l4.4-2.4a3.5,3.5,0,0,1,3.3-.2,3.5,3.5,0,0,1,2.2,2.5l1.4,4.8a2,2,0,0,0,3.8,0l1.4-4.8a3.8,3.8,0,0,1,5.5-2.3l4.4,2.4a2,2,0,0,0,2.7-2.7l-2.4-4.4a3.5,3.5,0,0,1-.2-3.3,3.7,3.7,0,0,1,2.5-2.2l4.7-1.4a2,2,0,0,0,0-3.8ZM21,25a4,4,0,1,1,4-4A4,4,0,0,1,21,25Zm8,6a2,2,0,1,1,2-2A2,2,0,0,1,29,31Z" />
-                            </svg>
+                        <div class="flex justify-center mb-5">
+                            <div
+                                class="flex items-center justify-center w-14 h-14 rounded-md bg-pink-500/10 border border-pink-500/30 shadow-inner transition duration-300 ease-in-out group-hover:scale-110">
+                                <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"
+                                    class="w-13 h-13 p-2 text-pink-500">
+                                    <path fill="currentColor"
+                                        d="M44.5,22.1l-4.7-1.4a3.7,3.7,0,0,1-2.5-2.2,3.5,3.5,0,0,1,.2-3.3l2.4-4.4a2.1,2.1,0,0,0-.3-2.4,2.1,2.1,0,0,0-2.4-.3l-4.4,2.4a3.5,3.5,0,0,1-3.3.2,3.7,3.7,0,0,1-2.2-2.5L25.9,3.4a2,2,0,0,0-3.8,0L20.7,8.2a3.7,3.7,0,0,1-2.2,2.5,3.5,3.5,0,0,1-3.3-.2L10.8,8.1a2.1,2.1,0,0,0-2.4.3,2.1,2.1,0,0,0-.3,2.4l2.4,4.4a3.5,3.5,0,0,1,.2,3.3,3.7,3.7,0,0,1-2.5,2.2L3.5,22.1a2,2,0,0,0,0,3.8l4.7,1.4a3.7,3.7,0,0,1,2.5,2.2,3.5,3.5,0,0,1-.2,3.3L8.1,37.2a2.1,2.1,0,0,0,.3,2.4,2.1,2.1,0,0,0,2.4.3l4.4-2.4a3.5,3.5,0,0,1,3.3-.2,3.5,3.5,0,0,1,2.2,2.5l1.4,4.8a2,2,0,0,0,3.8,0l1.4-4.8a3.8,3.8,0,0,1,5.5-2.3l4.4,2.4a2,2,0,0,0,2.7-2.7l-2.4-4.4a3.5,3.5,0,0,1-.2-3.3,3.7,3.7,0,0,1,2.5-2.2l4.7-1.4a2,2,0,0,0,0-3.8ZM21,25a4,4,0,1,1,4-4A4,4,0,0,1,21,25Zm8,6a2,2,0,1,1,2-2A2,2,0,0,1,29,31Z" />
+                                </svg>
+                            </div>
                         </div>
-                    </div>
 
-                    <h3 class="text-xl font-bold text-white text-center mb-5">Symptom Analysis</h3>
-                    <p class="text-md text-gray-300 group-hover:text-gray-100 text-center">
-                        Describe your symptoms and let the intelligent algorithm identify potential illnesses with
-                        tailored advice.
-                    </p>
-                </article>
+                        <h3 class="text-xl font-bold text-white text-center mb-5">Symptom Analysis</h3>
+                        <p class="text-md text-gray-300 group-hover:text-gray-100 text-center">
+                            Describe your symptoms and let the intelligent algorithm identify potential illnesses with
+                            tailored advice.
+                        </p>
+                    </article>
+                </div>
 
-                <!-- Tool 2 -->
-                <article
-                    class="w-full rounded-xl border border-pink-500/30 bg-white/5 backdrop-blur-md p-6 shadow-md py-18"
-                    data-aos="fade-up" data-aos-delay="100">
+                <div data-aos="fade-up" data-aos-delay="100">
+                    <article
+                        class="w-full h-full rounded-xl border border-pink-500/30 bg-white/5 backdrop-blur-md px-6 shadow-md py-18 cursor-pointer transition-all duration-300 ease-in-out hover:bg-pink-500/10 hover:scale-105 group">
+                        <div class="flex justify-center mb-5">
 
-                    <div class="flex justify-center mb-5">
-                        <div
-                            class="w-14 h-14 rounded-md bg-pink-500/10 border border-pink-500/30 shadow-inner flex items-center justify-center">
-                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                                class="w-10 h-10 text-pink-500 fill-current">
-                                <path d="M11 11V8H13V11H16V13H13V16H11V13H8V11H11Z" />
-                                <path
-                                    d="M3 12C3 16.9706 7.02944 21 12 21H18C19.6569 21 21 19.6569 21 18V12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12ZM12 5C15.866 5 19 8.13401 19 12C19 15.866 15.866 19 12 19C8.13401 19 5 15.866 5 12C5 8.13401 8.13401 5 12 5Z" />
-                            </svg>
+                            <div
+                                class="w-14 h-14 rounded-md bg-pink-500/10 border border-pink-500/30 shadow-inner flex items-center justify-center transition duration-300 ease-in-out group-hover:scale-110">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                                    class="w-10 h-10 text-pink-500 fill-current">
+                                    <path d="M11 11V8H13V11H16V13H13V16H11V13H8V11H11Z" />
+                                    <path
+                                        d="M3 12C3 16.9706 7.02944 21 12 21H18C19.6569 21 21 19.6569 21 18V12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12ZM12 5C15.866 5 19 8.13401 19 12C19 15.866 15.866 19 12 19C8.13401 19 5 15.866 5 12C5 8.13401 8.13401 5 12 5Z" />
+                                </svg>
+                            </div>
                         </div>
-                    </div>
 
-                    <h3 class="text-xl font-bold text-white text-center mb-5">Skin Condition</h3>
-                    <p class="text-md text-gray-300 group-hover:text-gray-100 text-center">
-                        Use your camera to analyze a skin area and get a preliminary assessment before consulting a
-                        professional.
-                    </p>
-                </article>
+                        <h3 class="text-xl font-bold text-white text-center mb-5">Skin Condition</h3>
+                        <p
+                            class="text-md text-gray-300 group-hover:text-gray-100 text-center transition-colors duration-300">
+                            Use your camera to analyze a skin area and get a preliminary assessment before consulting a
+                            professional.
+                        </p>
+                    </article>
+                </div>
 
-                <!-- Tool 3 -->
-                <article
-                    class="w-full rounded-xl border border-pink-500/30 bg-white/5 backdrop-blur-md p-6 shadow-md py-18"
-                    data-aos="fade-up" data-aos-delay="100">
+                <div data-aos="fade-up" data-aos-delay="100">
+                    <article
+                        class="w-full h-full rounded-xl border border-pink-500/30 bg-white/5 backdrop-blur-md px-6 shadow-md py-18 cursor-pointer transition-all duration-300 ease-in-out hover:bg-pink-500/10 hover:scale-105 group">
 
-                    <div class="flex justify-center mb-5">
-                        <div
-                            class="flex items-center justify-center w-14 h-14 rounded-md bg-pink-500/10 border border-pink-500/30 shadow-inner">
-                            <svg viewBox="0 0 24 24" class="w-10 h-10 text-pink-500 fill-current"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M6.75 6.5C6.75 3.6005 9.1005 1.25 12 1.25C14.8995 1.25 17.25 3.6005 17.25 6.5C17.25 9.3995 14.8995 11.75 12 11.75C9.1005 11.75 6.75 9.3995 6.75 6.5Z" />
-                                <path
-                                    d="M4.25 18.5714C4.25 15.6325 6.63249 13.25 9.57143 13.25H14.4286C17.3675 13.25 19.75 15.6325 19.75 18.5714C19.75 20.8792 17.8792 22.75 15.5714 22.75H8.42857C6.12081 22.75 4.25 20.8792 4.25 18.5714Z" />
-                            </svg>
+                        <div class="flex justify-center mb-5">
+                            <div
+                                class="flex items-center justify-center w-14 h-14 rounded-md bg-pink-500/10 border border-pink-500/30 shadow-inner transition duration-300 ease-in-out group-hover:scale-110">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                                    class="w-10 h-10 text-pink-500 fill-current">
+                                    <path
+                                        d="M6.75 6.5C6.75 3.6005 9.1005 1.25 12 1.25C14.8995 1.25 17.25 3.6005 17.25 6.5C17.25 9.3995 14.8995 11.75 12 11.75C9.1005 11.75 6.75 9.3995 6.75 6.5Z" />
+                                    <path
+                                        d="M4.25 18.5714C4.25 15.6325 6.63249 13.25 9.57143 13.25H14.4286C17.3675 13.25 19.75 15.6325 19.75 18.5714C19.75 20.8792 17.8792 22.75 15.5714 22.75H8.42857C6.12081 22.75 4.25 20.8792 4.25 18.5714Z" />
+                                </svg>
+                            </div>
                         </div>
-                    </div>
 
-                    <h3 class="text-xl font-bold text-white text-center mb-5">Personalized Profile</h3>
-                    <p class="text-md text-gray-300 group-hover:text-gray-100 text-center">
-                        Track your history, receive tailored advice, and access features specific to your health goals.
-                    </p>
-                </article>
+                        <h3 class="text-xl font-bold text-white text-center mb-5">Personalized Profile</h3>
+                        <p
+                            class="text-md text-gray-300 group-hover:text-gray-100 text-center transition-colors duration-300">
+                            Track your history, receive tailored advice, and access features specific to your health
+                            goals.
+                        </p>
+                    </article>
+                </div>
+
 
             </div>
         </div>

@@ -1,5 +1,7 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { Application } from '@splinetool/runtime';
+import { AuthService } from '../services/auth.service';
+import { RouterModule } from '@angular/router';
 import AOS from 'aos';
 
 @Component({
@@ -7,14 +9,26 @@ import AOS from 'aos';
   standalone: true,
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  imports: [RouterModule],
 })
 export class HomeComponent implements AfterViewInit {
 
+  isAuthenticated = false;
+
+  constructor(private authService: AuthService) {}
+
   ngAfterViewInit(): void {
+
+    this.authService.isLoggedIn().subscribe((loggedIn) => {
+      this.isAuthenticated = loggedIn;
+    });
+
     this.initAOS();
     this.setupSpline_aura();
+    this.setupSpline_auras();
     this.setupSpline_line();
     this.setupAOSRefreshOnSnap();
+
   }
 
   private initAOS(): void {
@@ -29,7 +43,19 @@ export class HomeComponent implements AfterViewInit {
     const aura = document.getElementById('splineCanvas_aura') as HTMLCanvasElement;
     if (aura) {
       const splineApp = new Application(aura);
-      splineApp.load('/assets/spline/aura.splinecode');
+      splineApp.load('/assets/spline/aura.splinecode').then(() => {
+        this.hideLoader();
+      });
+    }
+  }
+
+  private setupSpline_auras(): void {
+    const auras = document.getElementById('splineCanvas_auras') as HTMLCanvasElement;
+    if (auras) {
+      const splineApp = new Application(auras);
+      splineApp.load('/assets/spline/auras.splinecode').then(() => {
+        this.hideLoader();
+      });
     }
   }
 
@@ -37,9 +63,19 @@ export class HomeComponent implements AfterViewInit {
     const line = document.getElementById('splineCanvas_line') as HTMLCanvasElement;
     if (line) {
       const splineApp = new Application(line);
-      splineApp.load('/assets/spline/line.splinecode');
+      splineApp.load('/assets/spline/line.splinecode').then(() => {
+        this.hideLoader();
+      });
     }
   }
+
+  private hideLoader(): void {
+    const loader = document.getElementById('page-loader');
+    if (loader) {
+      loader.classList.add('hidden');
+    }
+  }
+
 
   private setupAOSRefreshOnSnap(): void {
     const sections = document.querySelectorAll('section');

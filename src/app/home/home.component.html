@@ -6,14 +6,13 @@
         <div
             class="absolute inset-0 bg-[url('/assets/grid.png')] bg-no-repeat bg-center bg-[length:400%_15%] translate-y-80 -z-20 select-none pointer-events-none">
         </div>
-        
+
         <div
             class="absolute inset-0 bg-[url('/assets/nova_logo.png')] bg-no-repeat bg-center bg-[length:1600px] opacity-0.5 -z-20 select-none pointer-events-none">
         </div>
 
 
-        <canvas id="splineCanvas_aura" class="absolute inset-0 w-full h-full -z-10 scale-80 -translate-y-20"
-            data-aos="zoom-in">
+        <canvas id="splineCanvas_aura" class="absolute inset-0 w-full h-full -z-10 -translate-y-20" data-aos="zoom-in">
         </canvas>
 
         <div
@@ -34,7 +33,7 @@
 
                 <div class="rounded-xl mb-6 max-w-md">
                     <p
-                        class="border border-pink-500/30 bg-white/5 backdrop-blur-md p-6 shadow-md rounded-lg p-4 text-white text-sm sm:text-base max-w-md text-justify">
+                        class="rounded-xl border border-pink-500/30 bg-white/2 backdrop-blur-xl p-6 shadow-md p-4 text-white text-sm sm:text-base max-w-md text-justify">
                         “A smart assistant that analyzes your symptoms, informs you about possible illnesses and helps
                         you
                         better understand your health.” 💙
@@ -74,12 +73,14 @@
 
     <section id="hero-fade"
         class="fade-scroll relative w-full min-h-screen flex items-center justify-center px-6 sm:px-10 lg:px-20 overflow-hidden h-screen snap-start">
-        <canvas id="splineCanvas_line" class="absolute inset-0 w-full h-full -z-10 translate-y-35 blur-sm opacity-50" data-aos="flip-up" data-aos-delay="500">
+        <canvas id="splineCanvas_line" class="absolute inset-0 w-full h-full -z-10 translate-y-35 blur-sm opacity-50"
+            data-aos="flip-up" data-aos-delay="500">
         </canvas>
         <div class="w-full">
             <div class="container m-auto p-4 space-y-2 text-center">
+                <p class="text-sm font-bold uppercase tracking-widest text-white mb-4">Our Tools</p>
                 <h2 class="text-lg text-white font-extrabold mx-auto md:text-5xl lg:text-4xl">
-                    Discover Our Different Tools
+                    Tools Built For Your Health
                 </h2>
                 <hr class="w-150 mx-auto mt-6 h-0.5 border-t-0 bg-pink-500/90" />
                 <p class="mt-2 line-clamp-4 text-gray-200 mb-10 mt-6">
@@ -90,83 +91,85 @@
 
             <div class="container mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 pb-16">
 
-                <div data-aos="fade-up" data-aos-delay="50">
+                <div data-aos="zoom-in">
                     <a href="/analysis">
-                    <article
-                        class="w-full h-full rounded-xl border border-pink-500/30 bg-white/2 backdrop-blur-xl px-6 shadow-md py-18 cursor-pointer transition-all duration-300 ease-in-out hover:bg-pink-500/10 hover:scale-105 group">
+                        <article
+                            class="w-full h-full rounded-xl border border-white/10 bg-white/2 backdrop-blur-xl px-6 shadow-md py-18 cursor-pointer transition-all duration-300 ease-in-out hover:bg-pink-500/10 hover:scale-105 group">
 
-                        <div class="flex justify-center mb-5">
-                            <div
-                                class="flex items-center justify-center w-14 h-14 rounded-md bg-pink-500/10 border-2 border-pink-500/30 shadow-inner transition duration-300 ease-in-out group-hover:scale-110">
-                                <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"
-                                    class="w-13 h-13 p-2 text-pink-500">
-                                    <path fill="currentColor"
-                                        d="M44.5,22.1l-4.7-1.4a3.7,3.7,0,0,1-2.5-2.2,3.5,3.5,0,0,1,.2-3.3l2.4-4.4a2.1,2.1,0,0,0-.3-2.4,2.1,2.1,0,0,0-2.4-.3l-4.4,2.4a3.5,3.5,0,0,1-3.3.2,3.7,3.7,0,0,1-2.2-2.5L25.9,3.4a2,2,0,0,0-3.8,0L20.7,8.2a3.7,3.7,0,0,1-2.2,2.5,3.5,3.5,0,0,1-3.3-.2L10.8,8.1a2.1,2.1,0,0,0-2.4.3,2.1,2.1,0,0,0-.3,2.4l2.4,4.4a3.5,3.5,0,0,1,.2,3.3,3.7,3.7,0,0,1-2.5,2.2L3.5,22.1a2,2,0,0,0,0,3.8l4.7,1.4a3.7,3.7,0,0,1,2.5,2.2,3.5,3.5,0,0,1-.2,3.3L8.1,37.2a2.1,2.1,0,0,0,.3,2.4,2.1,2.1,0,0,0,2.4.3l4.4-2.4a3.5,3.5,0,0,1,3.3-.2,3.5,3.5,0,0,1,2.2,2.5l1.4,4.8a2,2,0,0,0,3.8,0l1.4-4.8a3.8,3.8,0,0,1,5.5-2.3l4.4,2.4a2,2,0,0,0,2.7-2.7l-2.4-4.4a3.5,3.5,0,0,1-.2-3.3,3.7,3.7,0,0,1,2.5-2.2l4.7-1.4a2,2,0,0,0,0-3.8ZM21,25a4,4,0,1,1,4-4A4,4,0,0,1,21,25Zm8,6a2,2,0,1,1,2-2A2,2,0,0,1,29,31Z" />
-                                </svg>
+                            <div class="flex justify-center mb-5">
+                                <div
+                                    class="flex items-center justify-center w-14 h-14 rounded-md border-pink-500/50 border-3 shadow-inner transition duration-300 ease-in-out group-hover:scale-110">
+                                    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"
+                                        class="w-13 h-13 p-2 text-pink-500">
+                                        <path fill="currentColor"
+                                            d="M44.5,22.1l-4.7-1.4a3.7,3.7,0,0,1-2.5-2.2,3.5,3.5,0,0,1,.2-3.3l2.4-4.4a2.1,2.1,0,0,0-.3-2.4,2.1,2.1,0,0,0-2.4-.3l-4.4,2.4a3.5,3.5,0,0,1-3.3.2,3.7,3.7,0,0,1-2.2-2.5L25.9,3.4a2,2,0,0,0-3.8,0L20.7,8.2a3.7,3.7,0,0,1-2.2,2.5,3.5,3.5,0,0,1-3.3-.2L10.8,8.1a2.1,2.1,0,0,0-2.4.3,2.1,2.1,0,0,0-.3,2.4l2.4,4.4a3.5,3.5,0,0,1,.2,3.3,3.7,3.7,0,0,1-2.5,2.2L3.5,22.1a2,2,0,0,0,0,3.8l4.7,1.4a3.7,3.7,0,0,1,2.5,2.2,3.5,3.5,0,0,1-.2,3.3L8.1,37.2a2.1,2.1,0,0,0,.3,2.4,2.1,2.1,0,0,0,2.4.3l4.4-2.4a3.5,3.5,0,0,1,3.3-.2,3.5,3.5,0,0,1,2.2,2.5l1.4,4.8a2,2,0,0,0,3.8,0l1.4-4.8a3.8,3.8,0,0,1,5.5-2.3l4.4,2.4a2,2,0,0,0,2.7-2.7l-2.4-4.4a3.5,3.5,0,0,1-.2-3.3,3.7,3.7,0,0,1,2.5-2.2l4.7-1.4a2,2,0,0,0,0-3.8ZM21,25a4,4,0,1,1,4-4A4,4,0,0,1,21,25Zm8,6a2,2,0,1,1,2-2A2,2,0,0,1,29,31Z" />
+                                    </svg>
+                                </div>
                             </div>
-                        </div>
 
-                        <h3 class="text-xl font-bold text-white text-center mb-5">Symptom Analysis</h3>
-                        <p class="text-md text-gray-300 group-hover:text-gray-100 text-center">
-                            Describe your symptoms and let the intelligent algorithm identify potential illnesses with
-                            tailored advice.
-                        </p>
-                    </article>
-                </a>
-                </div>
-
-                <div data-aos="fade-up" data-aos-delay="50">
-                    <a href="/skinCheck">
-                    <article
-                        class="w-full h-full rounded-xl border border-pink-500/30 bg-white/2 backdrop-blur-xl px-6 shadow-md py-18 cursor-pointer transition-all duration-300 ease-in-out hover:bg-pink-500/10 hover:scale-105 group">
-                        <div class="flex justify-center mb-5">
-
-                            <div
-                                class="w-14 h-14 rounded-md bg-pink-500/10 border-2 border-pink-500/30 shadow-inner flex items-center justify-center transition duration-300 ease-in-out group-hover:scale-110">
-                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                                    class="w-10 h-10 text-pink-500 fill-current">
-                                    <path d="M11 11V8H13V11H16V13H13V16H11V13H8V11H11Z" />
-                                    <path
-                                        d="M3 12C3 16.9706 7.02944 21 12 21H18C19.6569 21 21 19.6569 21 18V12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12ZM12 5C15.866 5 19 8.13401 19 12C19 15.866 15.866 19 12 19C8.13401 19 5 15.866 5 12C5 8.13401 8.13401 5 12 5Z" />
-                                </svg>
-                            </div>
-                        </div>
-
-                        <h3 class="text-xl font-bold text-white text-center mb-5">Skin Condition</h3>
-                        <p
-                            class="text-md text-gray-300 group-hover:text-gray-100 text-center transition-colors duration-300">
-                            Use your camera to analyze a skin area and get a preliminary assessment before consulting a
-                            professional.
-                        </p>
-                    </article>
+                            <h3 class="text-xl font-bold text-white text-center mb-5">Symptom Analysis</h3>
+                            <p class="text-md text-gray-300 group-hover:text-gray-100 text-center">
+                                Describe your symptoms and let the intelligent algorithm identify potential illnesses
+                                with
+                                tailored advice.
+                            </p>
+                        </article>
                     </a>
                 </div>
 
-                <div data-aos="fade-up" data-aos-delay="50">
-                    <a [routerLink]="isAuthenticated ? '/account' : '/login'">
-                    <article
-                        class="w-full h-full rounded-xl border border-pink-500/30 bg-white/2 backdrop-blur-xl px-6 shadow-md py-18 cursor-pointer transition-all duration-300 ease-in-out hover:bg-pink-500/10 hover:scale-105 group">
+                <div data-aos="zoom-in">
+                    <a href="/skinCheck">
+                        <article
+                            class="w-full h-full rounded-xl border border-white/10 bg-white/2 backdrop-blur-xl px-6 shadow-md py-18 cursor-pointer transition-all duration-300 ease-in-out hover:bg-pink-500/10 hover:scale-105 group">
+                            <div class="flex justify-center mb-5">
 
-                        <div class="flex justify-center mb-5">
-                            <div
-                                class="flex items-center justify-center w-14 h-14 rounded-md bg-pink-500/10 border-2 border-pink-500/30 shadow-inner transition duration-300 ease-in-out group-hover:scale-110">
-                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-                                    class="w-10 h-10 text-pink-500 fill-current">
-                                    <path
-                                        d="M6.75 6.5C6.75 3.6005 9.1005 1.25 12 1.25C14.8995 1.25 17.25 3.6005 17.25 6.5C17.25 9.3995 14.8995 11.75 12 11.75C9.1005 11.75 6.75 9.3995 6.75 6.5Z" />
-                                    <path
-                                        d="M4.25 18.5714C4.25 15.6325 6.63249 13.25 9.57143 13.25H14.4286C17.3675 13.25 19.75 15.6325 19.75 18.5714C19.75 20.8792 17.8792 22.75 15.5714 22.75H8.42857C6.12081 22.75 4.25 20.8792 4.25 18.5714Z" />
-                                </svg>
+                                <div
+                                    class="w-14 h-14 rounded-md border-pink-500/50 border-3 shadow-inner flex items-center justify-center transition duration-300 ease-in-out group-hover:scale-110">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                                        class="w-10 h-10 text-pink-500 fill-current">
+                                        <path d="M11 11V8H13V11H16V13H13V16H11V13H8V11H11Z" />
+                                        <path
+                                            d="M3 12C3 16.9706 7.02944 21 12 21H18C19.6569 21 21 19.6569 21 18V12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12ZM12 5C15.866 5 19 8.13401 19 12C19 15.866 15.866 19 12 19C8.13401 19 5 15.866 5 12C5 8.13401 8.13401 5 12 5Z" />
+                                    </svg>
+                                </div>
                             </div>
-                        </div>
 
-                        <h3 class="text-xl font-bold text-white text-center mb-5">Personalized Profile</h3>
-                        <p
-                            class="text-md text-gray-300 group-hover:text-gray-100 text-center transition-colors duration-300">
-                            Track your history, receive tailored advice, and access features specific to your health
-                            goals.
-                        </p>
-                    </article>
+                            <h3 class="text-xl font-bold text-white text-center mb-5">Skin Condition</h3>
+                            <p
+                                class="text-md text-gray-300 group-hover:text-gray-100 text-center transition-colors duration-300">
+                                Use your camera to analyze a skin area and get a preliminary assessment before
+                                consulting a
+                                professional.
+                            </p>
+                        </article>
+                    </a>
+                </div>
+
+                <div data-aos="zoom-in">
+                    <a [routerLink]="isAuthenticated ? '/account' : '/login'">
+                        <article
+                            class="w-full h-full rounded-xl border border-white/10 bg-white/2 backdrop-blur-xl px-6 shadow-md py-18 cursor-pointer transition-all duration-300 ease-in-out hover:bg-pink-500/10 hover:scale-105 group">
+
+                            <div class="flex justify-center mb-5">
+                                <div
+                                    class="flex items-center justify-center w-14 h-14 rounded-md border-pink-500/50 border-3 shadow-inner transition duration-300 ease-in-out group-hover:scale-110">
+                                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                                        class="w-10 h-10 text-pink-500 fill-current">
+                                        <path
+                                            d="M6.75 6.5C6.75 3.6005 9.1005 1.25 12 1.25C14.8995 1.25 17.25 3.6005 17.25 6.5C17.25 9.3995 14.8995 11.75 12 11.75C9.1005 11.75 6.75 9.3995 6.75 6.5Z" />
+                                        <path
+                                            d="M4.25 18.5714C4.25 15.6325 6.63249 13.25 9.57143 13.25H14.4286C17.3675 13.25 19.75 15.6325 19.75 18.5714C19.75 20.8792 17.8792 22.75 15.5714 22.75H8.42857C6.12081 22.75 4.25 20.8792 4.25 18.5714Z" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <h3 class="text-xl font-bold text-white text-center mb-5">Personalized Profile</h3>
+                            <p
+                                class="text-md text-gray-300 group-hover:text-gray-100 text-center transition-colors duration-300">
+                                Track your history, receive tailored advice, and access features specific to your health
+                                goals.
+                            </p>
+                        </article>
                     </a>
                 </div>
 
@@ -177,66 +180,74 @@
 
     <section id="hero-fade"
         class="fade-scroll relative w-full min-h-screen flex items-center justify-center px-6 sm:px-10 lg:px-20 overflow-hidden h-screen snap-start">
-        <canvas id="splineCanvas_auras" class="absolute blur-sm w-full h-full opacity-30 -z-10 scale-80 translate-y-20"
+        <canvas id="splineCanvas_auras"
+            class="absolute blur-md brightness-70 saturate-100 w-full h-full -z-10 scale-80 -translate-y-10"
             data-aos="zoom-in">
         </canvas>
         <div class="px-4 mx-auto max-w-7xl">
-            <div class="max-w-2xl mx-auto text-center">
-                <h2 class="text-4xl text-white font-extrabold mx-auto md:text-6xl lg:text-5xl">How does it work?</h2>
-                <hr class="w-70 mx-auto mt-6 h-0.5 border-t-0 bg-pink-500/90" />
-                <p class="line-clamp-4 text-gray-200 mt-6">
-                    Our AI solution will help you from start to finish
-                </p>
-            </div>
-            <div class="relative rounded-lg mt-10 bg-pink-500/10 border-3 border-pink-500 pt-16 pb-10 px-10">
-                <div class="absolute inset-x-0 hidden xl:px-50 top-2 md:block md:px-20 lg:px-28 mt-21">
-                    <div class="border-t-7 border-dashed border-pink-500 w-full"></div>
-                </div>
-                <div class="relative grid grid-cols-1 text-center gap-y-12 md:grid-cols-3 gap-x-12">
-                    <div class="px-5">
-                        <div
-                            class="flex items-center justify-center w-16 h-16 mx-auto bg-[#101010] border-5 border-pink-500 rounded-full shadow">
-                            <span class="text-2xl font-semibold text-white">1</span>
+            <div class="container px-4 mx-auto">
+                <div class="max-w-5xl mx-auto">
+                    <div
+                        class="flex flex-wrap items-center -mx-5 border border-white/10 p-8 rounded-xl bg-white/2 backdrop-blur-xl">
+                        <div class="w-full lg:w-1/2 px-5 mb-20 lg:mb-0 ">
+                            <div class="max-w-md">
+                                <span class="text-sm font-bold uppercase tracking-widest text-white">How It Works</span>
+                                <h2 class="mt-10 mb-10 text-4xl font-extrabold leading-tight text-white">
+                                    From Symptoms to Solutions</h2>
+                                <hr class="w-60 mb-10 h-0.5 border-t-0 bg-pink-500/90" />
+                                <p class="mb-16 line-clamp-4 text-gray-200">Our AI solution will help you from start to
+                                    finish</p>
+                            </div>
                         </div>
-                        <div class="flex justify-center mt-10 text-3xl">
-                            💻
+                        <div class="w-full lg:w-1/2 px-5 py-5">
+
+                            <ol class="relative border-s border-gray-200">
+                                <li class="mb-10 ms-4">
+                                    <div
+                                        class="absolute w-3 h-3 bg-white rounded-full mt-1.5 -start-1.5 border border-white">
+                                    </div>
+                                    <span
+                                        class="mb-1 text-sm font-normal leading-none text-white/80">Step
+                                        1</span>
+                                    <h3 class="text-lg font-semibold text-white">Create Your Account
+                                    </h3>
+                                    <p class="mb-4 text-base font-normal text-white/80">
+                                        Sign up and quickly fill in your personalized health profile. Just the
+                                        essentials — no hassle.
+                                    </p>
+                                </li>
+
+                                <li class="mb-10 ms-4">
+                                    <div
+                                        class="absolute w-3 h-3 bg-white rounded-full mt-1.5 -start-1.5 border border-white">
+                                    </div>
+                                    <span
+                                        class="mb-1 text-sm font-normal leading-none text-white/80">Step
+                                        2</span>
+                                    <h3 class="text-lg font-semibold text-white">Pick Your Tool</h3>
+                                    <p class="mb-4 text-base font-normal text-white/80">
+                                        Choose the right tool for your need: symptom checker, skin analysis, mental
+                                        health, and more — tailored to your profile.
+                                    </p>
+                                </li>
+
+                                <li class="ms-4">
+                                    <div
+                                        class="absolute w-3 h-3 bg-white rounded-full mt-1.5 -start-1.5 border border-white">
+                                    </div>
+                                    <span
+                                        class="mb-1 text-sm font-normal leading-none text-white/80">Step
+                                        3</span>
+                                    <h3 class="text-lg font-semibold text-white">Get Smart Results
+                                    </h3>
+                                    <p class="mb-4 text-base font-normal text-white/80">
+                                        Instantly receive AI-powered insights, tips, and recommendations personalized
+                                        just for you.
+                                    </p>
+                                </li>
+                            </ol>
+
                         </div>
-                        <h3 class="mt-2 text-xl text-white font-semibold leading-tight md:mt-5">Enter Symptoms</h3>
-                        <p class="mt-4 text-base text-gray-100">
-                            The user inputs their symptoms into a simple and user-friendly interface
-                        </p>
-                    </div>
-                    <div class="px-5">
-                        <div
-                            class="flex items-center justify-center w-16 h-16 mx-auto bg-[#101010] border-5 border-pink-500 rounded-full shadow">
-                            <span class="text-2xl font-semibold text-white">2</span>
-                        </div>
-                        <div class="flex justify-center mt-10 text-3xl">
-                            🧠
-                        </div>
-                        <h3 class="mt-2 text-xl text-white font-semibold leading-tight md:mt-5">Intelligent Analysis
-                        </h3>
-                        <p class="mt-4 text-base text-gray-100">
-                            The algorithm processes the data and identifies potential illnesses based on a medical
-                            knowledge
-                            base
-                        </p>
-                    </div>
-                    <div class="px-5">
-                        <div
-                            class="flex items-center justify-center w-16 h-16 mx-auto bg-[#101010] border-5 border-pink-500 rounded-full shadow">
-                            <span class="text-2xl font-semibold text-white">3</span>
-                        </div>
-                        <div class="flex justify-center mt-10 text-3xl">
-                            💙
-                        </div>
-                        <h3 class="mt-2 text-xl text-white font-semibold leading-tight md:mt-5">Results &
-                            Recommendations
-                        </h3>
-                        <p class="mt-4 text-base text-gray-100">
-                            The tool displays possible conditions with advice and guidance on whether to seek medical
-                            consultation
-                        </p>
                     </div>
                 </div>
             </div>
@@ -400,9 +411,9 @@
 
 <!-- Loading overlay -->
 <div id="page-loader"
-     class="fixed inset-0 z-50 bg-[#101010] flex items-center justify-center transition-opacity duration-500">
-  <div class="text-white text-xl flex flex-col items-center">
-    <div class="spinner"></div>
-    <img src="/assets/nova_logo.png" alt="Nova Logo" class="h-7 mt-5">
-  </div>
+    class="fixed inset-0 z-50 bg-[#101010] flex items-center justify-center transition-opacity duration-500">
+    <div class="text-white text-xl flex flex-col items-center">
+        <div class="spinner"></div>
+        <img src="/assets/nova_logo.png" alt="Nova Logo" class="h-7 mt-5">
+    </div>
 </div>

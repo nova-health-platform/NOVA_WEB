@@ -17,8 +17,7 @@ import AOS from 'aos';
     RouterOutlet,
     CommonModule,
     FormsModule,
-    HeaderComponent,
-    FooterComponent
+    HeaderComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']

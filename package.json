@@ -18,7 +18,7 @@
     "@angular/platform-browser": "^19.1.6",
     "@angular/platform-browser-dynamic": "^19.1.6",
     "@angular/router": "^19.1.6",
-    "@splinetool/runtime": "^1.10.38",
+    "@splinetool/runtime": "^1.10.44",
     "@tailwindcss/postcss": "^4.0.0",
     "@tailwindcss/vite": "^4.0.0",
     "aos": "^2.3.4",

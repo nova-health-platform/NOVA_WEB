@@ -99,4 +99,17 @@ body {
   will-change: transform;
 }
 
-
+@keyframes waveSlide {
+  0% {
+    transform: translateX(-1%) translateY(5rem) scale(1.5);
+  }
+  50% {
+    transform: translateX(1%) translateY(5rem) scale(1.5);
+  }
+  100% {
+    transform: translateX(-1%) translateY(5rem) scale(1.5);
+  }
+}
+.wave-animation {
+  animation: waveSlide 20s ease-in-out infinite;
+}

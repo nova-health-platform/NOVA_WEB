@@ -87,7 +87,8 @@
                         <!-- Colonne gauche -->
                         <div class="relative z-30 w-full lg:w-1/2 px-5 mb-20 lg:mb-0">
                             <div class="max-w-md">
-                                <span class="text-sm font-bold uppercase tracking-widest text-white">How It Works</span>
+                                <span class="text-sm font-bold uppercase tracking-widest text-pink-500">How It
+                                    Works</span>
                                 <h2 class="mt-10 mb-10 text-4xl font-extrabold leading-tight text-white">
                                     From Symptoms to Solutions
                                 </h2>
@@ -159,10 +160,11 @@
 
     <section id="3"
         class="fade-scroll relative w-full min-h-screen flex items-center justify-center px-6 overflow-hidden h-screen snap-start">
-<img src="assets/wave.png" class="absolute -z-50 pointer-events-none h-full w-full blur-xl translate-y-15 wave-animation" />
+        <img src="assets/wave.png"
+            class="absolute -z-50 pointer-events-none h-full w-full blur-xl translate-y-15 wave-animation" />
         <div class="w-full">
             <div class="container m-auto p-4 space-y-2 text-center">
-                <p class="text-sm font-bold uppercase tracking-widest text-white mb-4">Our Tools</p>
+                <p class="text-sm font-bold uppercase tracking-widest text-pink-500 mb-4">Our Tools</p>
                 <h2 class="text-lg text-white font-extrabold mx-auto md:text-5xl lg:text-4xl">
                     Tools Built For Your Health
                 </h2>
@@ -261,189 +263,349 @@
     </section>
 
     <section id="4"
-        class="fade-scroll relative w-full min-h-screen flex items-center justify-center px-6 sm:px-10 lg:px-20 overflow-hidden h-screen snap-start">
-        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="container m-auto p-4 space-y-2 text-center">
-                <p class="text-sm font-bold uppercase tracking-widest text-white mb-4">Our Features</p>
+        class="fade-scroll relative w-full min-h-screen flex items-center justify-center px-6 overflow-hidden h-screen snap-start">
+
+        <div class="mx-auto w-full max-w-7xl">
+            <!-- En-tête -->
+            <div class="container mx-auto p-4 space-y-2 text-center">
+                <p class="text-xs sm:text-sm font-bold uppercase tracking-widest text-pink-500 mb-4">
+                    Our Features
+                </p>
                 <h2 class="text-lg text-white font-extrabold mx-auto md:text-5xl lg:text-4xl">
                     Your Health, Our Commitment
                 </h2>
-                <hr class="w-150 mx-auto mt-6 h-0.5 border-t-0 bg-pink-500/90" />
-                <p class="mt-2 line-clamp-4 text-gray-200 mb-10 mt-6">
-                    Discover the core strengths that make Nova more than just a health tool from advanced AI analysis to
-                    robust data protection, each feature is designed to empower you and earn your trust.
+                <hr class="w-150 mx-auto mt-5 h-0.5 border-t-0 bg-pink-500/90" />
+                <p class="mt-4 text-gray-200/90 mb-8 max-w-3xl mx-auto text-sm sm:text-base">
+                    Discover the core strengths that make Nova more than just a health tool from advanced AI analysis
+                    to robust data protection, each feature is designed to empower you and earn your trust.
                 </p>
             </div>
-            <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+
+            <!-- Cartes : défilement horizontal sur mobile / grille sur desktop -->
+            <div
+                class="flex flex-nowrap gap-4 overflow-x-auto pb-4 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:gap-8 sm:overflow-visible snap-x snap-mandatory">
+
                 <!-- Feature 1 -->
-                <div class="border border-white/10 bg-white/2 backdrop-blur-xl p-8 rounded-xl shadow-md">
-                    <div class="w-14 h-14 rounded-md border-blue-500/50 border-3 flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                        </svg>
+                <div
+                    class="min-w-[85%] sm:min-w-0 border border-white/10 bg-white/[0.02] backdrop-blur-xl p-4 rounded-xl shadow-md snap-start">
+                    <div class="flex items-center gap-4 h-full">
+                        <!-- Colonne logo (alignement vertical + largeur fixe) -->
+                        <div class="flex-shrink-0 w-16 flex items-center justify-center">
+                            <div
+                                class="w-14 h-14 rounded-md border-2 border-blue-500/50 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-blue-500" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- Séparateur vertical + contenu -->
+                        <div class="flex-1 pl-4 border-l border-white/15">
+                            <h3 class="text-lg font-semibold text-white">Confidentiality and Security</h3>
+                            <p class="text-white/80 text-sm">
+                                Your data is encrypted, anonymized, and never shared without your consent. Nova ensures
+                                your privacy is protected at every step of your journey.
+                            </p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Confidentiality and Security</h3>
-                    <p class="text-white/80">
-                        Your data is encrypted, anonymized, and never shared without your consent.
-                        Nova ensures your privacy is protected at every step of your journey.
-                    </p>
                 </div>
 
                 <!-- Feature 2 -->
-                <div class="border border-white/10 bg-white/2 backdrop-blur-xl p-8 rounded-xl shadow-md">
-                    <div
-                        class="w-14 h-14 rounded-md border-purple-500/50 border-3 flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-500" fill="currentColor"
-                            viewBox="0 0 270.92 270.92">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M246.56 104.38h-80.09V34.13c28.07 7.53 51.69 27.11 64.22 53.76 1.86 3.98 6.58 5.68 10.56 3.8 3.96-1.87 5.67-6.59 3.81-10.55-16.12-34.24-47.98-58.43-85.2-64.68a7.94 7.94 0 00-9.25 7.83v88.03c0 4.39 3.54 7.94 7.93 7.94h88.02c4.39 0 7.94-3.55 7.94-7.94s-3.55-7.94-7.94-7.94zm-31.74 39.08h-87.29v-61.18c0-4.37-3.55-7.93-7.94-7.93s-7.94 3.56-7.94 7.93v69.12c0 4.39 3.55 7.93 7.94 7.93h86.94c-4.01 44.44-41.47 79.36-86.94 79.36-48.13 0-87.29-39.16-87.29-87.29s39.16-87.3 87.29-87.3c4.39 0 7.94-3.56 7.94-7.93s-3.55-7.94-7.94-7.94c-56.88 0-103.17 46.28-103.17 103.17s46.29 103.16 103.17 103.16 103.16-46.28 103.16-103.16c0-4.39-3.54-7.94-7.93-7.94z" />
-                        </svg>
+                <div
+                    class="min-w-[85%] sm:min-w-0 border border-white/10 bg-white/[0.02] backdrop-blur-xl p-4 rounded-xl shadow-md snap-start">
+                    <div class="flex items-center gap-4 h-full">
+                        <!-- Colonne logo -->
+                        <div class="flex-shrink-0 w-16 flex items-center justify-center">
+                            <div
+                                class="w-14 h-14 rounded-md border-2 border-purple-500/50 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-purple-500"
+                                    fill="currentColor" viewBox="0 0 270.92 270.92" aria-hidden="true">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M246.56 104.38h-80.09V34.13c28.07 7.53 51.69 27.11 64.22 53.76 1.86 3.98 6.58 5.68 10.56 3.8 3.96-1.87 5.67-6.59 3.81-10.55-16.12-34.24-47.98-58.43-85.2-64.68a7.94 7.94 0 00-9.25 7.83v88.03c0 4.39 3.54 7.94 7.93 7.94h88.02c4.39 0 7.94-3.55 7.94-7.94s-3.55-7.94-7.94-7.94zm-31.74 39.08h-87.29v-61.18c0-4.37-3.55-7.93-7.94-7.93s-7.94 3.56-7.94 7.93v69.12c0 4.39 3.55 7.93 7.94 7.93h86.94c-4.01 44.44-41.47 79.36-86.94 79.36-48.13 0-87.29-39.16-87.29-87.29s39.16-87.3 87.29-87.3c4.39 0 7.94-3.56 7.94-7.93s-3.55-7.94-7.94-7.94c-56.88 0-103.17 46.28-103.17 103.17s46.29 103.16 103.17 103.16 103.16-46.28 103.16-103.16c0-4.39-3.54-7.94-7.93-7.94z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- Séparateur vertical + contenu -->
+                        <div class="flex-1 pl-4 border-l border-white/15">
+                            <h3 class="text-lg font-semibold text-white">Smart & Reliable Analysis</h3>
+                            <p class="text-white/80 text-sm">
+                                Powered by a validated medical database and advanced algorithms, Nova delivers precise
+                                results in seconds.
+                            </p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Smart & Reliable Analysis</h3>
-                    <p class="text-white/80">
-                        Powered by a validated medical database and advanced algorithms, Nova delivers precise results
-                        in seconds.
-                    </p>
                 </div>
 
                 <!-- Feature 3 -->
-                <div class="border border-white/10 bg-white/2 backdrop-blur-xl p-8 rounded-xl shadow-md">
-                    <div
-                        class="w-14 h-14 rounded-md border-green-500/50 border-3 flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                        </svg>
+                <div
+                    class="min-w-[85%] sm:min-w-0 border border-white/10 bg-white/[0.02] backdrop-blur-xl p-4 rounded-xl shadow-md snap-start">
+                    <div class="flex items-center gap-4 h-full">
+                        <!-- Colonne logo -->
+                        <div class="flex-shrink-0 w-16 flex items-center justify-center">
+                            <div
+                                class="w-14 h-14 rounded-md border-2 border-green-500/50 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-green-500" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- Séparateur vertical + contenu -->
+                        <div class="flex-1 pl-4 border-l border-white/15">
+                            <h3 class="text-lg font-semibold text-white">Ease of Use</h3>
+                            <p class="text-white/80 text-sm">
+                                With its clear design and guided steps, Nova is accessible to everyone. No training or
+                                technical skills required.
+                            </p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Ease of Use</h3>
-                    <p class="text-white/80">
-                        With its clear design and guided steps, Nova is accessible to everyone. No training or technical
-                        skills required.
-                    </p>
                 </div>
 
                 <!-- Feature 4 -->
-                <div class="border border-white/10 bg-white/2 backdrop-blur-xl p-8 rounded-xl shadow-md">
-                    <div class="w-14 h-14 rounded-md border-pink-500/50 border-3 flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-pink-500" fill="none"
-                            viewBox="0 0 50.8 50.8" stroke="currentColor">
-                            <path d="M7.854 33.546 16 22.893l7.52 16.293 6.267-27.572 3.76 8.773 5.64-6.893 3.76 8.146"
-                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-
+                <div
+                    class="min-w-[85%] sm:min-w-0 border border-white/10 bg-white/[0.02] backdrop-blur-xl p-4 rounded-xl shadow-md snap-start">
+                    <div class="flex items-center gap-4 h-full">
+                        <!-- Colonne logo -->
+                        <div class="flex-shrink-0 w-16 flex items-center justify-center">
+                            <div
+                                class="w-14 h-14 rounded-md border-2 border-pink-500/50 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-pink-500" fill="none"
+                                    viewBox="0 0 50.8 50.8" stroke="currentColor" aria-hidden="true">
+                                    <path
+                                        d="M7.854 33.546 16 22.893l7.52 16.293 6.267-27.572 3.76 8.773 5.64-6.893 3.76 8.146"
+                                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- Séparateur vertical + contenu -->
+                        <div class="flex-1 pl-4 border-l border-white/15">
+                            <h3 class="text-lg font-semibold text-white">Personalized Monitoring</h3>
+                            <p class="text-white/80 text-sm">
+                                Your complete history of analyses and tailored recommendations are stored securely,
+                                helping you track progress and adapt over time.
+                            </p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Personalized Monitoring</h3>
-                    <p class="text-white/80">
-                        Your complete history of analyses and tailored recommendations are stored securely,
-                        helping you track progress and adapt over time.
-                    </p>
                 </div>
 
                 <!-- Feature 5 -->
-                <div class="border border-white/10 bg-white/2 backdrop-blur-xl p-8 rounded-xl shadow-md">
-                    <div
-                        class="w-14 h-14 rounded-md border-yellow-500/50 border-3 flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-500" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path
-                                d="M4 21V18.5C4 15.4624 6.46243 13 9.5 13H13.5M8 21V18M16 6.5C16 8.70914 14.2091 10.5 12 10.5C9.79086 10.5 8 8.70914 8 6.5C8 4.29086 9.79086 2.5 12 2.5C14.2091 2.5 16 4.29086 16 6.5ZM17.5 12.9998C17.0439 12.3927 16.3178 12 15.5 12C14.1193 12 13 13.1193 13 14.5C13 15.1195 13.2253 15.6864 13.5985 16.1231L17.5 21L21.4015 16.1231C21.7747 15.6864 22 15.1195 22 14.5C22 13.1193 20.8807 12 19.5 12C18.6822 12 17.9561 12.3927 17.5 12.9998Z"
-                                stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-
+                <div
+                    class="min-w-[85%] sm:min-w-0 border border-white/10 bg-white/[0.02] backdrop-blur-xl p-4 rounded-xl shadow-md snap-start">
+                    <div class="flex items-center gap-4 h-full">
+                        <!-- Colonne logo -->
+                        <div class="flex-shrink-0 w-16 flex items-center justify-center">
+                            <div
+                                class="w-14 h-14 rounded-md border-2 border-yellow-500/50 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-yellow-500" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                    <path
+                                        d="M4 21V18.5C4 15.4624 6.46243 13 9.5 13H13.5M8 21V18M16 6.5C16 8.70914 14.2091 10.5 12 10.5C9.79086 10.5 8 8.70914 8 6.5C8 4.29086 9.79086 2.5 12 2.5C14.2091 2.5 16 4.29086 16 6.5ZM17.5 12.9998C17.0439 12.3927 16.3178 12 15.5 12C14.1193 12 13 13.1193 13 14.5C13 15.1195 13.2253 15.6864 13.5985 16.1231L17.5 21L21.4015 16.1231C21.7747 15.6864 22 15.1195 22 14.5C22 13.1193 20.8807 12 19.5 12C18.6822 12 17.9561 12.3927 17.5 12.9998Z"
+                                        stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- Séparateur vertical + contenu -->
+                        <div class="flex-1 pl-4 border-l border-white/15">
+                            <h3 class="text-lg font-semibold text-white">Informed Guidance</h3>
+                            <p class="text-white/80 text-sm">
+                                Nova informs and guides you, helping you make better health decisions without replacing
+                                professional medical advice.
+                            </p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Informed Guidance</h3>
-                    <p class="text-white/80">
-                        Nova informs and guides you, helping you make better health decisions without replacing
-                        professional medical advice.
-                    </p>
                 </div>
 
                 <!-- Feature 6 -->
-                <div class="border border-white/10 bg-white/2 backdrop-blur-xl p-8 rounded-xl shadow-md">
-                    <div
-                        class="w-14 h-14 rounded-md border-indigo-500/50 border-3 flex items-center justify-center mb-6">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-indigo-500" fill="currentColor"
-                            viewBox="0 0 24 24">
-                            <path fill-rule="evenodd" clip-rule="evenodd"
-                                d="M5.00004 16.8669L4.62722 16.9413C2.73914 17.3183 0.98708 15.8303 1.00007 13.8609L1.05413 5.66559C1.06392 4.18207 2.09362 2.91119 3.51587 2.62725L11.3728 1.05866C13.2589 0.682096 15.0093 2.16667 15 4.13309L15.3728 4.05866C17.259 3.6821 19.0094 5.16666 19 7.13308L19.3728 7.05866C21.2608 6.68171 23.0129 8.16969 22.9999 10.1391L22.9459 18.3344C22.9361 19.8179 21.9064 21.0888 20.4841 21.3728L12.6272 22.9413C10.7409 23.3179 8.99026 21.833 9.00004 19.8662L8.62722 19.9413C6.74104 20.3179 4.99061 18.8333 5.00004 16.8669ZM9.01352 17.8248L9.05418 11.6656C9.06395 10.182 10.0936 8.9112 11.5159 8.62722L16.9973 7.5329L17 7.1259C17.005 6.36468 16.3525 5.90253 15.7644 6.01995L7.90743 7.58854C7.44642 7.68057 7.05783 8.112 7.05409 8.67877L7.00003 16.8741C6.99501 17.6353 7.64752 18.0975 8.23566 17.98L9.01352 17.8248ZM13 4.12595L12.9973 4.53291L7.51587 5.62724C6.09362 5.91118 5.06392 7.18207 5.05413 8.66557L5.0135 14.8248L4.23566 14.98C3.64746 15.0975 2.99501 14.6353 3.00003 13.8741L3.05409 5.67878C3.05783 5.112 3.44643 4.68058 3.90743 4.58854L11.7643 3.01995C12.3525 2.90253 13.005 3.36463 13 4.12595ZM20.9459 18.3212C20.9421 18.888 20.5535 19.3194 20.0926 19.4115L12.2357 20.98C11.6475 21.0975 10.9951 20.6353 11 19.8741L11.0541 11.6788C11.0579 11.112 11.4465 10.6806 11.9075 10.5885L19.7643 9.01995C20.3525 8.90252 21.005 9.36473 21 10.1259L20.9459 18.3212Z" />
-                        </svg>
-
+                <div
+                    class="min-w-[85%] sm:min-w-0 border border-white/10 bg-white/[0.02] backdrop-blur-xl p-4 rounded-xl shadow-md snap-start">
+                    <div class="flex items-center gap-4 h-full">
+                        <!-- Colonne logo -->
+                        <div class="flex-shrink-0 w-16 flex items-center justify-center">
+                            <div
+                                class="w-14 h-14 rounded-md border-2 border-indigo-500/50 flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-indigo-500"
+                                    fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M5.00004 16.8669L4.62722 16.9413C2.73914 17.3183 0.98708 15.8303 1.00007 13.8609L1.05413 5.66559C1.06392 4.18207 2.09362 2.91119 3.51587 2.62725L11.3728 1.05866C13.2589 0.682096 15.0093 2.16667 15 4.13309L15.3728 4.05866C17.259 3.6821 19.0094 5.16666 19 7.13308L19.3728 7.05866C21.2608 6.68171 23.0129 8.16969 22.9999 10.1391L22.9459 18.3344C22.9361 19.8179 21.9064 21.0888 20.4841 21.3728L12.6272 22.9413C10.7409 23.3179 8.99026 21.833 9.00004 19.8662L8.62722 19.9413C6.74104 20.3179 4.99061 18.8333 5.00004 16.8669ZM9.01352 17.8248L9.05418 11.6656C9.06395 10.182 10.0936 8.9112 11.5159 8.62722L16.9973 7.5329L17 7.1259C17.005 6.36468 16.3525 5.90253 15.7644 6.01995L7.90743 7.58854C7.44642 7.68057 7.05783 8.112 7.05409 8.67877L7.00003 16.8741C6.99501 17.6353 7.64752 18.0975 8.23566 17.98L9.01352 17.8248ZM13 4.12595L12.9973 4.53291L7.51587 5.62724C6.09362 5.91118 5.06392 7.18207 5.05413 8.66557L5.0135 14.8248L4.23566 14.98C3.64746 15.0975 2.99501 14.6353 3.00003 13.8741L3.05409 5.67878C3.05783 5.112 3.44643 4.68058 3.90743 4.58854L11.7643 3.01995C12.3525 2.90253 13.005 3.36463 13 4.12595ZM20.9459 18.3212C20.9421 18.888 20.5535 19.3194 20.0926 19.4115L12.2357 20.98C11.6475 21.0975 10.9951 20.6353 11 19.8741L11.0541 11.6788C11.0579 11.112 11.4465 10.6806 11.9075 10.5885L19.7643 9.01995C20.3525 8.90252 21.005 9.36473 21 10.1259L20.9459 18.3212Z" />
+                                </svg>
+                            </div>
+                        </div>
+                        <!-- Séparateur vertical + contenu -->
+                        <div class="flex-1 pl-4 border-l border-white/15">
+                            <h3 class="text-lg font-semibold text-white">Multi-Platform Access</h3>
+                            <p class="text-white/80 text-sm">
+                                Use Nova anytime, anywhere. Available on web and mobile for complete flexibility.
+                            </p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-3">Multi-Platform Access</h3>
-                    <p class="text-white/80">
-                        Use Nova anytime, anywhere. Available on web and mobile for complete flexibility.
-                    </p>
                 </div>
+
             </div>
         </div>
     </section>
 
     <section id="5"
-        class="fade-scroll relative w-full min-h-screen flex items-center justify-center px-6 sm:px-10 lg:px-20 overflow-hidden h-screen snap-start">
-        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="max-w-xl mx-auto text-center xl:max-w-2xl">
-                <h2 class="text-4xl text-white font-extrabold mx-auto md:text-6xl lg:text-5xl">Any question?</h2>
-                <hr class="w-70 mx-auto mt-6 h-0.5 border-t-0 bg-pink-500/90" />
-                <p class="line-clamp-4 text-gray-200 mt-5">Do you have any questions? We have the answers!</p>
-            </div>
-        </div>
-        <div
-            class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8 divide-y divide-pink-500 bg-pink-500/10 rounded-xl border-3 border-pink-500 mt-12">
-            <details class="group p-6 [&_summary::-webkit-details-marker]:hidden">
-                <summary class="flex cursor-pointer items-center justify-between gap-1.5 text-gray-900 dark:text-white">
-                    <h2 class="text-lg font-medium">Lorem ipsum dolor sit amet consectetur adipisicing?</h2>
+  class="fade-scroll relative w-full min-h-screen flex items-center justify-center px-6 overflow-hidden h-screen snap-start">
+  <div class="mx-auto w-full max-w-7xl">
+    <!-- Header -->
+    <div class="text-center max-w-3xl mx-auto">
+      <p class="text-xs sm:text-sm font-bold uppercase tracking-widest text-pink-400/90 mb-3">FAQ</p>
+      <h2 class="text-3xl md:text-5xl lg:text-4xl font-extrabold text-white">Any Questions?</h2>
+      <hr class="w-80 mx-auto mt-5 h-0.5 border-t-0 bg-pink-500/90" />
+      <p class="mt-4 text-gray-300/90">
+        Do you have any questions? We have the answers!
+      </p>
+    </div>
 
-                    <span class="relative size-5 shrink-0">
-                        <svg class="absolute inset-0 size-5 opacity-100 group-open:opacity-0" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m19 9-7 7-7-7" />
-                        </svg>
-                        <svg class="absolute inset-0 size-5 opacity-0 group-open:opacity-100" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m5 15 7-7 7 7" />
-                        </svg>
-                    </span>
-                </summary>
+    <!-- Liste FAQ : 2 colonnes indépendantes -->
+    <div id="faq-accordion" class="mt-10 flex flex-wrap items-start gap-6">
+      <!-- 1 -->
+      <div class="w-full md:w-[calc(50%-12px)] border border-white/10 bg-white/[0.02] backdrop-blur-xl rounded-xl shadow-md">
+        <details class="group p-5 rounded-2xl">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6">
+            <h3 class="text-white font-semibold">Does Nova replace medical advice?</h3>
+            <span class="shrink-0 grid place-items-center w-8 h-8 rounded-full bg-pink-500 text-white transition group-open:rotate-180">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6"/>
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-gray-300 leading-relaxed">
+            No. Nova provides information and recommendations for guidance purposes only through AI.
+            For diagnosis, treatment, or emergencies, consult a healthcare professional.
+          </p>
+        </details>
+      </div>
 
-                <p class="mt-4 leading-relaxed text-gray-700 dark:text-gray-200">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa in,
-                    recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis explicabo
-                    consequuntur distinctio corporis earum similique!
-                </p>
-            </details>
+      <!-- 2 -->
+      <div class="w-full md:w-[calc(50%-12px)] border border-white/10 bg-white/[0.02] backdrop-blur-xl rounded-xl shadow-md">
+        <details class="group p-5 rounded-2xl">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6">
+            <h3 class="text-white font-semibold">How does symptom analysis work?</h3>
+            <span class="shrink-0 grid place-items-center w-8 h-8 rounded-full bg-pink-500 text-white transition group-open:rotate-180">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6"/>
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-gray-300 leading-relaxed">
+            You describe your symptoms, and Nova cross-references this information with your profile
+            (age, history, allergies, etc.) and machine-learning models to suggest interpretations and useful resources.
+          </p>
+        </details>
+      </div>
 
-            <details class="group p-6 [&_summary::-webkit-details-marker]:hidden">
-                <summary class="flex cursor-pointer items-center justify-between gap-1.5 text-gray-900 dark:text-white">
-                    <h2 class="text-lg font-medium">Lorem ipsum dolor sit amet consectetur adipisicing?</h2>
+      <!-- 3 -->
+      <div class="w-full md:w-[calc(50%-12px)] border border-white/10 bg-white/[0.02] backdrop-blur-xl rounded-xl shadow-md">
+        <details class="group p-5 rounded-2xl">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6">
+            <h3 class="text-white font-semibold">Is the personalized medical profile mandatory?</h3>
+            <span class="shrink-0 grid place-items-center w-8 h-8 rounded-full bg-pink-500 text-white transition group-open:rotate-180">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6"/>
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-gray-300 leading-relaxed">
+            No, but it significantly improves the relevance of the results (allergies, treatments, medical history, etc.).
+            You can gradually add to it and modify it at any time.
+          </p>
+        </details>
+      </div>
 
-                    <span class="relative size-5 shrink-0">
-                        <svg class="absolute inset-0 size-5 opacity-100 group-open:opacity-0" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m19 9-7 7-7-7" />
-                        </svg>
-                        <svg class="absolute inset-0 size-5 opacity-0 group-open:opacity-100" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m5 15 7-7 7 7" />
-                        </svg>
-                    </span>
-                </summary>
+      <!-- 4 -->
+      <div class="w-full md:w-[calc(50%-12px)] border border-white/10 bg-white/[0.02] backdrop-blur-xl rounded-xl shadow-md">
+        <details class="group p-5 rounded-2xl">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6">
+            <h3 class="text-white font-semibold">Is my data protected?</h3>
+            <span class="shrink-0 grid place-items-center w-8 h-8 rounded-full bg-pink-500 text-white transition group-open:rotate-180">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6"/>
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-gray-300 leading-relaxed">
+            Yes. We apply strict security and confidentiality standards. Your data is never resold,
+            and you can export or delete it from your account.
+          </p>
+        </details>
+      </div>
 
-                <p class="mt-4 leading-relaxed text-gray-700 dark:text-gray-200">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ab hic veritatis molestias culpa in,
-                    recusandae laboriosam neque aliquid libero nesciunt voluptate dicta quo officiis explicabo
-                    consequuntur distinctio corporis earum similique!
-                </p>
-            </details>
-        </div>
+      <!-- 5 -->
+      <div class="w-full md:w-[calc(50%-12px)] border border-white/10 bg-white/[0.02] backdrop-blur-xl rounded-xl shadow-md">
+        <details class="group p-5 rounded-2xl">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6">
+            <h3 class="text-white font-semibold">What tools does Nova offer?</h3>
+            <span class="shrink-0 grid place-items-center w-8 h-8 rounded-full bg-pink-500 text-white transition group-open:rotate-180">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6"/>
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-gray-300 leading-relaxed">
+            A personalized medical profile, symptom analysis, psychological monitoring,
+            a dermatological check-up, and recommendations tailored to your country.
+          </p>
+        </details>
+      </div>
 
-    </section>
+      <!-- 6 -->
+      <div class="w-full md:w-[calc(50%-12px)] border border-white/10 bg-white/[0.02] backdrop-blur-xl rounded-xl shadow-md">
+        <details class="group p-5 rounded-2xl">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6">
+            <h3 class="text-white font-semibold">Is Nova available in my country?</h3>
+            <span class="shrink-0 grid place-items-center w-8 h-8 rounded-full bg-pink-500 text-white transition group-open:rotate-180">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6"/>
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-gray-300 leading-relaxed">
+            Yes, Nova adapts its recommendations by country (local resources, useful information).
+            Some features may vary depending on local regulations.
+          </p>
+        </details>
+      </div>
+
+      <!-- 7 -->
+      <div class="w-full md:w-[calc(50%-12px)] border border-white/10 bg-white/[0.02] backdrop-blur-xl rounded-xl shadow-md">
+        <details class="group p-5 rounded-2xl">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6">
+            <h3 class="text-white font-semibold">Is there a free version? Subscriptions?</h3>
+            <span class="shrink-0 grid place-items-center w-8 h-8 rounded-full bg-pink-500 text-white transition group-open:rotate-180">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6"/>
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-gray-300 leading-relaxed">
+            Nova offers a free plan and paid plans with advanced features
+            (extended history, additional analytics, prioritization, etc.).
+          </p>
+        </details>
+      </div>
+
+      <!-- 8 -->
+      <div class="w-full md:w-[calc(50%-12px)] border border-white/10 bg-white/[0.02] backdrop-blur-xl rounded-xl shadow-md">
+        <details class="group p-5 rounded-2xl">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-6">
+            <h3 class="text-white font-semibold">Can I share my results with my doctor?</h3>
+            <span class="shrink-0 grid place-items-center w-8 h-8 rounded-full bg-pink-500 text-white transition group-open:rotate-180">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6"/>
+              </svg>
+            </span>
+          </summary>
+          <p class="mt-3 text-gray-300 leading-relaxed">
+            Yes. You can export or copy your results to share them with a healthcare professional.
+          </p>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
 
 </div>
 

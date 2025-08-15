@@ -28,9 +28,11 @@ export class HomeComponent implements AfterViewInit {
     this.initAOS();
     this.setupSpline_aura().catch((e) => {
       console.error(e);
-      this.hideLoader(); // sécurité supplémentaire
+      this.hideLoader();
     });
     this.setupAOSRefreshOnSnap();
+
+    this.setupSingleOpenAccordion();
 
     const lottieContainer = document.getElementById('lottie-container');
     if (lottieContainer) {
@@ -44,6 +46,28 @@ export class HomeComponent implements AfterViewInit {
     } else {
       console.warn('Lottie container not found');
     }
+  }
+
+  private setupSingleOpenAccordion(): void {
+    const container = document.getElementById('5');
+    if (!container) return;
+
+    const items = Array.from(container.querySelectorAll<HTMLDetailsElement>('details'));
+
+    const firstOpen = items.find(d => d.open);
+    if (firstOpen) {
+      items.forEach(d => { if (d !== firstOpen) d.open = false; });
+    }
+
+    items.forEach(d => {
+      d.addEventListener('toggle', () => {
+        if (d.open) {
+          items.forEach(other => {
+            if (other !== d && other.open) other.open = false;
+          });
+        }
+      });
+    });
   }
 
   private initAOS(): void {

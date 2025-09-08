@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -36,6 +36,14 @@ interface SelectionCircle {
   styleUrls: ['./analysis.component.scss']
 })
 export class AnalysisComponent implements OnInit, AfterViewInit {
+  // Chat message model
+  messages: { role: 'user' | 'assistant'; type: 'text' | 'clarification' | 'pain' | 'bodySelection' | 'result' | 'resultSwitcher' | 'demographics' | 'treatments' | 'extras'; content: string; answered?: boolean }[] = [];
+
+  currentResultView: 'result' | 'demographics' | 'treatments' = 'result';
+  thinking = false;
+
+  @ViewChild('chatScrollContainer') chatScrollContainer?: ElementRef<HTMLDivElement>;
+  @ViewChild('scrollAnchor') scrollAnchor?: ElementRef<HTMLDivElement>;
   symptoms: string[] = [];
   searchQuery: string = '';
   filteredSymptoms: string[] = [];
@@ -234,6 +242,9 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.animateContagiousGauge();
     this.animateCourseGauge();
     this.setInitialActiveTab();
+
+    // Seed first assistant message
+    this.pushAssistantText("Hello, describe your symptoms. Add several items and send.");
   }
 
 
@@ -521,7 +532,10 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       return;
     }
     this.errorMessage = '';
+    this.messages.push({ role: 'user', type: 'text', content: `Symptoms: ${this.selectedSymptoms.map(s => this.formatSymptom(s)).join(', ')}` });
     this.step = 2;
+    this.pushAssistantImmediateText('Thanks. Enter your info: age, gender, weight, height.');
+    this.scrollToBottomSoon();
   }
 
   submitPatientInfo(): void {
@@ -530,16 +544,29 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       return;
     }
     this.errorMessage = '';
+    this.messages.push({ role: 'user', type: 'text', content: `Age: ${this.age}, Gender: ${this.sex}, Weight: ${this.weight}kg, Height: ${this.height}cm` });
     this.step = 3;
+    // brief thinking animation before pain question (bottom typing indicator)
+    this.showThinking(1000);
+    setTimeout(() => {
+      this.messages.push({ role: 'assistant', type: 'pain', content: 'Are you experiencing physical pain?', answered: false });
+      this.scrollToBottomSoon();
+    }, 1000);
   }
 
   answerPainQuestion(answer: boolean): void {
     this.painAnswer = answer;
     if (answer) {
       this.showBodySelection = true;
-      this.step = 4; // On passe à l'étape suivante
+      this.step = 4;
+      this.showThinking(1000);
+      setTimeout(() => {
+        this.messages.push({ role: 'assistant', type: 'bodySelection', content: 'Indicate your pain locations on the body.' });
+        this.scrollToBottomSoon();
+      }, 1000);
     } else {
-      this.step = 4; // On passe aussi à l'étape suivante pour soumettre
+      this.step = 4;
+      this.markLastYesNoMessageAnswered('pain');
       this.submitSymptomsToApi();
     }
   }
@@ -553,8 +580,22 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
   validateBodySelection(): void {
     this.showBodySelection = false;
-    this.submitSymptomsToApi();
+    this.markLastMessageAnswered('bodySelection');
+    this.showThinking(1000);
+
+    setTimeout(() => {
+      // 👉 on affiche d'abord le message utilisateur
+      this.messages.push({ role: 'user', type: 'text', content: 'Areas have been selected.' });
+      this.scrollToBottomSoon();
+
+      // 👉 ensuite seulement, on marque la question douleur comme répondu
+      this.markLastYesNoMessageAnswered('pain');
+
+      // 👉 et on envoie l'appel API APRÈS
+      this.submitSymptomsToApi();
+    }, 1000);
   }
+
 
   animateConfidence(target: number): void {
     this.animatedConfidence = 0;
@@ -1196,6 +1237,12 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         this.currentClarification = data.question || null;
         this.response = null;
         this.loading = false;
+        
+
+        if (this.currentClarification?.question) {
+          this.messages.push({ role: 'assistant', type: 'clarification', content: this.currentClarification.question, answered: false });
+        }
+        this.scrollToBottomSoon();
       },
       error: (error) => {
         this.errorMessage = error.error?.error || 'An error occurred during the analysis.';
@@ -1206,6 +1253,12 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
   answerClarification(value: boolean): void {
     if (!this.currentClarification) return;
+    this.showThinking(1000);
+    setTimeout(() => {
+      this.messages.push({ role: 'user', type: 'text', content: value ? 'Yes' : 'No' });
+      this.scrollToBottomSoon();
+    }, 1000);
+    this.markLastYesNoMessageAnswered('clarification');
     const answerPayload = {
       state: this.state,
       answer: {
@@ -1227,13 +1280,28 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         if (data.final_prediction || data.predicted_disease) {
           this.response = data;
           this.currentClarification = null;
+          this.messages.push({ role: 'assistant', type: 'result', content: 'Here are your results.' });
+          this.currentResultView = 'result';
+          this.messages.push({ role: 'assistant', type: 'resultSwitcher', content: 'results-switcher' });
+          // Trigger animations
+          setTimeout(() => {
+            if (this.response?.confidence) {
+              this.animateConfidence(this.response.confidence * 100);
+            }
+            this.animateSeverity();
+            this.animateContagiousGauge();
+            this.animateCourseGauge();
+            // Charts will render when demographics tab is opened
+          }, 50);
         } else {
           this.currentClarification = data.question || null;
           if (this.currentClarification?.question) {
             this.askedQuestions.push(this.currentClarification.question);
+            this.messages.push({ role: 'assistant', type: 'clarification', content: this.currentClarification.question, answered: false });
           }
         }
         this.loading = false;
+        this.scrollToBottomSoon();
       },
       error: (error) => {
         this.errorMessage = error.error?.error || 'An error occurred during clarification.';
@@ -1264,5 +1332,124 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.hoverCircleFront = null;
     this.hoverCircleBack = null;
     this.step = 1;
+    this.messages = [];
+    this.pushAssistantText("Hello, describe your symptoms. Add several items and send.");
+    this.scrollToBottomSoon();
+  }
+
+  private pushAssistantText(content: string): void {
+    this.thinking = true;
+    setTimeout(() => {
+      this.thinking = false; // on coupe le "..."
+      this.messages.push({ role: 'assistant', type: 'text', content });
+      this.scrollToBottomSoon();
+    }, 1000);
+  }
+
+  private pushAssistantImmediateText(content: string): void {
+    this.messages.push({ role: 'assistant', type: 'text', content });
+    this.scrollToBottomSoon();
+  }
+
+  private scrollToBottomSoon(): void {
+    setTimeout(() => {
+      try {
+        this.scrollAnchor?.nativeElement.scrollIntoView({ behavior: 'smooth' });
+      } catch {}
+    }, 0);
+  }
+
+  private markLastYesNoMessageAnswered(kind: 'clarification' | 'pain'): void {
+    for (let i = this.messages.length - 1; i >= 0; i--) {
+      const msg = this.messages[i];
+      if (msg.role === 'assistant' && msg.type === kind) {
+        msg.answered = true;
+        break;
+      }
+    }
+  }
+
+  private stripLastTypingIndicator(): void {
+    for (let i = this.messages.length - 1; i >= 0; i--) {
+      const msg = this.messages[i];
+      if (msg.role === 'assistant' && msg.type === 'text' && msg.content === '...') {
+        this.messages.splice(i, 1);
+        break;
+      }
+    }
+  }
+
+  private markLastMessageAnswered(kind: 'bodySelection'): void {
+    for (let i = this.messages.length - 1; i >= 0; i--) {
+      const msg = this.messages[i];
+      if (msg.role === 'assistant' && msg.type === kind) {
+        msg.answered = true;
+        break;
+      }
+    }
+  }
+
+  // Result view navigation handlers used by template
+  nextResultView(): void {
+    const views = this.getAvailableResultViews();
+    const idx = views.indexOf(this.currentResultView);
+    this.currentResultView = views[(idx + 1) % views.length];
+    if (this.currentResultView === 'demographics') {
+      setTimeout(() => this.renderDemographicCharts(), 0);
+    }
+  }
+
+  prevResultView(): void {
+    const views = this.getAvailableResultViews();
+    const idx = views.indexOf(this.currentResultView);
+    this.currentResultView = views[(idx - 1 + views.length) % views.length];
+    if (this.currentResultView === 'demographics') {
+      setTimeout(() => this.renderDemographicCharts(), 0);
+    }
+  }
+
+  private getAvailableResultViews(): ('result' | 'demographics' | 'treatments')[] {
+    const views: ('result' | 'demographics' | 'treatments')[] = ['result'];
+    if (this.response?.disease_info?.demographics) views.push('demographics');
+    if (this.hasDiseaseTreatment || this.hasSymptomTreatments) views.push('treatments');
+    return views;
+  }
+
+  private showThinking(durationMs: number = 1000): void {
+    this.thinking = true;
+    setTimeout(() => {
+      this.thinking = false;
+    }, durationMs);
+  }
+
+
+
+  // Extras prompt handler
+  answerExtras(value: boolean): void {
+    // find last extras prompt
+    for (let i = this.messages.length - 1; i >= 0; i--) {
+      const msg = this.messages[i];
+      if (msg.role === 'assistant' && msg.type === 'extras' && !msg.answered) {
+        msg.answered = true;
+        break;
+      }
+    }
+    this.messages.push({ role: 'user', type: 'text', content: value ? 'Yes' : 'No' });
+    if (!value) {
+      this.scrollToBottomSoon();
+      return;
+    }
+    // Show demographics if available
+    if (this.response?.disease_info?.demographics) {
+      this.messages.push({ role: 'assistant', type: 'demographics', content: 'Disease demographics overview' });
+      setTimeout(() => {
+        this.renderDemographicCharts();
+      }, 0);
+    }
+    // Show treatments if available
+    if (this.hasDiseaseTreatment || this.hasSymptomTreatments) {
+      this.messages.push({ role: 'assistant', type: 'treatments', content: 'Treatment plan overview' });
+    }
+    this.scrollToBottomSoon();
   }
 }

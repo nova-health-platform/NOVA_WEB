@@ -17,6 +17,10 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AccountComponent } from './account/account.component';
 import { AuthGuard } from './guards/auth.guards';
+import { AboutUsComponent } from './about-us/about-us.component';
+import { ContactComponent } from './contact/contact.component';
+import { TermsOfUseComponent } from './terms-of-use/terms-of-use.component';
+import { DocsComponent } from './docs/docs.component';
 
 // Définition des routes
 export const routes: Routes = [
@@ -56,6 +60,16 @@ export const routes: Routes = [
     { path: 'burnout', component: BurnoutComponent },
 
     { path: 'medecineSearch', component: ScanMedComponent },
+
+    { path: 'about-us', component: AboutUsComponent },
+
+    { path: 'contact', component: ContactComponent },
+
+    { path: 'roadmap', component: AboutUsComponent },
+
+    { path: 'terms-of-use', component: TermsOfUseComponent },
+
+    { path: 'docs', component: DocsComponent },
 
     // Route pour capturer toutes les autres URLs et rediriger vers 'home'
     { path: '**', redirectTo: 'home' },

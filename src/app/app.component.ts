@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 
 // Import des composants standalone
 import { HeaderComponent } from './header/header.component';
-import { FooterComponent } from './footer/footer.component';
 
 import AOS from 'aos';
 

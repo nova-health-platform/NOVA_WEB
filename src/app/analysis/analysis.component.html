@@ -1,803 +1,451 @@
-<section class="min-h-screen flex justify-center items-center">
-  <div class="mx-auto w-full max-w-6xl">
-    <div>
-      <div *ngIf="errorMessage" class="bg-red-100 text-red-700 p-3 rounded mb-4 text-center max-w-2xl mx-auto">
-        {{ errorMessage }}
-      </div>
+<section class="min-h-screen w-full flex items-center justify-center">
+  <div class="w-full max-w-4xl mx-auto">
+    <div class="bg-[#101010] dark:bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 shadow-xl h-[80vh] flex flex-col">
+      <div class="p-4 border-b border-white/10 text-center text-white font-semibold">Analysis Assistant</div>
 
-      <div *ngIf="loading" class="text-center text-white mb-4 font-semibold">
-        Loading...
-      </div>
+      <div class="flex-1 overflow-y-auto p-4 space-y-4" #chatScrollContainer>
+        <div *ngIf="errorMessage" class="bg-red-100 text-red-700 p-3 rounded text-center">
+          {{ errorMessage }}
+        </div>
 
-      <!-- Step 1: Symptoms -->
-      <div *ngIf="step === 1" class="max-w-2xl mx-auto p-6 -mt-35">
-        <h1 class="text-4xl text-center text-white font-extrabold mb-6">Enter your symptoms</h1>
-        <div class="bg-white/3 rounded-xl shadow-xl p-2 mb-6">
-          <div class="flex items-center gap-2 ">
-            <div class="w-full">
-              <div class="flex items-center gap-2">
-                <div class="bg-[#101010] w-full rounded-lg">
+        <ng-container *ngFor="let m of messages">
+          <!-- User message -->
+          <div *ngIf="m.role === 'user'" class="flex justify-end">
+            <div class="max-w-[80%] bg-green-500/20 border border-green-500/60 text-white rounded-2xl rounded-br-sm px-4 py-2">
+              {{ m.content }}
+            </div>
+          </div>
 
-                  <input type="text" [(ngModel)]="searchQuery" (input)="filterSymptoms()" (keydown.enter)="addSymptom()"
-                    placeholder="Enter a symptom..."
-                    class="w-full p-2 py-3 border-2 border-pink-500/80 bg-pink-500/10 text-white rounded-lg focus:outline-none focus:ring-0 focus:ring-pink-500" />
-                </div>
-                <div class="bg-[#101010] rounded-lg">
+          <!-- Assistant text -->
+          <div *ngIf="m.role === 'assistant' && m.type === 'text'" class="flex justify-start">
+            <div class="max-w-[85%] bg-[#101010]/80 border border-white/10 text-white rounded-2xl rounded-bl-sm px-4 py-3">
+              {{ m.content }}
+            </div>
+          </div>
 
-                  <button (click)="submitSymptoms()"
-                    class="cursor-pointer px-4 py-3 rounded-lg bg-pink-500/10 border-2 border-pink-500/80 text-white hover:bg-pink-500 hover:text-white hover:ring-0 hover:ring-pink-500">
-                    Submit
-                  </button>
-                </div>
+          <!-- Assistant clarification (Yes/No) -->
+          <div *ngIf="m.role === 'assistant' && m.type === 'clarification'" class="flex justify-start">
+            <div class="max-w-[85%] w-full">
+              <div class="inline-block bg-[#101010]/80 dark:bg-[#101010]/80 border border-white/10 text-white rounded-2xl rounded-bl-sm px-4 py-3">
+                {{ m.content }}
               </div>
-              <ul *ngIf="filteredSymptoms.length > 0"
-                class="w-full bg-white border border-gray-300 rounded-md shadow-lg mt-4 z-10">
-                <li *ngFor="let symptom of filteredSymptoms" (click)="addSymptom(symptom)"
-                  class="p-2 cursor-pointer hover:bg-pink-100 text-black">
-                  {{ formatSymptom(symptom) }}
-                </li>
-
-              </ul>
-            </div>
-          </div>
-
-
-        </div>
-        <div *ngIf="selectedSymptoms.length > 0" class="mt-4 flex flex-wrap gap-2 justify-center items-center">
-          <span *ngFor="let symptom of selectedSymptoms; let i = index" class="bg-[#101010] rounded-full">
-            <span class="bg-pink-500/3 border-2 border-pink-500 text-white px-3 py-1 rounded-full flex items-center">
-              {{ formatSymptom(symptom) }}
-              <button (click)="removeSymptom(i)" class="cursor-pointer text-pink-500 ml-2 font-bold">✖</button>
-            </span>
-          </span>
-
-        </div>
-      </div>
-
-      <!-- Step 2: Patient Info -->
-      <div *ngIf="step === 2" class="max-w-2xl mx-auto p-6 -mt-35">
-        <h2 class="text-4xl text-center text-white font-extrabold mb-6">Patient Information</h2>
-        <div class="bg-white/3 rounded-xl shadow-xl p-2 mb-2">
-          <div class="grid grid-cols-2 gap-4">
-            <div class="bg-[#101010] rounded-lg">
-              <input type="number" [(ngModel)]="age" placeholder="Age"
-                class="w-full p-2 py-3 border-2 border-pink-500 bg-pink-500/10 text-white rounded-lg focus:outline-none focus:ring-0 focus:ring-pink-500" />
-            </div>
-            <div class="bg-[#101010] rounded-lg">
-              <select [(ngModel)]="sex"
-                class="w-full p-2 py-3 border-2 border-pink-500 bg-pink-500/10 text-white rounded-lg focus:outline-none focus:ring-0 focus:ring-pink-500">
-                <option value="" disabled hidden>Gender</option>
-                <option value="male" class="bg-white p-2 cursor-pointer hover:bg-pink-100 text-black">Male</option>
-                <option value="female" class="bg-white p-2 cursor-pointer hover:bg-pink-100 text-black">Female</option>
-              </select>
-
-            </div>
-            <div class="bg-[#101010] rounded-lg">
-              <input type="number" [(ngModel)]="weight" placeholder="Weight (kg)"
-                class="w-full p-2 py-3 border-2 border-pink-500 bg-pink-500/10 text-white rounded-lg focus:outline-none focus:ring-0 focus:ring-pink-500" />
-            </div>
-            <div class="bg-[#101010] rounded-lg">
-              <input type="number" [(ngModel)]="height" placeholder="Height (cm)"
-                class="w-full p-2 py-3 border-2 border-pink-500 bg-pink-500/10 text-white rounded-lg focus:outline-none focus:ring-0 focus:ring-pink-500" />
-            </div>
-          </div>
-
-
-        </div>
-        <div class="flex justify-between">
-          <div class="bg-white/3 p-2 rounded-lg">
-            <button (click)="previousStep()"
-              class="w-25 cursor-pointer px-4 py-2 rounded-lg bg-pink-500/10 border-2 border-pink-500 text-white hover:bg-pink-500 hover:text-white hover:ring-2 hover:ring-pink-500">
-              Back
-            </button>
-          </div>
-          <div class="bg-white/3 p-2 rounded-lg">
-            <button (click)="submitPatientInfo()"
-              class="w-25 cursor-pointer px-4 py-2 rounded-lg bg-pink-500/10 border-2 border-pink-500 text-white hover:bg-pink-500 hover:text-white hover:ring-2 hover:ring-pink-500">
-              Continue
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Step 3: Pain Question -->
-      <div *ngIf="step === 3 && painAnswer === null"
-        class="w-min mx-auto p-6 text-center bg-white/1 rounded-xl shadow-xl -mt-35">
-        <h3 class="text-xl font-semibold mb-6 text-white whitespace-nowrap px-6">Are you experiencing physical pain?
-        </h3>
-        <div class="flex justify-center gap-6 mb-4">
-          <button (click)="answerPainQuestion(true)"
-            class="cursor-pointer px-4 py-2 w-30 rounded-lg bg-green-500/10 border-2 border-green-500 text-white hover:bg-green-500 hover:text-white hover:ring-2 hover:ring-green-500">Yes</button>
-          <button (click)="answerPainQuestion(false)"
-            class="cursor-pointer px-4 py-2 w-30 rounded-lg bg-red-500/10 border-2 border-red-500 text-white hover:bg-red-500 hover:text-white hover:ring-2 hover:ring-red-500">No</button>
-        </div>
-      </div>
-
-      <div *ngIf="showBodySelection" class="p-6 rounded-lg shadow-md max-w-6xl mx-auto text-center -mt-35">
-        <h2 class="text-4xl text-center text-white font-extrabold mb-6">Select your physical pain</h2>
-        <div class="bg-white/3 p-4 rounded-xl shadow-xl flex flex-col md:flex-row gap-4 items-stretch justify-center">
-          <!-- Instructions + Slider -->
-          <div class="w-full md:w-1/2 h-full min-h-[450px] flex flex-col space-y-5">
-            <!-- Bloc Instructions -->
-            <div
-              class="bg-pink-500/10 border-2 border-pink-500 rounded-lg shadow-lg p-6 text-left text-white space-y-4">
-              <!-- Titre -->
-              <div class="flex items-center gap-3">
-                <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" stroke-width="2"
-                  viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M12 8c.667-2 2.5-3.5 5-3.5S21 6 21 8c0 2-1.5 3.5-3.5 3.5S14 10 12 8zM4 16l4-4 4 4M4 20h16" />
-                </svg>
-                <h3 class="text-lg font-bold">Instruction</h3>
-              </div>
-
-              <div class="text-sm leading-relaxed">
-                <p>To help us understand your discomfort, please indicate the areas where you feel pain using the body
-                  silhouette.</p>
-
-                <ul class="list-disc list-inside mt-3 space-y-1">
-                  <li>Use the <strong>slider</strong> to choose the size of the selection circle.</li>
-                  <li><strong>Click</strong> on the body to place a circle — areas underneath will be selected.</li>
-                  <li><strong>Click again</strong> near an existing circle to remove it.</li>
-                  <li>You can select <strong>multiple zones</strong> if needed.</li>
-                  <li>Make sure you differentiate between the <strong>"Front"</strong> and the <strong>"Back"</strong>
-                    to improve diagnostic accuracy.</li>
-                </ul>
-
-                <p class="text-sm text-pink-200 mt-2">
-                  Selected areas will appear as semi-transparent pink circles.
-                </p>
-
-                <p class="text-sm text-pink-200 mt-2 italic">
-                  Example: For shoulder pain, click near the top arm/shoulder section.
-                </p>
-              </div>
-
-
-            </div>
-
-            <div class="flex-grow bg-[#3b6fff]/10 border-2 border-[#3b6fff] p-6 rounded-lg text-sm text-white relative">
-              <div class="flex items-center gap-3">
-                <h3 class="text-lg font-bold mb-5">Circle Size</h3>
-              </div>
-
-              <!-- Slider input -->
-              <div class="px-0">
-                <input id="circleSizeSlider" type="range" min="1" max="3" step="1" [(ngModel)]="circleSizeIndex" class="w-full h-4 bg-[#3b6fff]/30 rounded-lg appearance-none cursor-pointer transition-all
-            focus:outline-none focus:ring-1 focus:ring-[#3b6fff]
-            [&::-webkit-slider-thumb]:appearance-none
-            [&::-webkit-slider-thumb]:h-4
-            [&::-webkit-slider-thumb]:w-4
-            [&::-webkit-slider-thumb]:rounded-full
-            [&::-webkit-slider-thumb]:bg-white
-            [&::-webkit-slider-thumb]:border-2
-            [&::-webkit-slider-thumb]:border-blue-500
-            [&::-webkit-slider-thumb]:transition
-            [&::-webkit-slider-thumb]:hover:scale-110
-            [&::-moz-range-thumb]:bg-blue-500/0
-            [&::-moz-range-thumb]:border-2
-            [&::-moz-range-thumb]:border-pink-500
-            [&::-moz-range-thumb]:rounded-full
-            [&::-moz-range-thumb]:h-4
-            [&::-moz-range-thumb]:w-4" />
-
-                <!-- Labels bien alignés -->
-                <div class="relative mt-4 h-4 w-full">
-                  <span class="absolute left-0 transform -translate-x-0/2 text-xs">Small</span>
-                  <span class="absolute left-1/2 transform -translate-x-1/2 text-xs">Medium</span>
-                  <span class="absolute left-full transform -translate-x-2/2 text-xs">Large</span>
-                </div>
-              </div>
-            </div>
-
-
-
-          </div>
-
-          <!-- Silhouettes -->
-          <div
-            class="w-full md:w-1/2 flex justify-center gap-8 bg-[#3b6fff]/10 pt-15 rounded-lg shadow-lg border-2 border-[#3b6fff]">
-            <!-- Front -->
-            <div class="flex flex-col items-center">
-              <svg (click)="handleSvgClick($event, 'front')" (mousemove)="handleSvgHover($event, 'front')"
-                (mouseleave)="hoverCircleFront = null" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190"
-                preserveAspectRatio="xMidYMid meet">
-                <g id="effects-layer-front"></g>
-
-                <!-- Corps -->
-                <ng-container *ngFor="let path of svgFrontPaths">
-                  <ng-container *ngIf="path.id === 'body'">
-                    <path [attr.d]="path.d" [attr.id]="path.id" fill="#3b6fff" [style.pointer-events]="'none'"></path>
-                  </ng-container>
-                </ng-container>
-
-                <!-- Zones interactives -->
-                <ng-container *ngFor="let path of svgFrontPaths">
-                  <ng-container *ngIf="path.id !== 'body'">
-                    <path [attr.d]="path.d" [attr.id]="path.id" fill="transparent" [style.pointer-events]="'auto'">
-                    </path>
-                  </ng-container>
-                </ng-container>
-
-                <!-- Cercles de sélection -->
-                <circle *ngFor="let circle of selectionCirclesFront" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
-                  [attr.r]="circle.r" fill="rgba(255,255,255,0.1)" stroke="#ec4899" stroke-width="1" />
-
-                <!-- Cercle de hover -->
-                <circle *ngIf="hoverCircleFront" [attr.cx]="hoverCircleFront.cx" [attr.cy]="hoverCircleFront.cy"
-                  [attr.r]="hoverCircleFront.r" fill="rgba(255,255,255,0.2)" stroke="#ffffff" stroke-dasharray="2"
-                  stroke-width="1" />
-              </svg>
-              <div class="mt-2 text-white text-sm font-semibold">Front</div>
-            </div>
-
-            <!-- Back -->
-            <div class="flex flex-col items-center">
-              <svg (click)="handleSvgClick($event, 'back')" (mousemove)="handleSvgHover($event, 'back')"
-                (mouseleave)="hoverCircleBack = null" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190"
-                preserveAspectRatio="xMidYMid meet">
-                <g id="effects-layer-back"></g>
-
-                <ng-container *ngFor="let path of svgBackPaths">
-                  <ng-container *ngIf="path.id === 'body'">
-                    <path [attr.d]="path.d" [attr.id]="path.id" fill="#3b6fff" [style.pointer-events]="'none'"></path>
-                  </ng-container>
-                </ng-container>
-
-                <ng-container *ngFor="let path of svgBackPaths">
-                  <ng-container *ngIf="path.id !== 'body'">
-                    <path [attr.d]="path.d" [attr.id]="path.id" fill="transparent" [style.pointer-events]="'auto'">
-                    </path>
-                  </ng-container>
-                </ng-container>
-
-                <circle *ngFor="let circle of selectionCirclesBack" [attr.cx]="circle.cx" [attr.cy]="circle.cy"
-                  [attr.r]="circle.r" fill="rgba(255,255,255,0.1)" stroke="#ec4899" stroke-width="1" />
-
-                <circle *ngIf="hoverCircleBack" [attr.cx]="hoverCircleBack.cx" [attr.cy]="hoverCircleBack.cy"
-                  [attr.r]="hoverCircleBack.r" fill="rgba(255,255,255,0.2)" stroke="#ffffff" stroke-dasharray="2"
-                  stroke-width="1" />
-              </svg>
-              <div class="mt-2 text-white text-sm font-semibold">Back</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Boutons -->
-        <div class="flex justify-end">
-          <div class="mt-4 bg-white/3 p-2 rounded-xl flex gap-2">
-            <button (click)="resetBodySelection()"
-              class="cursor-pointer rounded-md px-5 py-2.5 text-sm font-medium bg-pink-500/10 border-2 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
-              Reset
-            </button>
-            <button (click)="validateBodySelection()"
-              class="cursor-pointer rounded-md px-5 py-2.5 text-sm font-medium bg-[#3b6fff]/10 border-2 border-[#3b6fff] text-white hover:bg-[#3b6fff] hover:text-white">
-              Confirm selection
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-      <div *ngIf="currentClarification" class="w-min mx-auto p-6 text-center bg-white/1 rounded-xl -mt-35">
-        <div class="text-xl font-semibold mb-6 text-white whitespace-nowrap px-6">
-          {{ currentClarification.question }}
-        </div>
-        <div class="flex justify-center gap-6">
-          <button (click)="answerClarification(true)"
-            class="cursor-pointer px-4 py-2 w-30 rounded-lg bg-green-500/10 border-2 border-green-500 text-white hover:bg-green-500 hover:text-white hover:ring-2 hover:ring-green-500">Yes</button>
-          <button (click)="answerClarification(false)"
-            class="cursor-pointer px-4 py-2 w-30 rounded-lg bg-red-500/10 border-2 border-red-500 text-white hover:bg-red-500 hover:text-white hover:ring-2 hover:ring-red-500">No</button>
-        </div>
-      </div>
-
-      <div *ngIf="response && !currentClarification && response.predicted_disease" class="text-center mt-10">
-        <h2 class="text-4xl font-extrabold text-white">Analysis Result</h2>
-        <p class="text-sm mx-auto text-white/80 mt-3 mb-8 max-w-4xl">
-          This section presents the outcome of the symptom analysis, including the most likely diagnosis, its severity,
-          and related clinical information. It is derived from your input and enhanced by contextual medical data to
-          offer an accurate, data-driven health insight.
-        </p>
-        <div>
-          <div class="bg-white/3 p-3 rounded-xl max-w-6xl mx-auto text-white">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-              <!-- LEFT COLUMN -->
-              <div class="flex flex-col h-full gap-4">
-                <!-- Top: Diagnostic Info -->
-                <div class="p-4 rounded-xl shadow-md bg-pink-500/10 border border-pink-500/80">
-                  <!-- Confidence bar -->
-                  <div class="relative">
-                    <div class="absolute top-0 right-0 w-60 rounded-xl shadow-lg bg-pink-500/5">
-                      <div class="h-full w-full pt-1.5 pb-2 px-2 rounded-xl">
-                        <div class="flex items-center justify-between mb-1">
-                          <span class="text-[10px] font-semibold text-white uppercase">Confidence</span>
-                          <span class="text-xs font-bold" [style.color]="getGradientColor(animatedConfidence)">
-                            {{ animatedConfidence }}%
-                          </span>
-                        </div>
-                        <div class="w-full h-2 bg-pink-500/10 rounded-full overflow-hidden">
-                          <div class="h-full rounded-full transition-all duration-100" [ngStyle]="{
-              width: animatedConfidence + '%',
-              backgroundColor: getGradientColor(animatedConfidence)
-            }"></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <h3 class="text-2xl font-bold mb-4 text-white text-left">Diagnostic Result</h3>
-
-                  <!-- Disease description -->
-                  <div class="text-sm p-4 rounded-xl shadow bg-pink-500/10 text-justify space-y-1">
-                    <p class="text-lg">
-                      <span class="font-semibold text-pink-400">{{ formatDiseaseLabel(response.predicted_disease)
-                        }}</span>
-                    </p>
-                    <div class="overflow-hidden transition-[max-height] duration-500 ease-in-out"
-                      [style.maxHeight]="isDescriptionExpanded ? '1000px' : '3.5rem'"
-                      [style.opacity]="isDescriptionExpanded ? '1' : '1'">
-                      {{ response.disease_info.description }}
-                    </div>
-                    <button *ngIf="response.disease_info.description?.length > textLimit"
-                      (click)="isDescriptionExpanded = !isDescriptionExpanded"
-                      class="cursor-pointer text-pink-400 hover:underline text-xs font-medium mt-1">
-                      {{ isDescriptionExpanded ? 'Read less' : 'Read more' }}
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Bottom: Gauges take all remaining space -->
-                <div
-                  class="flex-1 p-4 rounded-xl shadow-md bg-pink-500/10 flex flex-col justify-center border border-pink-500/80">
-                  <h3 class="text-2xl font-bold mb-4 text-white text-left">Clinical Indicators</h3>
-                  <div class="flex justify-center items-center gap-16 flex-wrap p-4 rounded-xl bg-pink-500/10 h-full">
-                    <!-- Severity -->
-                    <div
-                      class="relative w-28 h-28 cursor-pointer rounded-full ring-1 ring-white/10 shadow-md backdrop-blur-md transition-transform duration-100 hover:scale-105 hover:bg-white/5">
-                      <svg class="size-full -rotate-225" viewBox="0 0 36 36">
-                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#334155"
-                          stroke-dasharray="75 100" stroke-linecap="round" />
-                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2"
-                          [attr.stroke]="getSeverityColor(animatedSeverity)"
-                          [attr.stroke-dasharray]="(animatedSeverity * 0.75 / 100 * 100).toFixed(2) + ' 100'"
-                          stroke-linecap="round" />
-                      </svg>
-                      <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                        <span class="text-base font-semibold leading-tight"
-                          [style.color]="getSeverityColor(animatedSeverity)">
-                          {{ response.disease_info.severity_level.replace('.', '') }}
-                        </span>
-                        <span class="text-xs text-white/70">Severity</span>
-                      </div>
-                    </div>
-
-                    <!-- Contagious -->
-                    <div
-                      class="relative w-28 h-28 cursor-pointer rounded-full ring-1 ring-white/10 shadow-md backdrop-blur-md transition-transform duration-100 hover:scale-105 hover:bg-white/5">
-                      <svg class="size-full -rotate-225" viewBox="0 0 36 36">
-                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#334155"
-                          stroke-dasharray="75 100" stroke-linecap="round" />
-                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2"
-                          [attr.stroke]="getContagiousColor(response.disease_info.contagious)"
-                          [attr.stroke-dasharray]="(animatedContagious * 0.75).toFixed(2) + ' 100'"
-                          stroke-linecap="round" />
-                      </svg>
-                      <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                        <span class="text-base font-semibold leading-tight"
-                          [style.color]="getContagiousColor(response.disease_info.contagious)">
-                          {{ response.disease_info.contagious.replace('.', '') }}
-                        </span>
-                        <span class="text-xs text-white/70">Contagious</span>
-                      </div>
-                    </div>
-
-                    <!-- Chronic/Acute -->
-                    <div
-                      class="relative w-28 h-28 cursor-pointer rounded-full ring-1 ring-white/10 shadow-md backdrop-blur-md transition-transform duration-100 hover:scale-105 hover:bg-white/5">
-                      <svg class="size-full -rotate-225" viewBox="0 0 36 36">
-                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#334155"
-                          stroke-dasharray="75 100" stroke-linecap="round" />
-                        <circle cx="18" cy="18" r="16" fill="none" stroke-width="2"
-                          [attr.stroke]="getCourseColor(response.disease_info.chronic_or_acute)"
-                          [attr.stroke-dasharray]="(animatedCourse * 0.75).toFixed(2) + ' 100'"
-                          stroke-linecap="round" />
-                      </svg>
-                      <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                        <span class="text-sm font-semibold"
-                          [style.color]="getCourseColor(response.disease_info.chronic_or_acute)">
-                          {{ response.disease_info.chronic_or_acute.replace('.', '') }}
-                        </span>
-                        <span class="text-xs text-white/70">Course</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-
-              <!-- RIGHT COLUMN -->
-              <div class="flex flex-col gap-4">
-                <div *ngIf="response.disease_info"
-                  class="relative p-4 rounded-xl shadow-md h-full bg-pink-500/10 border border-pink-500/80">
-                  <h3 class="text-2xl font-bold mb-4 text-white">Recommended Actions</h3>
-                  <div class="overflow-x-auto rounded-xl shadow bg-pink-500/10">
-                    <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
-                      <tbody class="divide-y divide-pink-500/20">
-                        <tr>
-                          <th class="ps-5 py-3 text-pink-400 font-semibold whitespace-nowrap">🩷</th>
-                          <td class="ps-5 pe-5 py-3">{{ response.disease_info.advice }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                </div>
-                <div *ngIf="response.disease_info"
-                  class="relative p-4 rounded-xl shadow-md h-full bg-pink-500/10 border border-pink-500/80">
-                  <h3 class="text-2xl font-bold mb-4 text-white">Disease Informations</h3>
-
-                  <div class="overflow-x-auto rounded-xl shadow bg-pink-500/10">
-                    <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
-                      <tbody class="divide-y divide-pink-500/20">
-                        <tr>
-                          <th class="px-4 py-3 text-pink-400 font-semibold whitespace-nowrap">Risk Factors</th>
-                          <td class="px-4 py-3">{{ response.disease_info.risk_factor }}</td>
-                        </tr>
-                        <tr>
-                          <th class="px-4 py-3 text-pink-400 font-semibold whitespace-nowrap">Prevention</th>
-                          <td class="px-4 py-3">{{ response.disease_info.prevention }}</td>
-                        </tr>
-                        <tr>
-                          <th class="px-4 py-3 text-pink-400 font-semibold whitespace-nowrap">Complications</th>
-                          <td class="px-4 py-3">{{ response.disease_info.complications }}</td>
-                        </tr>
-                        <tr>
-                          <th class="px-4 py-3 text-pink-400 font-semibold whitespace-nowrap">Related Diseases</th>
-                          <td class="px-4 py-3">{{ response.disease_info.related_diseases }}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-
-                </div>
+              <div class="flex justify-end mt-2" *ngIf="!m.answered">
+                <button (click)="answerClarification(true)" class="cursor-pointer px-4 py-2 rounded-2xl rounded-br-sm bg-green-500/20 border border-green-500/60 text-white">Yes</button>
+                <button (click)="answerClarification(false)" class="ml-2 cursor-pointer px-4 py-2 rounded-2xl rounded-br-sm bg-green-500/20 border border-green-500/60 text-white">No</button>
               </div>
             </div>
           </div>
-        </div>
-        <div>
 
-          <div *ngIf="showDemographicsSection">
-            <h2 class="text-4xl font-extrabold mt-20 text-white">Disease Demographics Overview</h2>
-            <p class="text-sm mx-auto text-white/70 mt-3 max-w-4xl">
-              This section illustrates the typical demographic distribution of the predicted disease, highlighting which
-              age groups and genders are most commonly affected. The data is based on aggregated clinical patterns and
-              helps contextualize the diagnosis within a broader population profile.
-            </p>
-
-            <div class="max-w-6xl mx-auto mt-8 text-white">
-              <div class="bg-white/3 p-3 rounded-xl">
-                <div class="grid grid-cols-5 gap-4 items-stretch">
-
-                  <!-- ✅ Gender Distribution -->
-                  <div class="col-span-2" *ngIf="showGenderChart">
-                    <div
-                      class="bg-purple-500/10 p-4 rounded-xl shadow-md border border-purple-500/80 h-full flex flex-col justify-between">
-
-                      <!-- Titre -->
-                      <h3 class="text-2xl font-bold mb-5 text-white text-left">Gender Distribution</h3>
-
-                      <!-- Graph avec hauteur fixe -->
-                      <div class="bg-purple-500/10 rounded-xl h-70 flex items-center justify-center p-4">
-                        <div class="w-full aspect-square max-w-[250px]">
-                          <canvas id="genderChart" class="w-full h-full"></canvas>
-                        </div>
-                      </div>
-
-                      <!-- Description uniforme -->
-                      <div
-                        class="rounded-xl shadow mt-4 bg-purple-500/10 p-4 text-center min-h-[60px] flex items-center justify-center">
-                        <p class="text-sm">This pie chart represents the distribution of disease cases between the sexes
-                          (men and women).</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- ✅ Age Distribution -->
-                  <div class="col-span-3" *ngIf="showAgeChart">
-                    <div
-                      class="bg-purple-500/10 p-4 rounded-xl shadow-md border border-purple-500/80 h-full flex flex-col justify-between">
-
-                      <!-- Titre -->
-                      <h3 class="text-2xl font-bold mb-5 text-white text-left">Age Distribution</h3>
-
-                      <!-- Graph (même hauteur que celui de gauche) -->
-                      <div class="bg-purple-500/10 rounded-xl h-70 flex items-center justify-center py-4 px-2">
-                        <canvas id="ageChart" class="w-full h-full"></canvas>
-                      </div>
-
-                      <!-- Description uniforme -->
-                      <div
-                        class="rounded-xl shadow mt-4 bg-purple-500/10 p-4 text-center h-full flex items-center justify-center">
-                        <p class="text-sm">This bar chart shows the frequency of cases by age group, highlighting the
-                          groups most affected.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
+          <!-- Assistant pain question (Yes/No) -->
+          <div *ngIf="m.role === 'assistant' && m.type === 'pain'" class="flex justify-start">
+            <div class="max-w-[85%] w-full">
+              <div class="inline-block bg-[#101010]/80 dark:bg-[#101010]/80 border border-white/10 text-white rounded-2xl rounded-bl-sm px-4 py-3">
+                {{ m.content }}
+              </div>
+              <div class="flex justify-end mt-2" *ngIf="!m.answered">
+                <button (click)="answerPainQuestion(true)" class="cursor-pointer px-4 py-2 rounded-2xl rounded-br-sm bg-green-500/20 border border-green-500/60 text-white">Yes</button>
+                <button (click)="answerPainQuestion(false)" class="ml-2 cursor-pointer px-4 py-2 rounded-2xl rounded-br-sm bg-green-500/20 border border-green-500/60 text-white">No</button>
               </div>
             </div>
           </div>
-        </div>
 
-
-
-
-
-        <div>
-          <div *ngIf="hasDiseaseTreatment || hasSymptomTreatments">
-            <h2 class="text-4xl font-extrabold mt-20 text-white">Treatment Plan Overview</h2>
-            <p class="text-sm mx-auto text-white/70 mt-3 max-w-4xl">
-              This section outlines the most commonly recommended treatments for the predicted disease, including
-              general approaches and symptom-specific strategies. It provides practical details such as medications,
-              dosages, duration, and alternatives to help guide patient care decisions.
-            </p>
-            <div class="max-w-6xl mx-auto mt-8 text-white">
-              <div class="bg-white/3 p-3 rounded-xl">
-                <div class="flex flex-col">
-                  <div class="flex gap-4 items-stretch">
-
-                    <!-- Tabs -->
-                    <ul
-                      class="md:w-1/4 flex-column space-y-2 text-sm font-medium text-white bg-blue-700/10 p-5 rounded-xl border border-blue-700 shadow-md">
-                      <li *ngIf="hasDiseaseTreatment">
-                        <button (click)="activeTab = 'general'"
-                          [ngClass]="{ 'bg-blue-700 text-white': activeTab === 'general', 'bg-blue-700/50 hover:bg-blue-700/70': activeTab !== 'general' }"
-                          class="cursor-pointer w-full text-left px-4 py-2 rounded-lg transition-colors mb-2">
-                          General
-                        </button>
-                        <hr class="h-0.5 border-t-0 bg-white/10">
-                      </li>
-                      <ng-container *ngIf="hasSymptomTreatments">
-
-                        <li *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
-                          <button (click)="activeTab = symptom"
-                            [ngClass]="{ 'bg-blue-700 text-white': activeTab === symptom, 'bg-blue-700/50 hover:bg-blue-700/70': activeTab !== symptom }"
-                            class="cursor-pointer w-full text-left px-4 py-2 rounded-lg capitalize transition-colors">
-                            {{ formatSymptom(symptom) }}
-                          </button>
-                        </li>
-                      </ng-container>
+          <!-- Assistant body selection embed -->
+          <div *ngIf="m.role === 'assistant' && m.type === 'bodySelection' && !m.answered" class="flex justify-start">
+            <div class="w-full bg-[#101010]/80 dark:bg-[#101010]/80 border border-white/10 text-white rounded-2xl rounded-bl-sm px-4 py-3">
+              <div class="text-lg font-semibold mb-3">Select your physical pain</div>
+              <div class="bg-white/3 p-4 rounded-xl shadow-xl flex flex-col md:flex-row gap-4 items-stretch justify-center">
+                <div class="w-full md:w-1/2 h-full min-h-[450px] flex flex-col space-y-5">
+                  <div class="bg-green-500/10 border-2 border-green-500 rounded-lg shadow-lg p-4 text-left text-white space-y-2">
+                    <div class="text-sm">To help us understand your discomfort, use the body silhouettes.</div>
+                    <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                      <li>Use the slider to choose the selection circle size.</li>
+                      <li>Click on the body to place a circle — underlying zones will be selected.</li>
+                      <li>Click again near an existing circle to remove it.</li>
+                      <li>You can select multiple zones if needed.</li>
+                      <li>Differentiate between “Front” and “Back” for accuracy.</li>
                     </ul>
-
-                    <div class="w-full text-sm bg-blue-700/10 p-4 rounded-xl border border-blue-700 shadow-md">
-                      <!-- General -->
-                      <div *ngIf="activeTab === 'general' && hasDiseaseTreatment" class="">
-
-                        <h4 class="text-2xl font-bold mb-5 text-white text-left">
-                          General treatment for {{ formatDiseaseLabel(response.predicted_disease) }}
-                        </h4>
-
-                        <ng-container *ngIf="response.treatment?.disease_treatment as treatment">
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm text-white">
-
-                            <!-- 💊 Médicaments -->
-                            <div class="w-full text-sm shadow-md p-4 rounded-xl bg-blue-700/20">
-                              <h5
-                                class="font-semibold text-blue-400 text-left font-semibold text-lg mb-2 tracking-wider">
-                                Medications
-                              </h5>
-                              <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-300">OTC Medications</div>
-                                <div class="text-right">{{ response.treatment.disease_treatment.otc_medications }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-300">Prescription</div>
-                                <div class="text-right">{{ response.treatment.disease_treatment.prescription_medications
-                                  }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-300">Alternative</div>
-                                <div class="text-right">{{ response.treatment.disease_treatment.alternative }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-300">Type</div>
-                                <div class="text-right">{{ response.treatment.disease_treatment.treatment_type
-                                  }}</div>
-                              </div>
-                            </div>
-
-                            <!-- 📋 Posologie -->
-                            <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
-                              <h5
-                                class="font-semibold text-blue-400 text-left font-semibold text-lg mb-2 tracking-wider">
-                                Posology
-                              </h5>
-                              <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-300">Dosage</div>
-                                <div class="text-right">{{ response.treatment.disease_treatment.dosage
-                                  }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-300">Frequency</div>
-                                <div class="text-right">{{ response.treatment.disease_treatment.frequency
-                                  }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-300">Duration</div>
-                                <div class="text-right">{{ response.treatment.disease_treatment.recommended_duration
-                                  }}</div>
-                              </div>
-                              <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                <div class="font-semibold text-blue-300">Route</div>
-                                <div class="text-right">{{ response.treatment.disease_treatment.administration_route
-                                  }}</div>
-                              </div>
-                            </div>
-
-
-                          </div>
-                          <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
-                            <!-- ⚠️ Bloc Precautions -->
-                            <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
-                              <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
-                                Precautions
-                              </h5>
-
-                              <div class="space-y-2">
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Side Effects</div>
-                                  <div class="text-right">{{ response.treatment.disease_treatment.side_effects }}</div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between items-center">
-                                  <div class="font-semibold text-blue-300">Driving</div>
-                                  <div class="text-right">
-                                    <span [ngClass]="{
-            'bg-green-500 text-white': response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('allowed'),
-            'bg-yellow-400 text-black': response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('caution'),
-            'bg-red-500 text-white': response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('avoid')
-          }" class="px-3 py-0.5 rounded-full font-medium">
-                                      {{
-                                      response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('allowed')
-                                      ? 'Allowed' :
-                                      response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('caution')
-                                      ? 'Caution' :
-                                      response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('avoid')
-                                      ? 'Avoid' :
-                                      'Unknown'
-                                      }}
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            <!-- 📝 Bloc Notes -->
-                            <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
-                              <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
-                                Notes
-                              </h5>
-                              <p class="text-white">{{ treatment.notes }}</p>
-                            </div>
-                          </div>
-
-
+                    <p class="text-xs text-green-300 mt-2">Selected areas appear as semi-transparent circles.</p>
+                    <p class="text-xs text-green-300 italic">Example: For shoulder pain, click near the top arm/shoulder section.</p>
+                  </div>
+                  <div class="flex-grow bg-[#3b6fff]/10 border-2 border-[#3b6fff] p-4 rounded-lg text-sm text-white">
+                    <div class="mb-3 font-semibold">Circle Size</div>
+                    <input id="circleSizeSlider" type="range" min="1" max="3" step="1" [(ngModel)]="circleSizeIndex" class="w-full" />
+                  </div>
+                </div>
+                <div class="w-full md:w-1/2 flex justify-center gap-8 bg-[#3b6fff]/10 pt-6 rounded-lg shadow-lg border-2 border-[#3b6fff]">
+                  <div class="flex flex-col items-center">
+                    <svg (click)="handleSvgClick($event, 'front')" (mousemove)="handleSvgHover($event, 'front')" (mouseleave)="hoverCircleFront = null" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190" preserveAspectRatio="xMidYMid meet">
+                      <g id="effects-layer-front"></g>
+                      <ng-container *ngFor="let path of svgFrontPaths">
+                        <ng-container *ngIf="path.id === 'body'">
+                          <path [attr.d]="path.d" [attr.id]="path.id" fill="#3b6fff" [style.pointer-events]="'none'"></path>
                         </ng-container>
+                      </ng-container>
+                      <ng-container *ngFor="let path of svgFrontPaths">
+                        <ng-container *ngIf="path.id !== 'body'">
+                          <path [attr.d]="path.d" [attr.id]="path.id" fill="transparent" [style.pointer-events]="'auto'"></path>
+                        </ng-container>
+                      </ng-container>
+                      <circle *ngFor="let circle of selectionCirclesFront" [attr.cx]="circle.cx" [attr.cy]="circle.cy" [attr.r]="circle.r" fill="rgba(255,255,255,0.1)" stroke="#ec4899" stroke-width="1" />
+                      <circle *ngIf="hoverCircleFront" [attr.cx]="hoverCircleFront.cx" [attr.cy]="hoverCircleFront.cy" [attr.r]="hoverCircleFront.r" fill="rgba(255,255,255,0.2)" stroke="#ffffff" stroke-dasharray="2" stroke-width="1" />
+                    </svg>
+                    <div class="mt-2 text-white text-sm font-semibold">Front</div>
+                  </div>
+                  <div class="flex flex-col items-center">
+                    <svg (click)="handleSvgClick($event, 'back')" (mousemove)="handleSvgHover($event, 'back')" (mouseleave)="hoverCircleBack = null" class="w-[150px] md:w-[200px] h-auto" viewBox="59 0 100 190" preserveAspectRatio="xMidYMid meet">
+                      <g id="effects-layer-back"></g>
+                      <ng-container *ngFor="let path of svgBackPaths">
+                        <ng-container *ngIf="path.id === 'body'">
+                          <path [attr.d]="path.d" [attr.id]="path.id" fill="#3b6fff" [style.pointer-events]="'none'"></path>
+                        </ng-container>
+                      </ng-container>
+                      <ng-container *ngFor="let path of svgBackPaths">
+                        <ng-container *ngIf="path.id !== 'body'">
+                          <path [attr.d]="path.d" [attr.id]="path.id" fill="transparent" [style.pointer-events]="'auto'"></path>
+                        </ng-container>
+                      </ng-container>
+                      <circle *ngFor="let circle of selectionCirclesBack" [attr.cx]="circle.cx" [attr.cy]="circle.cy" [attr.r]="circle.r" fill="rgba(255,255,255,0.1)" stroke="#ec4899" stroke-width="1" />
+                      <circle *ngIf="hoverCircleBack" [attr.cx]="hoverCircleBack.cx" [attr.cy]="hoverCircleBack.cy" [attr.r]="hoverCircleBack.r" fill="rgba(255,255,255,0.2)" stroke="#ffffff" stroke-dasharray="2" stroke-width="1" />
+                    </svg>
+                    <div class="mt-2 text-white text-sm font-semibold">Back</div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-end gap-2 mt-3">
+                <button (click)="resetBodySelection()" class="cursor-pointer rounded-md px-4 py-2 text-sm bg-green-500/10 border-2 border-green-500 text-white hover:bg-green-500">Reset</button>
+                <button (click)="validateBodySelection()" class="cursor-pointer rounded-md px-4 py-2 text-sm bg-[#3b6fff]/10 border-2 border-[#3b6fff] text-white hover:bg-[#3b6fff]">Confirm selection</button>
+              </div>
+            </div>
+          </div>
 
+          <!-- Results switcher: arrows to switch views -->
+          <div *ngIf="m.role === 'assistant' && m.type === 'resultSwitcher' && response" class="flex justify-start">
+            <div class="w-full flex items-center justify-between px-2">
+              <button (click)="prevResultView()" class="cursor-pointer px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white">◀</button>
+              <div class="text-white text-sm opacity-80">{{ currentResultView | titlecase }}</div>
+              <button (click)="nextResultView()" class="cursor-pointer px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-white">▶</button>
+            </div>
+          </div>
 
+          <!-- Conditionally show result/demographics/treatments based on currentResultView -->
+          <ng-container *ngIf="currentResultView === 'demographics'">
+            <div *ngIf="response?.disease_info?.demographics" class="flex justify-start">
+              <div class="w-full bg-[#101010]/80 dark:bg-[#101010]/80 border border-white/10 text-white rounded-2xl rounded-bl-sm p-4">
+                <div class="text-xl font-bold mb-2">Disease Demographics Overview</div>
+                <div class="max-w-6xl mx-auto mt-2 text-white">
+                  <div class="bg-white/3 p-3 rounded-xl">
+                    <div class="grid grid-cols-5 gap-4 items-stretch">
+                      <div class="col-span-2" *ngIf="showGenderChart">
+                        <div class="bg-purple-500/10 p-4 rounded-xl shadow-md border border-purple-500/80 h-full flex flex-col justify-between">
+                          <h3 class="text-2xl font-bold mb-5 text-white text-left">Gender Distribution</h3>
+                          <div class="bg-purple-500/10 rounded-xl h-70 flex items-center justify-center p-4">
+                            <div class="w-full aspect-square max-w-[250px]">
+                              <canvas id="genderChart" class="w-full h-full"></canvas>
+                            </div>
+                          </div>
+                          <div class="rounded-xl shadow mt-4 bg-purple-500/10 p-4 text-center min-h-[60px] flex items-center justify-center">
+                            <p class="text-sm">This pie chart represents the distribution of disease cases between the sexes (men and women).</p>
+                          </div>
+                        </div>
                       </div>
+                      <div class="col-span-3" *ngIf="showAgeChart">
+                        <div class="bg-purple-500/10 p-4 rounded-xl shadow-md border border-purple-500/80 h-full flex flex-col justify-between">
+                          <h3 class="text-2xl font-bold mb-5 text-white text-left">Age Distribution</h3>
+                          <div class="bg-purple-500/10 rounded-xl h-70 flex items-center justify-center py-4 px-2">
+                            <canvas id="ageChart" class="w-full h-full"></canvas>
+                          </div>
+                          <div class="rounded-xl shadow mt-4 bg-purple-500/10 p-4 text-center h-full flex items-center justify-center">
+                            <p class="text-sm">This bar chart shows the frequency of cases by age group, highlighting the groups most affected.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
 
-                      <!-- Symptom-specific -->
-                      <div *ngIf="hasSymptomTreatments">
+          <ng-container *ngIf="currentResultView === 'treatments'">
+            <div *ngIf="response && (hasDiseaseTreatment || hasSymptomTreatments)" class="flex justify-start">
+              <div class="w-full bg-[#101010]/80 dark:bg-[#101010]/80 border border-white/10 text-white rounded-2xl rounded-bl-sm p-4">
+                <div class="text-xl font-bold mb-2">Treatment Plan Overview</div>
+                <!-- reuse the treatments UI from above (already present in this file) -->
+                <!-- For brevity, rely on the existing block rendered earlier in the message list when result was shown -->
+                <!-- You can duplicate the treatments block here if you prefer it fully inline -->
+              </div>
+            </div>
+          </ng-container>
 
-                        <div *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
-                          <div *ngIf="activeTab === symptom">
-
-                            <h4 class="text-2xl font-bold mb-5 text-white text-left">
-                              Treatment for {{ formatSymptom(symptom) }}
-                            </h4>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm text-white">
-
-                              <!-- 💊 Médicaments -->
-                              <div class="w-full text-sm shadow-md p-4 rounded-xl bg-blue-700/20">
-                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
-                                  Medications
-                                </h5>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">OTC Medications</div>
-                                  <div class="text-right">{{
-                                    response.treatment.symptom_treatments[symptom].otc_medications }}</div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Prescription</div>
-                                  <div class="text-right">{{
-                                    response.treatment.symptom_treatments[symptom].prescription_medications }}</div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Alternative</div>
-                                  <div class="text-right">{{ response.treatment.symptom_treatments[symptom].alternative
-                                    }}</div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Type</div>
-                                  <div class="text-right">{{
-                                    response.treatment.symptom_treatments[symptom].treatment_type }}</div>
-                                </div>
+          <!-- Assistant final result embed -->
+          <div *ngIf="m.role === 'assistant' && m.type === 'result' && response" class="flex justify-start">
+            <div class="w-full bg-[#101010]/80 dark:bg-[#101010]/80 border border-white/10 text-white rounded-2xl rounded-bl-sm p-4">
+              <div class="text-xl font-bold mb-2">Analysis Result</div>
+              <!-- Reuse existing result blocks -->
+              <ng-container>
+                <!-- LEFT/RIGHT columns block reused -->
+                <div class="bg-white/3 p-3 rounded-xl text-white">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                    <div class="flex flex-col h-full gap-4">
+                      <div class="p-4 rounded-xl shadow-md bg-green-500/10 border border-green-500/80">
+                        <div class="relative">
+                          <div class="absolute top-0 right-0 w-60 rounded-xl shadow-lg bg-pink-500/5">
+                            <div class="h-full w-full pt-1.5 pb-2 px-2 rounded-xl">
+                              <div class="flex items-center justify-between mb-1">
+                                <span class="text-[10px] font-semibold text-white uppercase">Confidence</span>
+                                <span class="text-xs font-bold" [style.color]="getGradientColor(animatedConfidence)">{{ animatedConfidence }}%</span>
                               </div>
-
-                              <!-- 📋 Posologie -->
-                              <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
-                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
-                                  Posology
-                                </h5>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Dosage</div>
-                                  <div class="text-right">{{ response.treatment.symptom_treatments[symptom].dosage }}
-                                  </div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Frequency</div>
-                                  <div class="text-right">{{ response.treatment.symptom_treatments[symptom].frequency }}
-                                  </div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Duration</div>
-                                  <div class="text-right">{{
-                                    response.treatment.symptom_treatments[symptom].recommended_duration }}</div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Route</div>
-                                  <div class="text-right">{{
-                                    response.treatment.symptom_treatments[symptom].administration_route }}</div>
-                                </div>
+                              <div class="w-full h-2 bg-pink-500/10 rounded-full overflow-hidden">
+                                <div class="h-full rounded-full transition-all duration-100" [ngStyle]="{ width: animatedConfidence + '%', backgroundColor: getGradientColor(animatedConfidence) }"></div>
                               </div>
                             </div>
+                          </div>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-4 text-white text-left">Diagnostic Result</h3>
+                        <div class="text-sm p-4 rounded-xl shadow bg-green-500/10 text-justify space-y-1">
+                          <p class="text-lg"><span class="font-semibold text-green-400">{{ formatDiseaseLabel(response.predicted_disease) }}</span></p>
+                          <div class="overflow-hidden transition-[max-height] duration-500 ease-in-out" [style.maxHeight]="isDescriptionExpanded ? '1000px' : '3.5rem'">{{ response.disease_info.description }}</div>
+                          <button *ngIf="response.disease_info.description?.length > textLimit" (click)="isDescriptionExpanded = !isDescriptionExpanded" class="cursor-pointer text-pink-400 hover:underline text-xs font-medium mt-1">{{ isDescriptionExpanded ? 'Read less' : 'Read more' }}</button>
+                        </div>
+                      </div>
+                      <div class="flex-1 p-4 rounded-xl shadow-md bg-green-500/10 flex flex-col justify-center border border-green-500/80">
+                        <h3 class="text-2xl font-bold mb-4 text-white text-left">Clinical Indicators</h3>
+                        <div class="flex justify-center items-center gap-16 flex-wrap p-4 rounded-xl bg-pink-500/10 h-full">
+                          <div class="relative w-28 h-28 rounded-full ring-1 ring-white/10 shadow-md backdrop-blur-md">
+                            <svg class="size-full -rotate-225" viewBox="0 0 36 36">
+                              <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#334155" stroke-dasharray="75 100" stroke-linecap="round" />
+                              <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" [attr.stroke]="getSeverityColor(animatedSeverity)" [attr.stroke-dasharray]="(animatedSeverity * 0.75 / 100 * 100).toFixed(2) + ' 100'" stroke-linecap="round" />
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                              <span class="text-base font-semibold leading-tight" [style.color]="getSeverityColor(animatedSeverity)">{{ response.disease_info.severity_level.replace('.', '') }}</span>
+                              <span class="text-xs text-white/70">Severity</span>
+                            </div>
+                          </div>
+                          <div class="relative w-28 h-28 rounded-full ring-1 ring-white/10 shadow-md backdrop-blur-md">
+                            <svg class="size-full -rotate-225" viewBox="0 0 36 36">
+                              <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#334155" stroke-dasharray="75 100" stroke-linecap="round" />
+                              <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" [attr.stroke]="getContagiousColor(response.disease_info.contagious)" [attr.stroke-dasharray]="(animatedContagious * 0.75).toFixed(2) + ' 100'" stroke-linecap="round" />
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                              <span class="text-base font-semibold" [style.color]="getContagiousColor(response.disease_info.contagious)">{{ response.disease_info.contagious.replace('.', '') }}</span>
+                              <span class="text-xs text-white/70">Contagious</span>
+                            </div>
+                          </div>
+                          <div class="relative w-28 h-28 rounded-full ring-1 ring-white/10 shadow-md backdrop-blur-md">
+                            <svg class="size-full -rotate-225" viewBox="0 0 36 36">
+                              <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" stroke="#334155" stroke-dasharray="75 100" stroke-linecap="round" />
+                              <circle cx="18" cy="18" r="16" fill="none" stroke-width="2" [attr.stroke]="getCourseColor(response.disease_info.chronic_or_acute)" [attr.stroke-dasharray]="(animatedCourse * 0.75).toFixed(2) + ' 100'" stroke-linecap="round" />
+                            </svg>
+                            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                              <span class="text-sm font-semibold" [style.color]="getCourseColor(response.disease_info.chronic_or_acute)">{{ response.disease_info.chronic_or_acute.replace('.', '') }}</span>
+                              <span class="text-xs text-white/70">Course</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex flex-col gap-4">
+                      <div *ngIf="response.disease_info" class="relative p-4 rounded-xl shadow-md h-full bg-green-500/10 border border-green-500/80">
+                        <h3 class="text-2xl font-bold mb-4 text-white">Recommended Actions</h3>
+                        <div class="overflow-x-auto rounded-xl shadow bg-green-500/10">
+                          <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
+                            <tbody class="divide-y divide-pink-500/20">
+                              <tr>
+                                <th class="ps-5 py-3 text-pink-400 font-semibold whitespace-nowrap">🩷</th>
+                                <td class="ps-5 pe-5 py-3">{{ response.disease_info.advice }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <div *ngIf="response.disease_info" class="relative p-4 rounded-xl shadow-md h-full bg-green-500/10 border border-green-500/80">
+                        <h3 class="text-2xl font-bold mb-4 text-white">Disease Informations</h3>
+                        <div class="overflow-x-auto rounded-xl shadow bg-green-500/10">
+                          <table class="min-w-full text-sm text-left text-white table-auto rounded-xl">
+                            <tbody class="divide-y divide-green-500/20">
+                              <tr>
+                                <th class="px-4 py-3 text-green-400 font-semibold whitespace-nowrap">Risk Factors</th>
+                                <td class="px-4 py-3">{{ response.disease_info.risk_factor }}</td>
+                              </tr>
+                              <tr>
+                                <th class="px-4 py-3 text-green-400 font-semibold whitespace-nowrap">Prevention</th>
+                                <td class="px-4 py-3">{{ response.disease_info.prevention }}</td>
+                              </tr>
+                              <tr>
+                                <th class="px-4 py-3 text-green-400 font-semibold whitespace-nowrap">Complications</th>
+                                <td class="px-4 py-3">{{ response.disease_info.complications }}</td>
+                              </tr>
+                              <tr>
+                                <th class="px-4 py-3 text-green-400 font-semibold whitespace-nowrap">Related Diseases</th>
+                                <td class="px-4 py-3">{{ response.disease_info.related_diseases }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex justify-end gap-2 mt-3">
+                  <button (click)="downloadResultPDF()" class="cursor-pointer rounded-md px-4 py-2 text-sm bg-blue-700/10 border border-blue-700 text-white hover:bg-blue-700">Download PDF</button>
+                  <button (click)="resetForm()" class="cursor-pointer rounded-md px-4 py-2 text-sm bg-green-500/10 border border-green-500 text-white hover:bg-green-500">New analysis</button>
+                </div>
+              </ng-container>
+            </div>
+          </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
-                              <!-- ⚠️ Bloc Precautions -->
+          <!-- Assistant extras (ask for demographics/treatments) -->
+          <div *ngIf="m.role === 'assistant' && m.type === 'extras'" class="flex justify-start">
+            <div class="max-w-[85%] w-full">
+              <div class="inline-block bg-[#101010]/80 dark:bg-[#101010]/80 border border-white/10 text-white rounded-2xl rounded-bl-sm px-4 py-3">
+                {{ m.content }}
+              </div>
+              <div class="flex justify-end mt-2" *ngIf="!m.answered">
+                <div class="flex gap-3">
+                  <button (click)="answerExtras(true)" class="cursor-pointer px-4 py-2 rounded-lg bg-green-500/10 border-2 border-green-500 text-white hover:bg-green-500">Yes</button>
+                  <button (click)="answerExtras(false)" class="cursor-pointer px-4 py-2 rounded-lg bg-red-500/10 border-2 border-red-500 text-white hover:bg-red-500">No</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Demographics embed after consent -->
+          <div *ngIf="m.role === 'assistant' && m.type === 'demographics' && response" class="flex justify-start">
+            <div class="w-full bg-[#101010]/80 dark:bg-[#101010]/80 border border-white/10 text-white rounded-2xl rounded-bl-sm p-4">
+              <div class="text-xl font-bold mb-2">Disease Demographics Overview</div>
+              <div class="max-w-6xl mx-auto mt-2 text-white">
+                <div class="bg-white/3 p-3 rounded-xl">
+                  <div class="grid grid-cols-5 gap-4 items-stretch">
+                    <div class="col-span-2" *ngIf="showGenderChart">
+                      <div class="bg-purple-500/10 p-4 rounded-xl shadow-md border border-purple-500/80 h-full flex flex-col justify-between">
+                        <h3 class="text-2xl font-bold mb-5 text-white text-left">Gender Distribution</h3>
+                        <div class="bg-purple-500/10 rounded-xl h-70 flex items-center justify-center p-4">
+                          <div class="w-full aspect-square max-w-[250px]">
+                            <canvas id="genderChart" class="w-full h-full"></canvas>
+                          </div>
+                        </div>
+                        <div class="rounded-xl shadow mt-4 bg-purple-500/10 p-4 text-center min-h-[60px] flex items-center justify-center">
+                          <p class="text-sm">This pie chart represents the distribution of disease cases between the sexes (men and women).</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-span-3" *ngIf="showAgeChart">
+                      <div class="bg-purple-500/10 p-4 rounded-xl shadow-md border border-purple-500/80 h-full flex flex-col justify-between">
+                        <h3 class="text-2xl font-bold mb-5 text-white text-left">Age Distribution</h3>
+                        <div class="bg-purple-500/10 rounded-xl h-70 flex items-center justify-center py-4 px-2">
+                          <canvas id="ageChart" class="w-full h-full"></canvas>
+                        </div>
+                        <div class="rounded-xl shadow mt-4 bg-purple-500/10 p-4 text-center h-full flex items-center justify-center">
+                          <p class="text-sm">This bar chart shows the frequency of cases by age group, highlighting the groups most affected.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Treatments embed after consent -->
+          <div *ngIf="m.role === 'assistant' && m.type === 'treatments' && response && (hasDiseaseTreatment || hasSymptomTreatments)" class="flex justify-start">
+            <div class="w-full bg-[#101010]/80 dark:bg-[#101010]/80 border border-white/10 text-white rounded-2xl rounded-bl-sm p-4">
+              <div class="text-xl font-bold mb-2">Treatment Plan Overview</div>
+              <div class="max-w-6xl mx-auto mt-2 text-white">
+                <div class="bg-white/3 p-3 rounded-xl">
+                  <div class="flex flex-col">
+                    <div class="flex gap-4 items-stretch">
+                      <ul class="md:w-1/4 flex-column space-y-2 text-sm font-medium text-white bg-blue-700/10 p-5 rounded-xl border border-blue-700 shadow-md">
+                        <li *ngIf="hasDiseaseTreatment">
+                          <button (click)="activeTab = 'general'" [ngClass]="{ 'bg-blue-700 text-white': activeTab === 'general', 'bg-blue-700/50 hover:bg-blue-700/70': activeTab !== 'general' }" class="cursor-pointer w-full text-left px-4 py-2 rounded-lg transition-colors mb-2">General</button>
+                          <hr class="h-0.5 border-t-0 bg-white/10">
+                        </li>
+                        <ng-container *ngIf="hasSymptomTreatments">
+                          <li *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
+                            <button (click)="activeTab = symptom" [ngClass]="{ 'bg-blue-700 text-white': activeTab === symptom, 'bg-blue-700/50 hover:bg-blue-700/70': activeTab !== symptom }" class="cursor-pointer w-full text-left px-4 py-2 rounded-lg capitalize transition-colors">{{ formatSymptom(symptom) }}</button>
+                          </li>
+                        </ng-container>
+                      </ul>
+                      <div class="w-full text-sm bg-blue-700/10 p-4 rounded-xl border border-blue-700 shadow-md">
+                        <div *ngIf="activeTab === 'general' && hasDiseaseTreatment">
+                          <h4 class="text-2xl font-bold mb-5 text-white text-left">General treatment for {{ formatDiseaseLabel(response.predicted_disease) }}</h4>
+                          <ng-container *ngIf="response.treatment?.disease_treatment as treatment">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm text-white">
+                              <div class="w-full text-sm shadow-md p-4 rounded-xl bg-blue-700/20">
+                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">Medications</h5>
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">OTC Medications</div><div class="text-right">{{ response.treatment.disease_treatment.otc_medications }}</div></div>
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Prescription</div><div class="text-right">{{ response.treatment.disease_treatment.prescription_medications }}</div></div>
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Alternative</div><div class="text-right">{{ response.treatment.disease_treatment.alternative }}</div></div>
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Type</div><div class="text-right">{{ response.treatment.disease_treatment.treatment_type }}</div></div>
+                              </div>
                               <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
-                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
-                                  Precautions
-                                </h5>
-
+                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">Posology</h5>
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Dosage</div><div class="text-right">{{ response.treatment.disease_treatment.dosage }}</div></div>
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Frequency</div><div class="text-right">{{ response.treatment.disease_treatment.frequency }}</div></div>
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Duration</div><div class="text-right">{{ response.treatment.disease_treatment.recommended_duration }}</div></div>
+                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Route</div><div class="text-right">{{ response.treatment.disease_treatment.administration_route }}</div></div>
+                              </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+                              <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
+                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">Precautions</h5>
                                 <div class="space-y-2">
-                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                    <div class="font-semibold text-blue-300">Side Effects</div>
-                                    <div class="text-right">{{
-                                      response.treatment.symptom_treatments[symptom].side_effects }}</div>
-                                  </div>
-                                  <div
-                                    class="col-span-2 border-b border-white/20 py-2 flex justify-between items-center">
+                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Side Effects</div><div class="text-right">{{ response.treatment.disease_treatment.side_effects }}</div></div>
+                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between items-center">
                                     <div class="font-semibold text-blue-300">Driving</div>
                                     <div class="text-right">
-                                      <span [ngClass]="{
-            'bg-green-500 text-white': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('allowed'),
-            'bg-yellow-400 text-black': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('caution'),
-            'bg-red-500 text-white': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('avoid')
-          }" class="px-3 py-0.5 rounded-full font-medium">
-                                        {{
-                                        response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('allowed')
-                                        ? 'Allowed' :
-                                        response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('caution')
-                                        ? 'Caution' :
-                                        response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('avoid')
-                                        ? 'Avoid' :
-                                        'Unknown'
-                                        }}
+                                      <span [ngClass]="{ 'bg-green-500 text-white': response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('allowed'), 'bg-yellow-400 text-black': response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('caution'), 'bg-red-500 text-white': response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('avoid') }" class="px-3 py-0.5 rounded-full font-medium">
+                                        {{ response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('allowed') ? 'Allowed' : response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('caution') ? 'Caution' : response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('avoid') ? 'Avoid' : 'Unknown' }}
                                       </span>
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                              <!-- 📝 Bloc Notes -->
                               <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
-                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
-                                  Notes
-                                </h5>
-                                <p class="text-white">{{
-                                  response.treatment.symptom_treatments[symptom].notes }}</p>
+                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">Notes</h5>
+                                <p class="text-white">{{ treatment.notes }}</p>
+                              </div>
+                            </div>
+                          </ng-container>
+                        </div>
+                        <div *ngIf="hasSymptomTreatments">
+                          <div *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
+                            <div *ngIf="activeTab === symptom">
+                              <h4 class="text-2xl font-bold mb-5 text-white text-left">Treatment for {{ formatSymptom(symptom) }}</h4>
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm text-white">
+                                <div class="w-full text-sm shadow-md p-4 rounded-xl bg-blue-700/20">
+                                  <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">Medications</h5>
+                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">OTC Medications</div><div class="text-right">{{ response.treatment.symptom_treatments[symptom].otc_medications }}</div></div>
+                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Prescription</div><div class="text-right">{{ response.treatment.symptom_treatments[symptom].prescription_medications }}</div></div>
+                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Alternative</div><div class="text-right">{{ response.treatment.symptom_treatments[symptom].alternative }}</div></div>
+                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Type</div><div class="text-right">{{ response.treatment.symptom_treatments[symptom].treatment_type }}</div></div>
+                                </div>
+                                <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
+                                  <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">Posology</h5>
+                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Dosage</div><div class="text-right">{{ response.treatment.symptom_treatments[symptom].dosage }}</div></div>
+                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Frequency</div><div class="text-right">{{ response.treatment.symptom_treatments[symptom].frequency }}</div></div>
+                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Duration</div><div class="text-right">{{ response.treatment.symptom_treatments[symptom].recommended_duration }}</div></div>
+                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Route</div><div class="text-right">{{ response.treatment.symptom_treatments[symptom].administration_route }}</div></div>
+                                </div>
+                              </div>
+                              <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+                                <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
+                                  <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">Precautions</h5>
+                                  <div class="space-y-2">
+                                    <div class="col-span-2 border-b border-white/20 py-2 flex justify-between"><div class="font-semibold text-blue-300">Side Effects</div><div class="text-right">{{ response.treatment.symptom_treatments[symptom].side_effects }}</div></div>
+                                    <div class="col-span-2 border-b border-white/20 py-2 flex justify-between items-center">
+                                      <div class="font-semibold text-blue-300">Driving</div>
+                                      <div class="text-right">
+                                        <span [ngClass]="{ 'bg-green-500 text-white': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('allowed'), 'bg-yellow-400 text-black': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('caution'), 'bg-red-500 text-white': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('avoid') }" class="px-3 py-0.5 rounded-full font-medium">
+                                          {{ response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('allowed') ? 'Allowed' : response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('caution') ? 'Caution' : response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('avoid') ? 'Avoid' : 'Unknown' }}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl shadow-md">
+                                  <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">Notes</h5>
+                                  <p class="text-white">{{ response.treatment.symptom_treatments[symptom].notes }}</p>
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -809,19 +457,54 @@
               </div>
             </div>
           </div>
-        </div>
-        <div class="flex justify-end gap-4">
-          <div class="mt-4 bg-white/3 p-2 rounded-xl">
-            <button (click)="downloadResultPDF()"
-              class="cursor-pointer rounded-md px-5 py-2.5 text-sm font-medium bg-blue-700/10 border-1 border-blue-700 text-white hover:bg-blue-700 hover:text-white">
-              Download My Result
-            </button>
+
+          <!-- Bottom typing indicator -->
+        </ng-container>
+        <div *ngIf="thinking" class="flex justify-start">
+          <div class="bg-[#101010]/80 border border-white/10 text-white rounded-2xl rounded-bl-sm px-2 py-2 animate-pulse">
+            <div class="lds-ripple"><div></div><div></div></div>
           </div>
-          <div class="mt-4 bg-white/3 p-2 rounded-xl">
-            <button (click)="resetForm()"
-              class="cursor-pointer rounded-md px-5 py-2.5 text-sm font-medium bg-pink-500/10 border-1 border-pink-500 text-white hover:bg-pink-500 hover:text-white">
-              Analyze Other Symptoms
-            </button>
+        </div>
+
+        <div #scrollAnchor></div>
+      </div>
+
+      <!-- Composer area -->
+      <div class="p-3 border-t border-white/10 bg-[#101010] dark:bg-[#0b0b0b]/70">
+        <!-- Step 1 composer: symptoms -->
+        <div *ngIf="step === 1">
+          <div class="flex items-center gap-2">
+            <input type="text" [(ngModel)]="searchQuery" (input)="filterSymptoms()" (keydown.enter)="addSymptom()" placeholder="Enter a symptom then press Enter" class="flex-1 p-3 rounded-lg bg-[#101010] dark:bg-[#0e0e0e] border border-white/10 text-white" />
+            <button (click)="submitSymptoms()" class="cursor-pointer px-4 py-2 rounded-lg bg-green-500/10 border-2 border-green-500 text-white hover:bg-green-500">Send</button>
+          </div>
+          <ul *ngIf="filteredSymptoms.length > 0" class="w-full bg-[#101010] dark:bg-[#0e0e0e] border border-white/10 rounded-md shadow-lg mt-2 z-10 max-h-40 overflow-y-auto">
+            <li *ngFor="let symptom of filteredSymptoms" (click)="addSymptom(symptom)" class="p-2 cursor-pointer hover:bg-white/5 text-white">
+              {{ formatSymptom(symptom) }}
+            </li>
+          </ul>
+          <div *ngIf="selectedSymptoms.length > 0" class="mt-2 flex flex-wrap gap-2">
+            <span *ngFor="let symptom of selectedSymptoms; let i = index" class="bg-green-500/10 border border-green-500 text-white px-3 py-1 rounded-full flex items-center">
+              {{ formatSymptom(symptom) }}
+              <button (click)="removeSymptom(i)" class="cursor-pointer text-green-400 ml-2 font-bold">✖</button>
+            </span>
+          </div>
+        </div>
+
+        <!-- Step 2 composer: patient info -->
+        <div *ngIf="step === 2" class="space-y-2">
+          <div class="grid grid-cols-2 gap-2">
+            <input type="number" [(ngModel)]="age" placeholder="Age" class="p-2 rounded-lg bg-[#101010] dark:bg-[#0e0e0e] border border-white/10 text-white" />
+            <select [(ngModel)]="sex" class="p-2 rounded-lg bg-[#101010] dark:bg-[#0e0e0e] border border-white/10 text-white">
+              <option value="" disabled hidden>Gender</option>
+              <option value="male" class="bg-[#0e0e0e]">Male</option>
+              <option value="female" class="bg-[#0e0e0e]">Female</option>
+            </select>
+            <input type="number" [(ngModel)]="weight" placeholder="Weight (kg)" class="p-2 rounded-lg bg-[#101010] dark:bg-[#0e0e0e] border border-white/10 text-white" />
+            <input type="number" [(ngModel)]="height" placeholder="Height (cm)" class="p-2 rounded-lg bg-[#101010] dark:bg-[#0e0e0e] border border-white/10 text-white" />
+          </div>
+          <div class="flex justify-between">
+            <button (click)="previousStep()" class="cursor-pointer px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white">Back</button>
+            <button (click)="submitPatientInfo()" class="cursor-pointer px-4 py-2 rounded-lg bg-green-500/10 border-2 border-green-500 text-white hover:bg-green-500">Continue</button>
           </div>
         </div>
       </div>

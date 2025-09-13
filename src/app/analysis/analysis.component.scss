@@ -94,4 +94,18 @@ input[type=number] {
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
+/* Shimmer animation for confidence progress bar */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
 

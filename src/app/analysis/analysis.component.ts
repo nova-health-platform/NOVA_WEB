@@ -50,7 +50,9 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
   currentResultView: 'result' | 'demographics' | 'treatments' = 'result';
   thinking = false;
-  showDiseaseInfo = true;
+  showDiseaseInfo = false;
+  showRecommendedActions = false;
+  showConfidenceModal = false;
   currentDate = new Date().toLocaleDateString();
   
   // Typewriter animation properties
@@ -164,7 +166,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.response =
     {
       "bmi": 24.69,
-      "confidence": 0.3188423216342926,
+      "confidence": 0.92,
       "disease_info": {
         "advice": "Seek medical attention if experiencing symptoms of hyperkalemia.Seek medical attention if experiencing symptoms of hyperkalemia. Seek medical attention if experiencing symptoms of hyperkalemia.",
         "chronic_or_acute": "Acute.",
@@ -281,6 +283,11 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         }, 100);
       }
     }, 50);
+    
+    // Auto-show detailed analysis in development mode
+    setTimeout(() => {
+      this.showDetailedAnalysis();
+    }, 2000); // Wait 2 seconds for Quick Summary animation to complete
   }
 
 
@@ -1586,8 +1593,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         );
       }
 
-      const highlightBorderColorGender = 'yellow';
-      const highlightBorderWidthGender = 2;
+      const highlightBorderColorGender = 'rgb(255, 255, 255)';
+      const highlightBorderWidthGender = 3;
 
       new Chart(genderCanvas, {
         type: 'pie',
@@ -1595,7 +1602,10 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
           labels: genderData.labels,
           datasets: [{
             data: genderData.values,
-            backgroundColor: ['rgb(185, 85, 247)', 'rgb(247, 85, 239)'],
+            backgroundColor: genderData.values.map((_, i) =>
+              i === highlightIndexGender ? 'rgb(255, 255, 255)' : 
+              i === 0 ? 'rgb(34, 197, 94)' : 'rgb(16, 185, 129)'
+            ),
             borderColor: genderData.values.map((_, i) =>
               i === highlightIndexGender ? highlightBorderColorGender : 'transparent'
             ),
@@ -1669,8 +1679,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         }
       }
 
-      const highlightBorderColor = 'yellow';
-      const highlightBorderWidth = 2;
+      const highlightBorderColor = 'rgb(255, 255, 255)';
+      const highlightBorderWidth = 3;
 
       new Chart(ageCanvas, {
         type: 'bar',
@@ -1679,7 +1689,9 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
           datasets: [{
             label: 'Age Distribution (%)',
             data: ageData.values,
-            backgroundColor: 'rgb(185, 85, 247)',
+            backgroundColor: ageData.values.map((_, i) =>
+              i === highlightIndex ? 'rgb(255, 255, 255)' : 'rgb(34, 197, 94)'
+            ),
             borderColor: ageData.values.map((_, i) =>
               i === highlightIndex ? highlightBorderColor : 'transparent'
             ),
@@ -1745,8 +1757,24 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     }, 50);
   }
 
+  // Function to switch to analysis tab and animate confidence
+  switchToAnalysisTab(): void {
+    this.currentResultView = 'result';
+    // Reset confidence to 0 and animate to target value
+    this.animatedConfidence = 0;
+    setTimeout(() => {
+      if (this.response?.confidence) {
+        this.animateConfidence(this.response.confidence * 100);
+      }
+    }, 50);
+  }
+
   toggleDiseaseInfo(): void {
     this.showDiseaseInfo = !this.showDiseaseInfo;
+  }
+
+  toggleRecommendedActions(): void {
+    this.showRecommendedActions = !this.showRecommendedActions;
   }
 
   getFormattedSeverity(): string {
@@ -2321,7 +2349,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       this.messages.push({ role: 'assistant', type: 'result', content: 'Here are your results.' });
       this.currentResultView = 'result';
       
-      // Trigger animations and render charts
+      // Reset confidence to 0 and trigger animations
+      this.animatedConfidence = 0;
       setTimeout(() => {
         if (this.response?.confidence) {
           this.animateConfidence(this.response.confidence * 100);
@@ -2478,6 +2507,15 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   closeDescriptionModal(): void {
     this.showDescriptionModal = false;
     this.currentModalDescription = '';
+  }
+
+  // Confidence modal methods
+  openConfidenceModal(): void {
+    this.showConfidenceModal = true;
+  }
+
+  closeConfidenceModal(): void {
+    this.showConfidenceModal = false;
   }
 
   // Get descriptions for each tab

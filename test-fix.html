@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Fix Typewriter</title>
+    <style>
+        body {
+            background: #101010;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .typewriter-bubble {
+            display: inline-block;
+            background: rgba(16, 16, 16, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 12px 16px;
+            margin: 10px 0;
+            transition: width 0.2s ease-out, min-width 0.2s ease-out;
+            overflow: hidden;
+            white-space: nowrap;
+            width: fit-content;
+            min-width: 200px;
+        }
+        
+        .typewriter-text {
+            display: inline;
+        }
+        
+        .typewriter-cursor {
+            display: inline-block;
+            animation: blink 1s infinite;
+            color: #22c55e;
+            font-weight: bold;
+            margin-left: 2px;
+        }
+        
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+        
+        button {
+            background: #22c55e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        
+        button:hover {
+            background: #16a34a;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test de la correction du typewriter</h1>
+    <p>Le message ne devrait plus apparaître brièvement avant l'animation.</p>
+    
+    <div id="messages"></div>
+    
+    <button onclick="testMessage()">Tester un message</button>
+    <button onclick="clearMessages()">Effacer</button>
+    
+    <script>
+        let typewriterSpeed = 30;
+        let typewriterAnimation = null;
+        
+        function animateText(messageElement, fullText) {
+            let currentIndex = 0;
+            messageElement.querySelector('.typewriter-text').textContent = '';
+            messageElement.querySelector('.typewriter-cursor').style.display = 'inline-block';
+            
+            const typeNextChar = () => {
+                if (currentIndex < fullText.length) {
+                    messageElement.querySelector('.typewriter-text').textContent = fullText.substring(0, currentIndex + 1);
+                    currentIndex++;
+                    typewriterAnimation = setTimeout(typeNextChar, typewriterSpeed);
+                } else {
+                    messageElement.querySelector('.typewriter-cursor').style.display = 'none';
+                    typewriterAnimation = null;
+                }
+            };
+            
+            // Start immediately
+            typeNextChar();
+        }
+        
+        function createMessage(text) {
+            const messagesContainer = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'typewriter-bubble';
+            
+            messageDiv.innerHTML = `
+                <span class="typewriter-text"></span>
+                <span class="typewriter-cursor">|</span>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            
+            // Start animation immediately
+            setTimeout(() => animateText(messageDiv, text), 50);
+        }
+        
+        function testMessage() {
+            createMessage("Ce message ne devrait plus apparaître brièvement avant l'animation !");
+        }
+        
+        function clearMessages() {
+            document.getElementById('messages').innerHTML = '';
+        }
+        
+        // Test initial message
+        setTimeout(() => {
+            createMessage("Test de la correction - le message ne devrait plus clignoter !");
+        }, 500);
+    </script>
+</body>
+</html>
+

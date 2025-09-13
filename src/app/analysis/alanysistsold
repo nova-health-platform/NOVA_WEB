@@ -16,15 +16,6 @@ interface ClarificationItem {
   question: string;
 }
 
-interface AnimatedMessage {
-  role: 'user' | 'assistant';
-  type: 'text' | 'clarification' | 'pain' | 'bodySelection' | 'result' | 'resultSwitcher' | 'demographics' | 'treatments' | 'extras' | 'quickSummary';
-  content: string;
-  answered?: boolean;
-  isAnimating?: boolean;
-  displayedText?: string;
-}
-
 interface SvgPath {
   id: string;
   d: string;
@@ -46,17 +37,10 @@ interface SelectionCircle {
 })
 export class AnalysisComponent implements OnInit, AfterViewInit {
   // Chat message model
-  messages: AnimatedMessage[] = [];
+  messages: { role: 'user' | 'assistant'; type: 'text' | 'clarification' | 'pain' | 'bodySelection' | 'result' | 'resultSwitcher' | 'demographics' | 'treatments' | 'extras'; content: string; answered?: boolean }[] = [];
 
   currentResultView: 'result' | 'demographics' | 'treatments' = 'result';
   thinking = false;
-  showDiseaseInfo = true;
-  currentDate = new Date().toLocaleDateString();
-  
-  // Typewriter animation properties
-  typewriterSpeed = 3; // milliseconds per character (base speed)
-  typewriterAnimation: any = null;
-  isSimulatedResponse = false; // Flag to detect simulated responses
 
   @ViewChild('chatScrollContainer') chatScrollContainer?: ElementRef<HTMLDivElement>;
   @ViewChild('scrollAnchor') scrollAnchor?: ElementRef<HTMLDivElement>;
@@ -64,12 +48,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   searchQuery: string = '';
   filteredSymptoms: string[] = [];
   selectedSymptoms: string[] = [];
-  selectedSources: { [canonical: string]: 'suggested' | 'free' } = {};
-  // Free-text extraction flow
-  freeTextSymptoms: string = '';
-  showExtractionConfirm: boolean = false;
-  extractedRecognized: { canonical: string; label: string; synonyms: string[]; selected: boolean }[] = [];
-  extractedUnrecognized: string[] = [];
   step: number = 1;
   showBmiModal = false;
   animatedConfidence = 0;
@@ -83,13 +61,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   showGenderChart = false;
   showAgeChart = false;
 
-  // Demographic data for Quick Summary
-  genderData: { labels: string[], values: number[] } = { labels: [], values: [] };
-  ageData: { labels: string[], values: number[] } = { labels: [], values: [] };
-
-  // Modal properties
-  showDescriptionModal = false;
-  currentModalDescription = '';
 
   activeTab: string = 'general';
 
@@ -131,10 +102,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   hoverCircleFront: { cx: number; cy: number; r: number } | null = null;
   hoverCircleBack: { cx: number; cy: number; r: number } | null = null;
 
-  // Synonyms and fuzzy matching maps
-  synonymsMap: { [canonical: string]: string[] } = {};
-  synonymToCanonical: { [normalizedSynonym: string]: string } = {};
-
 
   constructor(private http: HttpClient) {
     Chart.register(...registerables);
@@ -158,7 +125,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   }
 
   simulateFakeResponse(): void {
-    this.isSimulatedResponse = true; // Enable instant typing for simulated responses
     this.age = 24;
     this.sex = 'Male';
     this.response =
@@ -253,44 +219,32 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.loading = false;
     this.errorMessage = '';
     this.currentClarification = null;
-    
-    // Add Quick Summary message first
-    const quickSummaryContent = this.generateQuickSummaryContent();
-    this.addAnimatedMessage({
-      role: 'assistant',
-      type: 'quickSummary',
-      content: quickSummaryContent,
-      isAnimating: true,
-      displayedText: ''
-    });
-    
-    // Note: Detailed analysis will be shown only when user clicks the button in Quick Summary
-    
-    // Trigger animations and render charts
-    setTimeout(() => {
-      if (this.response?.confidence) {
-        this.animateConfidence(this.response.confidence * 100);
-      }
-      this.animateSeverity();
-      this.animateContagiousGauge();
-      this.animateCourseGauge();
-      // Render demographic charts if data is available
-      if (this.response?.disease_info?.demographics) {
-        setTimeout(() => {
-          this.renderDemographicCharts();
-        }, 100);
-      }
-    }, 50);
+    this.renderDemographicCharts();
   }
 
 
   ngOnInit(): void {
     this.loadSymptoms();
-    this.loadSynonyms();
     this.loadSvgPaths();
 
-    this.simulateFakeResponse();
+    //this.simulateFakeResponse();
+
+    // Anime la jauge si des données sont présentes
+    setTimeout(() => {
+      if (this.response?.confidence) {
+        this.animateConfidence(this.response.confidence * 100);
+      }
+      if (this.response?.bmi) {
+        this.animateBmiGauge(this.response.bmi);
+      }
+    }, 100);
+    this.animateSeverity();
+    this.animateContagiousGauge();
+    this.animateCourseGauge();
     this.setInitialActiveTab();
+
+    // Seed first assistant message
+    this.pushAssistantText("Hello, describe your symptoms. Add several items and send.");
   }
 
 
@@ -300,21 +254,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         this.renderDemographicCharts();
       }
     }, 0);
-  }
-
-  private preloadProfileImage(): void {
-    const img = new Image();
-    img.onload = () => {
-      // Image is loaded, now show the first message
-      this.pushAssistantImmediateTextAnimated("Hello, describe your symptoms. Add several items and send.");
-    };
-    img.onerror = () => {
-      // If image fails to load, show message anyway after a short delay
-      setTimeout(() => {
-        this.pushAssistantImmediateTextAnimated("Hello, describe your symptoms. Add several items and send.");
-      }, 500);
-    };
-    img.src = 'assets/profile.png';
   }
 
 
@@ -331,100 +270,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       next: (data) => this.symptoms = data,
       error: (err) => console.error('Error loading symptoms:', err)
     });
-  }
-
-  loadSynonyms(): void {
-    this.http.get<Array<{ symptom: string; synonyms: string[] }>>('http://localhost:5000/api/symptoms/synonyms').subscribe({
-      next: (records) => {
-        this.synonymsMap = {};
-        this.synonymToCanonical = {};
-        for (const rec of records || []) {
-          const canonical = this.normalize(rec.symptom);
-          const syns = Array.isArray(rec.synonyms) ? rec.synonyms : [];
-          const normalizedSyns = [rec.symptom, ...syns]
-            .filter(Boolean)
-            .map(s => this.normalize(s));
-          this.synonymsMap[canonical] = Array.from(new Set(normalizedSyns));
-          for (const s of normalizedSyns) {
-            this.synonymToCanonical[s] = canonical;
-          }
-        }
-      },
-      error: (err) => console.error('Error loading synonyms:', err)
-    });
-  }
-
-  private normalize(input: string): string {
-    return (input || '')
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/\p{Diacritic}/gu, '')
-      .replace(/[^a-z0-9\s_\-]/g, ' ')
-      .replace(/[\s\-]+/g, ' ')
-      .trim()
-      .replace(/ /g, '_');
-  }
-
-  private levenshtein(a: string, b: string): number {
-    if (a === b) return 0;
-    const m = a.length, n = b.length;
-    if (m === 0) return n;
-    if (n === 0) return m;
-    const dp = new Array(n + 1).fill(0);
-    for (let j = 0; j <= n; j++) dp[j] = j;
-    for (let i = 1; i <= m; i++) {
-      let prev = i - 1;
-      dp[0] = i;
-      for (let j = 1; j <= n; j++) {
-        const temp = dp[j];
-        const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-        dp[j] = Math.min(
-          dp[j] + 1,
-          dp[j - 1] + 1,
-          prev + cost
-        );
-        prev = temp;
-      }
-    }
-    return dp[n];
-  }
-
-  private bestFuzzyCanonical(queryRaw: string): { canonical: string; distance: number } | null {
-    const query = this.normalize(queryRaw);
-    if (!query) return null;
-
-    // Exact or synonym match first
-    if (this.synonymToCanonical[query]) {
-      return { canonical: this.synonymToCanonical[query], distance: 0 };
-    }
-
-    // Fallback to fuzzy search across known synonyms
-    let bestCanonical: string | null = null;
-    let bestDistance = Infinity;
-    const maxDistance = Math.max(1, Math.round(Math.min(3, query.length * 0.25)));
-
-    for (const [canonical, syns] of Object.entries(this.synonymsMap)) {
-      for (const s of syns) {
-        const d = this.levenshtein(query, s);
-        if (d < bestDistance) {
-          bestDistance = d;
-          bestCanonical = canonical;
-          if (bestDistance === 0) break;
-        }
-      }
-      if (bestDistance === 0) break;
-    }
-
-    if (bestCanonical !== null && bestDistance <= maxDistance) {
-      return { canonical: bestCanonical, distance: bestDistance };
-    }
-    return null;
-  }
-
-  private mapToCanonical(input: string): string {
-    const best = this.bestFuzzyCanonical(input);
-    if (best) return best.canonical;
-    return this.normalize(input);
   }
 
   loadSvgPaths(): void {
@@ -559,76 +404,29 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   }
 
   filterSymptoms(): void {
-    const raw = this.searchQuery;
-    const query = this.normalize(raw);
-    if (!query) {
-      this.filteredSymptoms = [];
-      return;
-    }
-
-    // Collect candidates from canonical list by partial match
-    const canonicalCandidates = new Set<string>();
-    for (const canonical of this.symptoms) {
-      const norm = this.normalize(canonical);
-      if (norm.includes(query)) canonicalCandidates.add(norm);
-    }
-
-    // Include synonym-based candidates by partial match
-    for (const [canonical, syns] of Object.entries(this.synonymsMap)) {
-      if (canonical.includes(query)) canonicalCandidates.add(canonical);
-      for (const s of syns) {
-        if (s.includes(query)) canonicalCandidates.add(canonical);
-      }
-    }
-
-    // If no partial matches, use fuzzy across synonyms
-    if (canonicalCandidates.size === 0) {
-      const scored: Array<{ canonical: string; score: number }> = [];
-      const seen = new Set<string>();
-      for (const [canonical, syns] of Object.entries(this.synonymsMap)) {
-        for (const s of syns) {
-          const d = this.levenshtein(query, s);
-          const max = Math.max(s.length, query.length);
-          const score = 1 - d / Math.max(1, max);
-          if (!seen.has(canonical) || score > (scored.find(x => x.canonical === canonical)?.score || -1)) {
-            seen.add(canonical);
-            const idx = scored.findIndex(x => x.canonical === canonical);
-            if (idx >= 0) scored[idx].score = score; else scored.push({ canonical, score });
-          }
-        }
-      }
-      scored.sort((a, b) => b.score - a.score);
-      this.filteredSymptoms = scored.filter(s => s.score >= 0.5).slice(0, 10).map(s => s.canonical);
-      return;
-    }
-
-    this.filteredSymptoms = Array.from(canonicalCandidates).slice(0, 10);
+    const query = this.searchQuery.toLowerCase().replace(/ /g, '_');
+    this.filteredSymptoms = this.symptoms
+      .filter(symptom => symptom.toLowerCase().includes(query))
+      .slice(0, 10);
   }
 
   addSymptom(symptom?: string): void {
-    const input = (symptom || this.searchQuery).trim();
-    if (!input) return;
-
-    // Always accept free text, map to canonical for ML
-    const canonical = this.mapToCanonical(input);
-    if (!this.selectedSymptoms.includes(canonical)) {
-      this.selectedSymptoms.push(canonical);
-      this.selectedSources[canonical] = symptom ? 'suggested' : 'free';
+    const finalSymptom = (symptom || this.searchQuery).trim();
+    if (finalSymptom && !this.selectedSymptoms.includes(finalSymptom)) {
+      this.selectedSymptoms.push(finalSymptom);
     }
     this.searchQuery = '';
     this.filteredSymptoms = [];
   }
 
   removeSymptom(index: number): void {
-    const removed = this.selectedSymptoms.splice(index, 1)[0];
-    if (removed) {
-      delete this.selectedSources[removed];
-    }
+    this.selectedSymptoms.splice(index, 1);
   }
 
   formatSymptoms(symptoms: string[]): string[] {
-    // Ensure all selected are mapped to canonical for API
-    return symptoms.map(s => this.mapToCanonical(s));
+    return symptoms.map(symptom =>
+      symptom.toLowerCase().trim().replace(/ /g, '_')
+    );
   }
 
   showBmiChart(): void {
@@ -662,7 +460,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
               tension: 0.4
             },
             {
-              label: 'Obesity',
+              label: 'Obésité',
               data: [60, 70, 80, 90, 100, 110],
               borderColor: 'rgba(239,68,68,0.6)', // rouge
               backgroundColor: 'rgba(239,68,68,0.1)',
@@ -729,65 +527,14 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
 
   submitSymptoms(): void {
-    // Deprecated in free-text flow. Route to extract.
-    this.extractSymptomsFromFreeText();
-  }
-
-  extractSymptomsFromFreeText(): void {
-    const text = (this.freeTextSymptoms || this.searchQuery || '').trim();
-    if (!text) {
-      this.errorMessage = 'Please describe your symptoms.';
+    if (this.selectedSymptoms.length === 0) {
+      this.errorMessage = 'Please select at least one symptom.';
       return;
     }
     this.errorMessage = '';
-    // Show user's raw text as a message
-    this.messages.push({ role: 'user', type: 'text', content: text });
-    this.scrollToBottomSoon();
-
-    this.loading = true;
-    this.http.post<any>('http://localhost:5000/api/symptoms/extract', { text }).subscribe({
-      next: (res) => {
-        const recognized = Array.isArray(res?.recognized) ? res.recognized : [];
-        const unrecognized = Array.isArray(res?.unrecognized) ? res.unrecognized : [];
-        this.extractedRecognized = recognized.map((r: any) => ({
-          canonical: r.canonical,
-          label: r.label || this.formatSymptom(r.canonical),
-          synonyms: r.synonyms || [],
-          selected: true
-        }));
-        this.extractedUnrecognized = unrecognized;
-        this.showExtractionConfirm = true;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.errorMessage = err?.error?.error || 'Failed to extract symptoms. Please try again.';
-        this.loading = false;
-      }
-    });
-  }
-
-  toggleRecognizedSelection(index: number): void {
-    const item = this.extractedRecognized[index];
-    if (item) item.selected = !item.selected;
-  }
-
-  backToEditFreeText(): void {
-    this.showExtractionConfirm = false;
-  }
-
-  confirmRecognizedSelection(): void {
-    const chosen = this.extractedRecognized.filter(i => i.selected);
-    if (chosen.length === 0) {
-      this.errorMessage = 'Please validate at least one recognized symptom or go back to edit.';
-      return;
-    }
-    this.errorMessage = '';
-    this.selectedSymptoms = chosen.map(i => i.canonical);
-    this.selectedSources = {};
-    for (const i of chosen) this.selectedSources[i.canonical] = 'suggested';
-    // Proceed to demographics step
+    this.messages.push({ role: 'user', type: 'text', content: `Symptoms: ${this.selectedSymptoms.map(s => this.formatSymptom(s)).join(', ')}` });
     this.step = 2;
-    this.pushAssistantImmediateTextAnimated('Thanks. Enter your info: age, gender, weight, height.');
+    this.pushAssistantImmediateText('Thanks. Enter your info: age, gender, weight, height.');
     this.scrollToBottomSoon();
   }
 
@@ -802,29 +549,24 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     // brief thinking animation before pain question (bottom typing indicator)
     this.showThinking(1000);
     setTimeout(() => {
-      this.pushAssistantPainAnimated('Are you experiencing physical pain?');
+      this.messages.push({ role: 'assistant', type: 'pain', content: 'Are you experiencing physical pain?', answered: false });
+      this.scrollToBottomSoon();
     }, 1000);
   }
 
   answerPainQuestion(answer: boolean): void {
     this.painAnswer = answer;
-    
-    // Add user's response to the chat
-    this.messages.push({ role: 'user', type: 'text', content: answer ? 'Yes' : 'No' });
-    this.scrollToBottomSoon();
-    
-    // Mark the pain question as answered (hide buttons)
-    this.markLastYesNoMessageAnswered('pain');
-    
     if (answer) {
       this.showBodySelection = true;
       this.step = 4;
       this.showThinking(1000);
       setTimeout(() => {
-        this.pushAssistantBodySelectionAnimated('Indicate your pain locations on the body.');
+        this.messages.push({ role: 'assistant', type: 'bodySelection', content: 'Indicate your pain locations on the body.' });
+        this.scrollToBottomSoon();
       }, 1000);
     } else {
       this.step = 4;
+      this.markLastYesNoMessageAnswered('pain');
       this.submitSymptomsToApi();
     }
   }
@@ -846,10 +588,10 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       this.messages.push({ role: 'user', type: 'text', content: 'Areas have been selected.' });
       this.scrollToBottomSoon();
 
-      // 👉 then only, we mark the pain question as answered
+      // 👉 ensuite seulement, on marque la question douleur comme répondu
       this.markLastYesNoMessageAnswered('pain');
 
-      // 👉 and we send the API call AFTER
+      // 👉 et on envoie l'appel API APRÈS
       this.submitSymptomsToApi();
     }, 1000);
   }
@@ -907,9 +649,9 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   }
 
   getBmiQualityPercent(bmi: number): number {
-    if (bmi < 16.5 || bmi > 40) return 10;       // very bad
-    if (bmi < 18.5 || (bmi >= 30 && bmi < 35)) return 40; // underweight or moderate obesity
-    if ((bmi >= 25 && bmi < 30)) return 70;      // overweight
+    if (bmi < 16.5 || bmi > 40) return 10;       // très mauvais
+    if (bmi < 18.5 || (bmi >= 30 && bmi < 35)) return 40; // insuffisance ou obésité modérée
+    if ((bmi >= 25 && bmi < 30)) return 70;      // surpoids
     if (bmi >= 18.5 && bmi < 25) return 100;     // normal
     return 20; // fallback
   }
@@ -1088,17 +830,10 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     isGenderDataValid: boolean,
     isAgeDataValid: boolean
   } {
-    // Clean the string: replace Unicode dashes with regular dashes and handle empty percentages
-    const clean = demographics
-      .replace(/\\u2013/g, '-')  // Replace Unicode dashes
-      .replace(/\u2013/g, '-')   // Replace actual Unicode dashes in the string
-      .replace(/\b(\w+):\s?%(?!\d)/g, '$1: 0%'); // Handle empty percentages like "55–60: %"
+    const clean = demographics.replace(/\\u2013/g, '-').replace(/\b(\w+):\s?%(?!\d)/g, '$1: 0%');
 
     const genderRegex = /(Male|Female):\s?(\d+)%/gi;
-    
-    // Updated regex to handle the specific format:
-    // "0–5 years: 0%", "5–10: 5%", "20–25: 20%", "65+ years: %"
-    const ageRegex = /(\d{1,2}(?:[–-]\d{1,2})?\+?)\s?(?:years)?:\s?(\d*)%/gi;
+    const ageRegex = /(\d{1,2}\+?|\d{1,2}-\d{1,2})\s?(?:years)?:\s?(\d+)%/gi;
 
     const genderLabels: string[] = [];
     const genderValues: number[] = [];
@@ -1114,9 +849,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
     while ((match = ageRegex.exec(clean)) !== null) {
       ageLabels.push(match[1]);
-      // Handle empty percentages by defaulting to 0
-      const percentage = match[2] === '' ? '0' : match[2];
-      ageValues.push(parseInt(percentage, 10));
+      ageValues.push(parseInt(match[2], 10));
     }
 
     const isGenderDataValid = genderValues.some(v => v > 0);
@@ -1138,417 +871,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   }
 
 
-
-  getPersonalizedDemographicContext(): string {
-    if (!this.age || !this.sex) return '';
-    
-    const userAgeGroup = this.findUserAgeGroup(this.age);
-    if (!userAgeGroup) return '';
-    
-    const total = this.ageData.values.reduce((sum, val) => sum + val, 0);
-    const userAgeGroupIndex = this.ageData.labels.findIndex(label => label === userAgeGroup);
-    const userPercent = userAgeGroupIndex !== -1 ? Math.round((this.ageData.values[userAgeGroupIndex] / total) * 100) : 0;
-    
-    // Determine risk level based on percentage
-    let riskLevel = 'low';
-    if (userPercent >= 25) riskLevel = 'high';
-    else if (userPercent >= 15) riskLevel = 'moderate';
-    
-    const genderText = this.sex.toLowerCase() === 'male' ? 'male' : 'female';
-    const ageText = this.age;
-    
-    return `As a ${ageText}-year-old ${genderText}, you fall into a ${riskLevel} risk demographic for this condition.`;
-  }
-
-  getPersonalizedGenderContext(): string {
-    if (!this.sex) return '';
-    
-    const genderText = this.sex.toLowerCase() === 'male' ? 'male' : 'female';
-    const ageText = this.age ? `${this.age}-year-old ` : '';
-    
-    return `As a ${ageText}${genderText}, this information is particularly relevant to your demographic profile.`;
-  }
-
-  getPersonalizedAgeContext(): string {
-    if (!this.age) return '';
-    
-    const userAgeGroup = this.findUserAgeGroup(this.age);
-    if (!userAgeGroup) return '';
-    
-    const total = this.ageData.values.reduce((sum, val) => sum + val, 0);
-    const userAgeGroupIndex = this.ageData.labels.findIndex(label => label === userAgeGroup);
-    const userPercent = userAgeGroupIndex !== -1 ? Math.round((this.ageData.values[userAgeGroupIndex] / total) * 100) : 0;
-    
-    // Determine risk level based on percentage
-    let riskLevel = 'low';
-    if (userPercent >= 25) riskLevel = 'high';
-    else if (userPercent >= 15) riskLevel = 'moderate';
-    
-    return `As a ${this.age}-year-old, you fall into a ${riskLevel} risk age group for this condition.`;
-  }
-
-  getPersonalizedTreatmentAdvice(): string {
-    if (!this.age || !this.sex) return '';
-    
-    const userAgeGroup = this.findUserAgeGroup(this.age);
-    if (!userAgeGroup) return '';
-    
-    const total = this.ageData.values.reduce((sum, val) => sum + val, 0);
-    const userAgeGroupIndex = this.ageData.labels.findIndex(label => label === userAgeGroup);
-    const userPercent = userAgeGroupIndex !== -1 ? Math.round((this.ageData.values[userAgeGroupIndex] / total) * 100) : 0;
-    
-    // Determine advice based on risk level and age
-    if (userPercent >= 25) {
-      return 'Given your high-risk demographic profile, immediate medical consultation is strongly recommended.';
-    } else if (userPercent >= 15) {
-      return 'Given your moderate risk demographic, early intervention is particularly important for optimal outcomes.';
-    } else if (this.age < 30) {
-      return 'Given your age profile, early detection and treatment can significantly improve long-term outcomes.';
-    } else {
-      return 'Given your demographic profile, regular monitoring and adherence to treatment recommendations are essential.';
-    }
-  }
-
-  generateQuickSummaryContent(): string {
-    if (!this.response) return '';
-    
-    // Parse demographics data if available to ensure variables are set
-    if (this.response?.disease_info?.demographics) {
-      const demographics = this.parseDemographics(this.response.disease_info.demographics);
-      this.genderData = demographics.genderData;
-      this.ageData = demographics.ageData;
-      this.showDemographicsSection = true;
-      this.showGenderChart = demographics.isGenderDataValid;
-      this.showAgeChart = demographics.isAgeDataValid;
-    }
-    
-    const confidenceValue = this.response.confidence ? Math.round(this.response.confidence * 100) : 0;
-    const diseaseName = this.formatDiseaseName(this.response.predicted_disease);
-    let content = `Based on your symptoms, the most likely condition is <strong>${diseaseName}</strong> with a <strong>${confidenceValue}% confidence</strong>.`;
-    
-    // Add severity and contagious info only if available
-    const severity = this.getFormattedSeverity();
-    const contagious = this.getFormattedContagious();
-    if (severity && severity !== 'Unknown' && contagious && contagious !== 'Unknown') {
-      content += `<br><br>This condition typically has <strong>${severity} severity</strong> and is <strong>${contagious}</strong>.`;
-    }
-    
-    // Add demographics only if we have valid data
-    if (this.showDemographicsSection) {
-      const genderText = this.getGenderDistributionText();
-      const ageText = this.getAgeDistributionText();
-      
-      // Only add demographics section if we have at least one valid piece of data
-      if (genderText || ageText) {
-        content += '<br><br>';
-        
-        if (genderText && ageText) {
-          content += `This condition affects <strong>${genderText}</strong> and is <strong>${ageText}</strong>.`;
-          const demographicContext = this.getPersonalizedDemographicContext();
-          if (demographicContext) {
-            content += ` ${demographicContext}`;
-          }
-        } else if (genderText && !ageText) {
-          content += `This condition affects <strong>${genderText}</strong>.`;
-          const genderContext = this.getPersonalizedGenderContext();
-          if (genderContext) {
-            content += ` ${genderContext}`;
-          }
-        } else if (!genderText && ageText) {
-          content += `This condition is <strong>${ageText}</strong>.`;
-          const ageContext = this.getPersonalizedAgeContext();
-          if (ageContext) {
-            content += ` ${ageContext}`;
-          }
-        }
-      }
-    }
-    
-    // Add treatment only if we have valid treatment data
-    if (this.hasDiseaseTreatment) {
-      const treatmentType = this.response?.treatment?.disease_treatment?.treatment_type;
-      const duration = this.response?.treatment?.disease_treatment?.recommended_duration;
-      const prescription = this.response?.treatment?.disease_treatment?.prescription_medications;
-      const otc = this.response?.treatment?.disease_treatment?.otc_medications;
-      
-      // Check if we have any valid treatment data
-      const hasValidTreatmentType = treatmentType && treatmentType.toLowerCase() !== 'n/a' && treatmentType.trim();
-      const hasValidDuration = duration && duration.toLowerCase() !== 'n/a' && duration.trim();
-      const hasValidPrescription = prescription && prescription !== 'NaN' && prescription.trim() && prescription.toLowerCase() !== 'n/a';
-      const hasValidOtc = otc && otc !== 'NaN' && otc.trim() && otc.toLowerCase() !== 'n/a';
-      
-      if (hasValidTreatmentType || hasValidDuration || hasValidPrescription || hasValidOtc) {
-        let treatmentText = '<br><br>';
-        
-        // Build treatment description based on available data
-        if (hasValidTreatmentType) {
-          const formattedTreatmentType = this.formatTreatmentType(treatmentType);
-          treatmentText += `The recommended approach is <strong>${formattedTreatmentType}</strong>`;
-          
-          if (hasValidDuration) {
-            const formattedDuration = this.formatDuration(duration);
-            treatmentText += ` with a <strong>${formattedDuration}</strong> treatment duration`;
-          }
-          treatmentText += '.';
-        } else if (hasValidDuration) {
-          const formattedDuration = this.formatDuration(duration);
-          treatmentText += `The recommended treatment duration is <strong>${formattedDuration}</strong>.`;
-        }
-        
-        // Add medications
-        if (hasValidPrescription) {
-          const formattedPrescription = this.formatMedication(prescription);
-          if (hasValidTreatmentType || hasValidDuration) {
-            treatmentText += ` <strong>${formattedPrescription}</strong>`;
-          } else {
-            treatmentText += `The primary treatment is <strong>${formattedPrescription}</strong>.`;
-          }
-        }
-        
-        if (hasValidOtc) {
-          const formattedOtc = this.formatMedication(otc);
-          if (hasValidTreatmentType || hasValidDuration || hasValidPrescription) {
-            treatmentText += ` Additionally, ${formattedOtc} may be considered.`;
-          } else {
-            treatmentText += `${formattedOtc} may be considered as treatment.`;
-          }
-        }
-        
-        // Ensure proper punctuation at the end
-        if (treatmentText && !treatmentText.endsWith('.') && !treatmentText.endsWith('!') && !treatmentText.endsWith('?')) {
-          treatmentText += '.';
-        }
-        
-        // Add personalized advice only if we have treatment data
-        const treatmentAdvice = this.getPersonalizedTreatmentAdvice();
-        if (treatmentAdvice) {
-          treatmentText += ` ${treatmentAdvice}`;
-        }
-        
-        content += treatmentText;
-      }
-    }
-    
-    return content;
-  }
-
-  private formatAgeGroup(ageGroup: string): string {
-    // If it's just a number, add "years"
-    if (/^\d+$/.test(ageGroup.trim())) {
-      return `${ageGroup} years`;
-    }
-    // If it already contains "years", return as is
-    if (ageGroup.toLowerCase().includes('years')) {
-      return ageGroup;
-    }
-    // For ranges like "20-30", add "years"
-    if (ageGroup.includes('-')) {
-      return `${ageGroup} years`;
-    }
-    // For ranges like "65+", add "years"
-    if (ageGroup.includes('+')) {
-      return `${ageGroup} years`;
-    }
-    // Default: return as is
-    return ageGroup;
-  }
-
-  private formatTreatmentType(treatmentType: string): string {
-    if (!treatmentType) return '';
-    
-    // Convert to lowercase and capitalize first letter
-    const formatted = treatmentType.toLowerCase().trim();
-    
-    // Handle common treatment types
-    const treatmentMap: { [key: string]: string } = {
-      'symptomatic': 'symptomatic',
-      'symptomatic treatment': 'symptomatic treatment',
-      'supportive': 'supportive',
-      'supportive care': 'supportive care',
-      'conservative': 'conservative',
-      'conservative treatment': 'conservative treatment',
-      'medical': 'medical',
-      'medical treatment': 'medical treatment',
-      'surgical': 'surgical',
-      'surgical treatment': 'surgical treatment',
-      'pharmacological': 'pharmacological',
-      'pharmacological treatment': 'pharmacological treatment',
-      'n/a': 'not specified'
-    };
-    
-    return treatmentMap[formatted] || formatted.charAt(0).toUpperCase() + formatted.slice(1);
-  }
-
-  private formatDuration(duration: string): string {
-    if (!duration) return '';
-    
-    const formatted = duration.toLowerCase().trim();
-    
-    // Handle common duration formats
-    const durationMap: { [key: string]: string } = {
-      'long-term': 'long-term',
-      'long-term, ongoing': 'long-term, ongoing',
-      'long term': 'long-term',
-      'long term ongoing': 'long-term, ongoing',
-      'short-term': 'short-term',
-      'short term': 'short-term',
-      'acute': 'acute',
-      'chronic': 'chronic',
-      'ongoing': 'ongoing',
-      'continuous': 'continuous',
-      'intermittent': 'intermittent',
-      'as needed based on medical advice': 'as needed',
-      'as prescribed': 'as prescribed',
-      'n/a': 'not specified'
-    };
-    
-    return durationMap[formatted] || formatted.charAt(0).toUpperCase() + formatted.slice(1);
-  }
-
-  private formatMedication(medication: string): string {
-    if (!medication) return '';
-    
-    const formatted = medication.trim();
-    
-    // Handle N/A cases
-    if (formatted.toLowerCase() === 'n/a') {
-      return 'not specified';
-    }
-    
-    // If it already ends with proper punctuation, return as is
-    if (formatted.endsWith('.') || formatted.endsWith('!') || formatted.endsWith('?')) {
-      return formatted;
-    }
-    
-    // If it starts with a capital letter and looks like a sentence, return as is
-    if (/^[A-Z]/.test(formatted) && formatted.length > 10) {
-      return formatted;
-    }
-    
-    // Handle complex medication descriptions
-    if (formatted.includes(',') || formatted.includes('(') || formatted.includes(')')) {
-      return formatted;
-    }
-    
-    // If it's a simple medication name, capitalize first letter
-    if (formatted.length < 50 && !formatted.includes('.')) {
-      return formatted.charAt(0).toUpperCase() + formatted.slice(1);
-    }
-    
-    // Default: return as is
-    return formatted;
-  }
-
-  private formatDiseaseName(diseaseName: string): string {
-    if (!diseaseName) return '';
-    
-    // Handle disease names with underscores (e.g., "abdominal_aortic_aneurysm")
-    if (diseaseName.includes('_')) {
-      return diseaseName
-        .split('_')
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-        .join(' ');
-    }
-    
-    // If already properly formatted, ensure proper capitalization
-    return diseaseName
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
-  }
-
-  private getGenderDistributionText(): string {
-    if (!this.genderData.labels.length || !this.genderData.values.length) return '';
-    
-    const total = this.genderData.values.reduce((sum, val) => sum + val, 0);
-    if (total === 0) return '';
-    
-    const maleIndex = this.genderData.labels.findIndex(label => label.toLowerCase() === 'male');
-    const femaleIndex = this.genderData.labels.findIndex(label => label.toLowerCase() === 'female');
-    
-    let result = '';
-    if (maleIndex !== -1 && this.genderData.values[maleIndex] > 0) {
-      const malePercent = Math.round((this.genderData.values[maleIndex] / total) * 100);
-      result += `${malePercent}% male`;
-    }
-    if (femaleIndex !== -1 && this.genderData.values[femaleIndex] > 0) {
-      const femalePercent = Math.round((this.genderData.values[femaleIndex] / total) * 100);
-      if (result) result += ', ';
-      result += `${femalePercent}% female`;
-    }
-    
-    return result;
-  }
-
-  private getAgeDistributionText(): string {
-    if (!this.ageData.labels.length || !this.ageData.values.length) return '';
-    
-    const total = this.ageData.values.reduce((sum, val) => sum + val, 0);
-    if (total === 0) return '';
-    
-    const maxIndex = this.ageData.values.indexOf(Math.max(...this.ageData.values));
-    const maxAgeGroup = this.ageData.labels[maxIndex];
-    const maxPercent = Math.round((this.ageData.values[maxIndex] / total) * 100);
-    const formattedMaxAgeGroup = this.formatAgeGroup(maxAgeGroup);
-    
-    let result = `most common in ${formattedMaxAgeGroup} (${maxPercent}%)`;
-    
-    if (this.age !== null && this.age !== undefined) {
-      const userAgeGroup = this.findUserAgeGroup(this.age);
-      if (userAgeGroup) {
-        const userAgeGroupIndex = this.ageData.labels.findIndex(label => label === userAgeGroup);
-        if (userAgeGroupIndex !== -1 && this.ageData.values[userAgeGroupIndex] > 0) {
-          const userPercent = Math.round((this.ageData.values[userAgeGroupIndex] / total) * 100);
-          const formattedUserAgeGroup = this.formatAgeGroup(userAgeGroup);
-          result += `, and you fall into the ${formattedUserAgeGroup} group (${userPercent}%)`;
-        }
-      }
-    }
-    
-    return result;
-  }
-
-  private findUserAgeGroup(userAge: number): string | null {
-    if (!this.ageData.labels.length) return null;
-    
-    for (const ageGroup of this.ageData.labels) {
-      const isInGroup = this.isAgeInGroup(userAge, ageGroup);
-      if (isInGroup) {
-        return ageGroup;
-      }
-    }
-    return null;
-  }
-
-  private isAgeInGroup(age: number, ageGroup: string): boolean {
-    // Handle different age group formats
-    if (ageGroup.includes('-')) {
-      // Format: "20-30" or "20-30 years"
-      const match = ageGroup.match(/(\d+)-(\d+)/);
-      if (match) {
-        const minAge = parseInt(match[1]);
-        const maxAge = parseInt(match[2]);
-        return age >= minAge && age <= maxAge;
-      }
-    } else if (ageGroup.includes('+')) {
-      // Format: "65+" or "65+ years"
-      const match = ageGroup.match(/(\d+)\+/);
-      if (match) {
-        const minAge = parseInt(match[1]);
-        return age >= minAge;
-      }
-    } else {
-      // Single age format: "25" or "25 years"
-      const match = ageGroup.match(/(\d+)/);
-      if (match) {
-        const exactAge = parseInt(match[1]);
-        return age === exactAge;
-      }
-    }
-    return false;
-  }
-
-
   renderDemographicCharts(): void {
     const demographics = this.response?.disease_info?.demographics;
     this.showDemographicsSection = false;
@@ -1565,18 +887,12 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    // Store demographic data for Quick Summary
-    this.genderData = genderData;
-    this.ageData = ageData;
-
     this.showDemographicsSection = true;
     this.showGenderChart = isGenderDataValid;
     this.showAgeChart = isAgeDataValid;
 
-    // Add a delay to ensure DOM elements are rendered
-    setTimeout(() => {
-      const genderCanvas = document.getElementById('genderChart') as HTMLCanvasElement | null;
-      const ageCanvas = document.getElementById('ageChart') as HTMLCanvasElement | null;
+    const genderCanvas = document.getElementById('genderChart') as HTMLCanvasElement | null;
+    const ageCanvas = document.getElementById('ageChart') as HTMLCanvasElement | null;
 
     if (isGenderDataValid && genderCanvas) {
       let highlightIndexGender = -1;
@@ -1734,32 +1050,9 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       });
     }
 
-    }, 100); // End of setTimeout
   }
 
-  // Function to switch to demographics tab and render charts
-  switchToDemographicsTab(): void {
-    this.currentResultView = 'demographics';
-    setTimeout(() => {
-      this.renderDemographicCharts();
-    }, 50);
-  }
 
-  toggleDiseaseInfo(): void {
-    this.showDiseaseInfo = !this.showDiseaseInfo;
-  }
-
-  getFormattedSeverity(): string {
-    if (!this.response?.disease_info?.severity_level) return '';
-    const severity = this.response.disease_info.severity_level.replace('.', '').toLowerCase();
-    return severity;
-  }
-
-  getFormattedContagious(): string {
-    if (!this.response?.disease_info?.contagious) return '';
-    const contagious = this.response.disease_info.contagious.replace('.', '').toLowerCase();
-    return contagious === 'no' ? 'not contagious' : 'contagious';
-  }
 
   splitTreatmentKeys(keys: string[]): [string[], string[]] {
     const mid = Math.ceil(keys.length / 2);
@@ -1852,7 +1145,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     doc.setFontSize(10);
     doc.text(doc.splitTextToSize(advice, 180), 15, 198);
 
-    /** ✅ General treatment */
+    /** ✅ Traitement général */
     const treatment = this.response?.treatment?.disease_treatment || {};
     autoTable(doc, {
       startY: 220,
@@ -1873,21 +1166,21 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       bodyStyles: { textColor: 50 },
     });
 
-    /** ✅ Specific treatments by symptom */
-    /** ✅ Specific treatments by symptom (chained in PDF) */
+    /** ✅ Traitements spécifiques par symptôme */
+    /** ✅ Traitements spécifiques par symptôme (enchaînés dans le PDF) */
     if (this.response?.treatment?.symptom_treatments) {
       const symptoms = Object.keys(this.response.treatment.symptom_treatments || {});
-      let currentY = (doc as any).lastAutoTable?.finalY || 240; // Start under the previous table
+      let currentY = (doc as any).lastAutoTable?.finalY || 240; // Démarrage sous le tableau précédent
 
       symptoms.forEach((symptom) => {
         const sympData = this.response?.treatment?.symptom_treatments?.[symptom] || {};
 
-        // ✅ Block title
+        // ✅ Titre du bloc
         doc.setFontSize(13);
         doc.setTextColor(44, 62, 80);
         doc.text(`Symptom Treatment: ${this.formatSymptom(symptom)}`, 15, currentY + 10);
 
-        // ✅ Table
+        // ✅ Tableau
         autoTable(doc, {
           startY: currentY + 15,
           head: [['Detail', 'Value']],
@@ -1908,7 +1201,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
           bodyStyles: { textColor: 50, fontSize: 10 },
         });
 
-        // ✅ Update for the next block
+        // ✅ Mise à jour pour le prochain bloc
         currentY = (doc as any).lastAutoTable.finalY;
       });
     }
@@ -1920,12 +1213,11 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     doc.setTextColor(150);
     doc.text(`Generated by Nova AI Health Assistant`, 105, pageHeight - 10, { align: 'center' });
 
-    /** ✅ Download */
+    /** ✅ Téléchargement */
     doc.save(`Nova_Analysis_${today}.pdf`);
   }
 
   submitSymptomsToApi(): void {
-    this.isSimulatedResponse = false; // Reset flag for real API calls
     this.loading = true;
     this.errorMessage = '';
     const formattedSymptoms = this.formatSymptoms(this.selectedSymptoms);
@@ -1948,7 +1240,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         
 
         if (this.currentClarification?.question) {
-          this.pushAssistantClarificationAnimated(this.currentClarification.question);
+          this.messages.push({ role: 'assistant', type: 'clarification', content: this.currentClarification.question, answered: false });
         }
         this.scrollToBottomSoon();
       },
@@ -1961,12 +1253,11 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
   answerClarification(value: boolean): void {
     if (!this.currentClarification) return;
-    
-    // Add user's response to the chat immediately
-    this.messages.push({ role: 'user', type: 'text', content: value ? 'Yes' : 'No' });
-    this.scrollToBottomSoon();
-    
     this.showThinking(1000);
+    setTimeout(() => {
+      this.messages.push({ role: 'user', type: 'text', content: value ? 'Yes' : 'No' });
+      this.scrollToBottomSoon();
+    }, 1000);
     this.markLastYesNoMessageAnswered('clarification');
     const answerPayload = {
       state: this.state,
@@ -1989,18 +1280,9 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         if (data.final_prediction || data.predicted_disease) {
           this.response = data;
           this.currentClarification = null;
-          
-          // Add Quick Summary message first
-          const quickSummaryContent = this.generateQuickSummaryContent();
-          this.addAnimatedMessage({
-            role: 'assistant',
-            type: 'quickSummary',
-            content: quickSummaryContent,
-            isAnimating: true,
-            displayedText: ''
-          });
-          
-          // Note: Detailed analysis will be shown only when user clicks the button in Quick Summary
+          this.messages.push({ role: 'assistant', type: 'result', content: 'Here are your results.' });
+          this.currentResultView = 'result';
+          this.messages.push({ role: 'assistant', type: 'resultSwitcher', content: 'results-switcher' });
           // Trigger animations
           setTimeout(() => {
             if (this.response?.confidence) {
@@ -2009,18 +1291,13 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
             this.animateSeverity();
             this.animateContagiousGauge();
             this.animateCourseGauge();
-            // Render demographic charts if data is available
-            if (this.response?.disease_info?.demographics) {
-              setTimeout(() => {
-                this.renderDemographicCharts();
-              }, 100);
-            }
+            // Charts will render when demographics tab is opened
           }, 50);
         } else {
           this.currentClarification = data.question || null;
           if (this.currentClarification?.question) {
             this.askedQuestions.push(this.currentClarification.question);
-            this.pushAssistantClarificationAnimated(this.currentClarification.question);
+            this.messages.push({ role: 'assistant', type: 'clarification', content: this.currentClarification.question, answered: false });
           }
         }
         this.loading = false;
@@ -2056,13 +1333,23 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.hoverCircleBack = null;
     this.step = 1;
     this.messages = [];
-    this.showDemographicsSection = false;
-    this.showGenderChart = false;
-    this.showAgeChart = false;
-    this.pushAssistantTextAnimated("Hello, describe your symptoms. Add several items and send.");
+    this.pushAssistantText("Hello, describe your symptoms. Add several items and send.");
     this.scrollToBottomSoon();
   }
 
+  private pushAssistantText(content: string): void {
+    this.thinking = true;
+    setTimeout(() => {
+      this.thinking = false; // on coupe le "..."
+      this.messages.push({ role: 'assistant', type: 'text', content });
+      this.scrollToBottomSoon();
+    }, 1000);
+  }
+
+  private pushAssistantImmediateText(content: string): void {
+    this.messages.push({ role: 'assistant', type: 'text', content });
+    this.scrollToBottomSoon();
+  }
 
   private scrollToBottomSoon(): void {
     setTimeout(() => {
@@ -2148,8 +1435,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       }
     }
     this.messages.push({ role: 'user', type: 'text', content: value ? 'Yes' : 'No' });
-    this.scrollToBottomSoon();
     if (!value) {
+      this.scrollToBottomSoon();
       return;
     }
     // Show demographics if available
@@ -2164,333 +1451,5 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       this.messages.push({ role: 'assistant', type: 'treatments', content: 'Treatment plan overview' });
     }
     this.scrollToBottomSoon();
-  }
-
-  // Typewriter animation methods
-  private calculateAdaptiveSpeed(textLength: number): number {
-    // If this is a simulated response, make typing instant
-    if (this.isSimulatedResponse) {
-      console.log(`Simulated response detected - instant typing for ${textLength} characters`);
-      return 0; // Instant typing
-    }
-    
-    let speed: number;
-    
-    // Base speed for short texts (0-100 chars)
-    if (textLength <= 100) {
-      speed = this.typewriterSpeed;
-    }
-    // Faster speed for medium texts (100-300 chars)
-    else if (textLength <= 300) {
-      speed = Math.max(1, this.typewriterSpeed * 0.5);
-    }
-    // Even faster for long texts (300-600 chars)
-    else if (textLength <= 600) {
-      speed = Math.max(0.5, this.typewriterSpeed * 0.3);
-    }
-    // Very fast for long texts (600-1000 chars)
-    else if (textLength <= 1000) {
-      speed = Math.max(0.3, this.typewriterSpeed * 0.2);
-    }
-    // Fastest for very long texts (1000+ chars)
-    else {
-      speed = Math.max(0.1, this.typewriterSpeed * 0.1);
-    }
-    
-    // Debug log to verify adaptive speed is working
-    console.log(`Text length: ${textLength}, Base speed: ${this.typewriterSpeed}ms, Adaptive speed: ${speed}ms`);
-    
-    return speed;
-  }
-
-  private animateText(message: AnimatedMessage): void {
-    // Don't start if already animating (prevent double animation)
-    if (message.isAnimating && message.displayedText && message.displayedText.length > 0) return;
-    
-    message.isAnimating = true;
-    message.displayedText = '';
-    
-    // If this is a simulated response, display text instantly
-    if (this.isSimulatedResponse) {
-      message.displayedText = message.content;
-      message.isAnimating = false;
-      this.scrollToBottomSoon();
-      console.log('Simulated response - text displayed instantly');
-      return;
-    }
-    
-    // Special handling for quickSummary to avoid showing HTML tags during animation
-    if (message.type === 'quickSummary') {
-      this.animateQuickSummaryText(message);
-      return;
-    }
-    
-    const fullText = message.content;
-    const adaptiveSpeed = this.calculateAdaptiveSpeed(fullText.length);
-    let currentIndex = 0;
-    
-    const typeNextChar = () => {
-      if (currentIndex < fullText.length) {
-        message.displayedText = fullText.substring(0, currentIndex + 1);
-        currentIndex++;
-        this.typewriterAnimation = setTimeout(typeNextChar, adaptiveSpeed);
-        this.scrollToBottomSoon();
-      } else {
-        message.isAnimating = false;
-        this.typewriterAnimation = null;
-      }
-    };
-    
-    // Start immediately
-    typeNextChar();
-  }
-
-  private animateQuickSummaryText(message: AnimatedMessage): void {
-    // If this is a simulated response, display text instantly
-    if (this.isSimulatedResponse) {
-      message.displayedText = message.content;
-      message.isAnimating = false;
-      this.scrollToBottomSoon();
-      console.log('Simulated response - Quick Summary displayed instantly');
-      return;
-    }
-    
-    const fullText = message.content;
-    const adaptiveSpeed = this.calculateAdaptiveSpeed(fullText.length);
-    let currentIndex = 0;
-    let inTag = false;
-    let currentTag = '';
-    
-    const typeNextChar = () => {
-      if (currentIndex < fullText.length) {
-        const char = fullText[currentIndex];
-        
-        if (char === '<') {
-          inTag = true;
-          currentTag = '<';
-        } else if (char === '>') {
-          inTag = false;
-          currentTag += '>';
-          // Add the complete tag at once without delay
-          message.displayedText += currentTag;
-          currentTag = '';
-          // Continue immediately for tags to avoid saccades
-          currentIndex++;
-          typeNextChar();
-          return;
-        } else if (inTag) {
-          currentTag += char;
-        } else {
-          message.displayedText += char;
-        }
-        
-        currentIndex++;
-        this.typewriterAnimation = setTimeout(typeNextChar, adaptiveSpeed);
-        this.scrollToBottomSoon();
-      } else {
-        message.isAnimating = false;
-        this.typewriterAnimation = null;
-      }
-    };
-    
-    // Start immediately
-    typeNextChar();
-  }
-
-  addAnimatedMessage(message: AnimatedMessage): void {
-    this.messages.push(message);
-    this.scrollToBottomSoon();
-    
-    // Start animation after a short delay
-    setTimeout(() => this.animateText(message), 50);
-  }
-
-  isDetailedAnalysisVisible(): boolean {
-    return this.messages.some(m => m.role === 'assistant' && m.type === 'result');
-  }
-
-  showDetailedAnalysis(): void {
-    // Check if detailed analysis is already shown
-    const hasDetailedAnalysis = this.isDetailedAnalysisVisible();
-    
-    if (hasDetailedAnalysis) {
-      // Remove the detailed analysis message
-      this.messages = this.messages.filter(m => !(m.role === 'assistant' && m.type === 'result'));
-    } else {
-      // Add the result message to display the detailed analysis
-      this.messages.push({ role: 'assistant', type: 'result', content: 'Here are your results.' });
-      this.currentResultView = 'result';
-      
-      // Trigger animations and render charts
-      setTimeout(() => {
-        if (this.response?.confidence) {
-          this.animateConfidence(this.response.confidence * 100);
-        }
-        this.animateSeverity();
-        this.animateContagiousGauge();
-        this.animateCourseGauge();
-        // Render demographic charts if data is available
-        if (this.response?.disease_info?.demographics) {
-          setTimeout(() => {
-            this.renderDemographicCharts();
-          }, 100);
-        }
-      }, 50);
-    }
-    
-    this.scrollToBottomSoon();
-  }
-
-  private pushAssistantTextAnimated(content: string): void {
-    // Add message with avatar immediately, but without text
-    const message: AnimatedMessage = {
-      role: 'assistant',
-      type: 'text',
-      content,
-      isAnimating: false,
-      displayedText: ''
-    };
-    this.messages.push(message);
-    this.scrollToBottomSoon();
-    
-    // Show thinking spinner
-    this.thinking = true;
-    setTimeout(() => {
-      this.thinking = false;
-      // Start animation immediately after DOM update
-      setTimeout(() => this.animateText(message), 50);
-    }, 1000);
-  }
-
-  private pushAssistantImmediateTextAnimated(content: string): void {
-    const message: AnimatedMessage = {
-      role: 'assistant',
-      type: 'text',
-      content,
-      isAnimating: false,
-      displayedText: ''
-    };
-    this.messages.push(message);
-    this.scrollToBottomSoon();
-    // Start animation immediately after DOM update
-    setTimeout(() => this.animateText(message), 50);
-  }
-
-  private pushAssistantClarificationAnimated(content: string): void {
-    // Add message with avatar immediately, but without text
-    const message: AnimatedMessage = {
-      role: 'assistant',
-      type: 'clarification',
-      content,
-      answered: false,
-      isAnimating: true,
-      displayedText: ''
-    };
-    this.messages.push(message);
-    this.scrollToBottomSoon();
-    
-    // Show thinking spinner
-    this.thinking = true;
-    setTimeout(() => {
-      this.thinking = false;
-      // Start animation immediately after DOM update
-      setTimeout(() => this.animateText(message), 50);
-    }, 1000);
-  }
-
-  private pushAssistantPainAnimated(content: string): void {
-    // Add message with avatar immediately, but without text
-    const message: AnimatedMessage = {
-      role: 'assistant',
-      type: 'pain',
-      content,
-      answered: false,
-      isAnimating: true,
-      displayedText: ''
-    };
-    this.messages.push(message);
-    this.scrollToBottomSoon();
-    
-    // Show thinking spinner
-    this.thinking = true;
-    setTimeout(() => {
-      this.thinking = false;
-      // Start animation immediately after DOM update
-      setTimeout(() => this.animateText(message), 50);
-    }, 1000);
-  }
-
-  private pushAssistantBodySelectionAnimated(content: string): void {
-    // Add message with avatar immediately, but without text
-    const message: AnimatedMessage = {
-      role: 'assistant',
-      type: 'bodySelection',
-      content,
-      answered: false,
-      isAnimating: true,
-      displayedText: ''
-    };
-    this.messages.push(message);
-    this.scrollToBottomSoon();
-    
-    // Show thinking spinner
-    this.thinking = true;
-    setTimeout(() => {
-      this.thinking = false;
-      // Start animation immediately after DOM update
-      setTimeout(() => this.animateText(message), 50);
-    }, 1000);
-  }
-
-  private pushAssistantExtrasAnimated(content: string): void {
-    // Add message with avatar immediately, but without text
-    const message: AnimatedMessage = {
-      role: 'assistant',
-      type: 'extras',
-      content,
-      answered: false,
-      isAnimating: true,
-      displayedText: ''
-    };
-    this.messages.push(message);
-    this.scrollToBottomSoon();
-    
-    // Show thinking spinner
-    this.thinking = true;
-    setTimeout(() => {
-      this.thinking = false;
-      // Start animation immediately after DOM update
-      setTimeout(() => this.animateText(message), 50);
-    }, 1000);
-  }
-
-  // Helper method to check if message is extras type
-  isExtrasMessage(message: AnimatedMessage): boolean {
-    return message.type === 'extras';
-  }
-
-  // Modal methods
-  openDescriptionModal(description: string): void {
-    this.currentModalDescription = description;
-    this.showDescriptionModal = true;
-  }
-
-  closeDescriptionModal(): void {
-    this.showDescriptionModal = false;
-    this.currentModalDescription = '';
-  }
-
-  // Get descriptions for each tab
-  getTabDescription(tab: string): string {
-    switch (tab) {
-      case 'result':
-        return 'This section presents the outcome of the symptom analysis, including the most likely diagnosis, its severity, and related clinical information. It is derived from your input and enhanced by contextual medical data to offer an accurate, data-driven health insight.';
-      case 'demographics':
-        return 'This section illustrates the typical demographic distribution of the predicted disease, highlighting which age groups and genders are most commonly affected. The charts show statistical data about disease prevalence across different population segments.';
-      case 'treatments':
-        return 'This section outlines the most commonly recommended treatments for the predicted disease, including general approaches and symptom-specific strategies. It provides detailed information about medications, dosages, and treatment protocols.';
-      default:
-        return '';
-    }
   }
 }

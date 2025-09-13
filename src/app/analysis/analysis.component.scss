@@ -12,14 +12,14 @@ input[type=number] {
 .lds-ripple {
   display: inline-block;
   position: relative;
-  width: 30px;   /* largeur totale */
+  width: 30px;
   height: 30px;
-  color: #22c55e; /* ✅ Tailwind green-500 */
+  color: #22c55e;
 }
 
 .lds-ripple div {
   position: absolute;
-  border: 3px solid currentColor; /* un peu plus visible */
+  border: 3px solid currentColor;
   opacity: 1;
   border-radius: 50%;
   animation: lds-ripple 1.2s cubic-bezier(0, 0.2, 0.8, 1) infinite;
@@ -44,6 +44,54 @@ input[type=number] {
     height: 30px;
     opacity: 0;
   }
+}
+
+.typewriter-bubble {
+  transition: width 0.2s ease-out, min-width 0.2s ease-out;
+  overflow: hidden;
+  white-space: nowrap;
+  width: fit-content;
+  min-width: 200px;
+}
+
+.typewriter-bubble-multiline {
+  transition: width 0.2s ease-out, min-width 0.2s ease-out;
+  overflow: hidden;
+  white-space: normal;
+  width: fit-content;
+  min-width: 200px;
+  word-wrap: break-word;
+}
+
+.typewriter-text {
+  display: inline;
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  animation: blink 1s infinite;
+  color: #22c55e;
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+/* Avatar styles */
+.assistant-avatar {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.assistant-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 

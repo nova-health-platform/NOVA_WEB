@@ -179,7 +179,7 @@
                       <h2 class="text-lg font-bold text-white mb-3">Analysis Result</h2>
                       <button 
                         (click)="openDescriptionModal(getTabDescription('result'))"
-                        class="absolute top-0 right-0 w-6 h-6 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+                        class="absolute top-0 right-0 w-6 h-6 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors"
                         title="Section description">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -194,7 +194,7 @@
                     <ng-container *ngTemplateOutlet="tabNavigation"></ng-container>
                     
                     <!-- Main Diagnostic Card -->
-                    <div class="bg-transparent backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden mb-4">
+                    <div class="bg-transparent backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden mb-6">
                       <div class="p-6">
                         <!-- Header with Title, Preliminary Assessment and Confidence -->
                         <div class="flex items-stretch gap-4 mb-4">
@@ -323,7 +323,7 @@
                                 <div class="text-xs text-white/50">Condition seriousness</div>
                               </div>
                             </div>
-                            <div class="text-base font-bold mb-1" [style.color]="getSeverityColor(animatedSeverity)">
+                            <div class="text-base font-bold mb-1" [style.color]="getSeverityColor(response.disease_info.severity_level.replace('.', ''))">
                               {{ response.disease_info.severity_level.replace('.', '') }}
                             </div>
                             <div class="text-xs text-white/60 leading-relaxed">How serious this condition typically is</div>
@@ -372,7 +372,7 @@
 
 
                     <!-- Recommended Actions Card -->
-                    <div class="bg-transparent backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden mb-4">
+                    <div class="bg-transparent backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden mb-6">
                       <div class="p-6">
                         <div class="flex items-center justify-between">
                           <div class="flex items-center space-x-4">
@@ -437,7 +437,7 @@
                     </div>
 
                     <!-- Disease Information Grid -->
-                    <div class="bg-transparent backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden mb-2">
+                    <div class="bg-transparent backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden mb-3">
                       <div class="p-6">
                         <div class="flex items-center justify-between">
                           <div class="flex items-center space-x-4">
@@ -528,7 +528,7 @@
                       <h2 class="text-lg font-bold text-white mb-3">Disease Demographics Overview</h2>
                       <button 
                         (click)="openDescriptionModal(getTabDescription('demographics'))"
-                        class="absolute top-0 right-0 w-6 h-6 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+                        class="absolute top-0 right-0 w-6 h-6 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors"
                         title="Section description">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -542,7 +542,7 @@
                     <ng-container *ngTemplateOutlet="tabNavigation"></ng-container>
                     
                     <!-- Gender Distribution Container -->
-                    <div *ngIf="showGenderChart" class="mb-8 w-full border border-white/10 rounded-xl p-6">
+                    <div *ngIf="showGenderChart" class="mb-6 w-full border border-white/10 rounded-xl p-6">
                       <div class="mb-6">
                         <div class="flex items-start space-x-4 mb-3">
                           <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -566,7 +566,7 @@
                     </div>
 
                     <!-- Age Distribution Container -->
-                    <div *ngIf="showAgeChart" class="mb-4 w-full border border-white/10 rounded-xl p-6">
+                    <div *ngIf="showAgeChart" class="mb-3 w-full border border-white/10 rounded-xl p-6">
                       <div class="mb-6">
                         <div class="flex items-start space-x-4 mb-3">
                           <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -591,11 +591,12 @@
                 <!-- Tab 3: Treatments -->
                 <div *ngIf="currentResultView === 'treatments'">
                   <div class="space-y-4">
+                    <!-- Title and Description -->
                     <div class="text-center mb-6 relative">
-                      <h2 class="text-lg font-bold text-white mb-3">Treatment Plan Overview</h2>
+                      <h2 class="text-lg font-bold text-white mb-3">Treatment Plan</h2>
                       <button 
                         (click)="openDescriptionModal(getTabDescription('treatments'))"
-                        class="absolute top-0 right-0 w-6 h-6 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center transition-colors"
+                        class="absolute top-0 right-0 w-6 h-6 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition-colors"
                         title="Section description">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -609,254 +610,260 @@
                     <!-- Tab Navigation -->
                     <ng-container *ngTemplateOutlet="tabNavigation"></ng-container>
 
-
-
-                    <div class="space-y-4">
-
-                      <!-- Treatment Navigation -->
-                      <div class="flex flex-wrap gap-2 justify-center">
-                        <button *ngIf="hasDiseaseTreatment" (click)="activeTab = 'general'"
-                          [ngClass]="{ 'bg-blue-500 text-white': activeTab === 'general', 'bg-white/10 text-white/60 hover:text-white': activeTab !== 'general' }"
-                          class="px-3 py-1 rounded-sm transition-colors text-sm">
-                          General
+                    <!-- Treatment Navigation -->
+                    <div class="flex flex-wrap gap-2 justify-center">
+                      <button *ngIf="hasDiseaseTreatment" (click)="activeTab = 'general'"
+                        [ngClass]="{ 'bg-green-500 text-white shadow-lg': activeTab === 'general', 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white': activeTab !== 'general' }"
+                        class="px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium">
+                        General Treatment
+                      </button>
+                      <ng-container *ngIf="hasSymptomTreatments">
+                        <button *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)" (click)="activeTab = symptom"
+                          [ngClass]="{ 'bg-green-500 text-white shadow-lg': activeTab === symptom, 'bg-white/10 text-white/70 hover:bg-white/20 hover:text-white': activeTab !== symptom }"
+                          class="px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium capitalize">
+                          {{ formatSymptom(symptom) }}
                         </button>
-                        <ng-container *ngIf="hasSymptomTreatments">
-                          <button *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)" (click)="activeTab = symptom"
-                            [ngClass]="{ 'bg-blue-500 text-white': activeTab === symptom, 'bg-white/10 text-white/60 hover:text-white': activeTab !== symptom }"
-                            class="px-3 py-1 rounded-sm transition-colors text-sm capitalize">
-                            {{ formatSymptom(symptom) }}
-                          </button>
+                      </ng-container>
+                    </div>
+
+                    <!-- Treatment Content -->
+                    <div class="border border-white/10 rounded-xl overflow-hidden mb-3">
+                      <!-- General Treatment -->
+                      <div *ngIf="activeTab === 'general' && hasDiseaseTreatment" class="p-6">
+                        <div class="flex items-start gap-3 mb-6">
+                          <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mt-0.5">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                          </div>
+                          <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-white mb-1">
+                              General Treatment for {{ formatDiseaseLabel(response.predicted_disease) }}
+                            </h3>
+                            <p class="text-sm text-white/60">Primary treatment protocol and medication guidelines</p>
+                          </div>
+                        </div>
+
+                        <ng-container *ngIf="response.treatment?.disease_treatment as treatment">
+                          <!-- Medications & Posology Grid -->
+                          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-3">
+                            <!-- Medications Card -->
+                            <div *ngIf="(treatment.otc_medications && treatment.otc_medications !== 'NaN' && treatment.otc_medications !== 'NA' && treatment.otc_medications !== 'na' && treatment.otc_medications.trim() !== '') || (treatment.prescription_medications && treatment.prescription_medications !== 'NaN' && treatment.prescription_medications !== 'NA' && treatment.prescription_medications !== 'na' && treatment.prescription_medications.trim() !== '') || (treatment.alternative && treatment.alternative !== 'NaN' && treatment.alternative !== 'NA' && treatment.alternative !== 'na' && treatment.alternative.trim() !== '') || (treatment.treatment_type && treatment.treatment_type !== 'NaN' && treatment.treatment_type !== 'NA' && treatment.treatment_type !== 'na' && treatment.treatment_type.trim() !== '')" class="bg-white/5 border border-white/10 rounded-lg p-4">
+                              <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                </svg>
+                                <h4 class="font-semibold text-green-400">Medications</h4>
+                              </div>
+                              <div class="space-y-3">
+                                <div *ngIf="treatment.otc_medications && treatment.otc_medications !== 'NaN' && treatment.otc_medications !== 'NA' && treatment.otc_medications !== 'na' && treatment.otc_medications.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                  <span class="text-white/80 text-sm">OTC Medications</span>
+                                  <span class="text-white text-sm font-medium">{{ treatment.otc_medications }}</span>
+                                </div>
+                                <div *ngIf="treatment.prescription_medications && treatment.prescription_medications !== 'NaN' && treatment.prescription_medications !== 'NA' && treatment.prescription_medications !== 'na' && treatment.prescription_medications.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                  <span class="text-white/80 text-sm">Prescription</span>
+                                  <span class="text-white text-sm font-medium">{{ treatment.prescription_medications }}</span>
+                                </div>
+                                <div *ngIf="treatment.alternative && treatment.alternative !== 'NaN' && treatment.alternative !== 'NA' && treatment.alternative !== 'na' && treatment.alternative.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                  <span class="text-white/80 text-sm">Alternative</span>
+                                  <span class="text-white text-sm font-medium">{{ treatment.alternative }}</span>
+                                </div>
+                                <div *ngIf="treatment.treatment_type && treatment.treatment_type !== 'NaN' && treatment.treatment_type !== 'NA' && treatment.treatment_type !== 'na' && treatment.treatment_type.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                  <span class="text-white/80 text-sm">Type</span>
+                                  <span class="text-white text-sm font-medium">{{ treatment.treatment_type }}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- Posology Card -->
+                            <div *ngIf="(treatment.dosage && treatment.dosage !== 'NaN' && treatment.dosage !== 'NA' && treatment.dosage !== 'na' && treatment.dosage.trim() !== '') || (treatment.frequency && treatment.frequency !== 'NaN' && treatment.frequency !== 'NA' && treatment.frequency !== 'na' && treatment.frequency.trim() !== '') || (treatment.recommended_duration && treatment.recommended_duration !== 'NaN' && treatment.recommended_duration !== 'NA' && treatment.recommended_duration !== 'na' && treatment.recommended_duration.trim() !== '') || (treatment.administration_route && treatment.administration_route !== 'NaN' && treatment.administration_route !== 'NA' && treatment.administration_route !== 'na' && treatment.administration_route.trim() !== '')" class="bg-white/5 border border-white/10 rounded-lg p-4">
+                              <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <h4 class="font-semibold text-green-400">Posology</h4>
+                              </div>
+                              <div class="space-y-3">
+                                <div *ngIf="treatment.dosage && treatment.dosage !== 'NaN' && treatment.dosage !== 'NA' && treatment.dosage !== 'na' && treatment.dosage.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                  <span class="text-white/80 text-sm">Dosage</span>
+                                  <span class="text-white text-sm font-medium">{{ treatment.dosage }}</span>
+                                </div>
+                                <div *ngIf="treatment.frequency && treatment.frequency !== 'NaN' && treatment.frequency !== 'NA' && treatment.frequency !== 'na' && treatment.frequency.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                  <span class="text-white/80 text-sm">Frequency</span>
+                                  <span class="text-white text-sm font-medium">{{ treatment.frequency }}</span>
+                                </div>
+                                <div *ngIf="treatment.recommended_duration && treatment.recommended_duration !== 'NaN' && treatment.recommended_duration !== 'NA' && treatment.recommended_duration !== 'na' && treatment.recommended_duration.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                  <span class="text-white/80 text-sm">Duration</span>
+                                  <span class="text-white text-sm font-medium">{{ treatment.recommended_duration }}</span>
+                                </div>
+                                <div *ngIf="treatment.administration_route && treatment.administration_route !== 'NaN' && treatment.administration_route !== 'NA' && treatment.administration_route !== 'na' && treatment.administration_route.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                  <span class="text-white/80 text-sm">Route</span>
+                                  <span class="text-white text-sm font-medium">{{ treatment.administration_route }}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Precautions & Notes Grid -->
+                          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Precautions Card -->
+                            <div *ngIf="(treatment.side_effects && treatment.side_effects !== 'NaN' && treatment.side_effects !== 'NA' && treatment.side_effects !== 'na' && treatment.side_effects.trim() !== '') || (treatment.driving_restrictions && treatment.driving_restrictions !== 'NaN' && treatment.driving_restrictions !== 'NA' && treatment.driving_restrictions !== 'na' && treatment.driving_restrictions.trim() !== '')" class="bg-white/5 border border-white/10 rounded-lg p-4">
+                              <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                </svg>
+                                <h4 class="font-semibold text-amber-400">Precautions</h4>
+                              </div>
+                              <div class="space-y-3">
+                                <div *ngIf="treatment.side_effects && treatment.side_effects !== 'NaN' && treatment.side_effects !== 'NA' && treatment.side_effects !== 'na' && treatment.side_effects.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                  <span class="text-white/80 text-sm">Side Effects</span>
+                                  <span class="text-white text-sm font-medium">{{ treatment.side_effects }}</span>
+                                </div>
+                                <div *ngIf="treatment.driving_restrictions && treatment.driving_restrictions !== 'NaN' && treatment.driving_restrictions !== 'NA' && treatment.driving_restrictions !== 'na' && treatment.driving_restrictions.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                  <span class="text-white/80 text-sm">Driving</span>
+                                  <span [ngClass]="{
+                                    'bg-green-500 text-white': treatment.driving_restrictions?.toLowerCase().includes('allowed'),
+                                    'bg-yellow-400 text-black': treatment.driving_restrictions?.toLowerCase().includes('caution'),
+                                    'bg-red-500 text-white': treatment.driving_restrictions?.toLowerCase().includes('avoid')
+                                  }" class="px-3 py-1 rounded-full text-xs font-medium">
+                                    {{ treatment.driving_restrictions?.toLowerCase().includes('allowed') ? 'Allowed' :
+                                       treatment.driving_restrictions?.toLowerCase().includes('caution') ? 'Caution' :
+                                       treatment.driving_restrictions?.toLowerCase().includes('avoid') ? 'Avoid' : 'Unknown' }}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- Notes Card -->
+                            <div *ngIf="treatment.notes && treatment.notes !== 'NaN' && treatment.notes !== 'NA' && treatment.notes !== 'na' && treatment.notes.trim() !== ''" class="bg-white/5 border border-white/10 rounded-lg p-4">
+                              <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                </svg>
+                                <h4 class="font-semibold text-green-400">Notes</h4>
+                              </div>
+                              <p class="text-white text-sm leading-relaxed">{{ treatment.notes }}</p>
+                            </div>
+                          </div>
                         </ng-container>
                       </div>
 
-                      <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 backdrop-blur-sm rounded-md border border-white/20  overflow-hidden mb-4">
-                        <div class="p-3">
-                        <!-- General -->
-                        <div *ngIf="activeTab === 'general' && hasDiseaseTreatment" class="">
-
-                          <h4 class="text-lg font-bold mb-3 text-white text-left">
-                            General treatment for {{ formatDiseaseLabel(response.predicted_disease) }}
-                          </h4>
-
-                          <ng-container *ngIf="response.treatment?.disease_treatment as treatment">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-white">
-
-                              <!-- 💊 Médicaments -->
-                              <div class="w-full  p-3 rounded-md bg-white/5 border border-white/10">
-                                <h5 class="font-semibold text-blue-400 text-left text-sm mb-2">
-                                  Medications
-                                </h5>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">OTC Medications</div>
-                                  <div class="text-right">{{ response.treatment.disease_treatment.otc_medications }}</div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Prescription</div>
-                                  <div class="text-right">{{ response.treatment.disease_treatment.prescription_medications
-                                    }}</div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Alternative</div>
-                                  <div class="text-right">{{ response.treatment.disease_treatment.alternative }}</div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Type</div>
-                                  <div class="text-right">{{ response.treatment.disease_treatment.treatment_type
-                                    }}</div>
-                                </div>
+                      <!-- Symptom-specific Treatments -->
+                      <div *ngIf="hasSymptomTreatments">
+                        <div *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
+                          <div *ngIf="activeTab === symptom" class="p-6">
+                            <div class="flex items-start gap-3 mb-6">
+                              <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center mt-0.5">
+                                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
                               </div>
-
-                              <!-- 📋 Posologie -->
-                              <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl ">
-                                <h5
-                                  class="font-semibold text-blue-400 text-left font-semibold text-lg mb-2 tracking-wider">
-                                  Posology
-                                </h5>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Dosage</div>
-                                  <div class="text-right">{{ response.treatment.disease_treatment.dosage
-                                    }}</div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Frequency</div>
-                                  <div class="text-right">{{ response.treatment.disease_treatment.frequency
-                                    }}</div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Duration</div>
-                                  <div class="text-right">{{ response.treatment.disease_treatment.recommended_duration
-                                    }}</div>
-                                </div>
-                                <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                  <div class="font-semibold text-blue-300">Route</div>
-                                  <div class="text-right">{{ response.treatment.disease_treatment.administration_route
-                                    }}</div>
-                                </div>
-                              </div>
-
-
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5">
-                              <!-- ⚠️ Bloc Precautions -->
-                              <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl ">
-                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
-                                  Precautions
-                                </h5>
-
-                                <div class="space-y-2">
-                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                    <div class="font-semibold text-blue-300">Side Effects</div>
-                                    <div class="text-right">{{ response.treatment.disease_treatment.side_effects }}</div>
-                                  </div>
-                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between items-center">
-                                    <div class="font-semibold text-blue-300">Driving</div>
-                                    <div class="text-right">
-                                      <span [ngClass]="{
-            'bg-green-500 text-white': response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('allowed'),
-            'bg-yellow-400 text-black': response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('caution'),
-            'bg-red-500 text-white': response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('avoid')
-          }" class="px-3 py-0.5 rounded-full font-medium">
-                                        {{
-                                        response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('allowed')
-                                        ? 'Allowed' :
-                                        response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('caution')
-                                        ? 'Caution' :
-                                        response.treatment.disease_treatment.driving_restrictions?.toLowerCase().includes('avoid')
-                                        ? 'Avoid' :
-                                        'Unknown'
-                                        }}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <!-- 📝 Bloc Notes -->
-                              <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl ">
-                                <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
-                                  Notes
-                                </h5>
-                                <p class="text-white">{{ treatment.notes }}</p>
+                              <div class="flex-1">
+                                <h3 class="text-lg font-semibold text-white mb-1">
+                                  Treatment for {{ formatSymptom(symptom) }}
+                                </h3>
+                                <p class="text-sm text-white/60">Targeted treatment for specific symptom management</p>
                               </div>
                             </div>
 
-
-                          </ng-container>
-
-
-                        </div>
-
-                        <!-- Symptom-specific -->
-                        <div *ngIf="hasSymptomTreatments">
-
-                          <div *ngFor="let symptom of getSymptomList(response.treatment.symptom_treatments)">
-                            <div *ngIf="activeTab === symptom">
-
-                              <h4 class="text-lg font-bold mb-5 text-white text-left">
-                                Treatment for {{ formatSymptom(symptom) }}
-                              </h4>
-
-                              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-white">
-
-                                <!-- 💊 Médicaments -->
-                                <div class="w-full text-sm  p-4 rounded-xl bg-blue-700/20">
-                                  <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
-                                    Medications
-                                  </h5>
-                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                    <div class="font-semibold text-blue-300">OTC Medications</div>
-                                    <div class="text-right">{{
-                                      response.treatment.symptom_treatments[symptom].otc_medications }}</div>
-                                  </div>
-                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                    <div class="font-semibold text-blue-300">Prescription</div>
-                                    <div class="text-right">{{
-                                      response.treatment.symptom_treatments[symptom].prescription_medications }}</div>
-                                  </div>
-                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                    <div class="font-semibold text-blue-300">Alternative</div>
-                                    <div class="text-right">{{ response.treatment.symptom_treatments[symptom].alternative
-                                      }}</div>
-                                  </div>
-                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                    <div class="font-semibold text-blue-300">Type</div>
-                                    <div class="text-right">{{
-                                      response.treatment.symptom_treatments[symptom].treatment_type }}</div>
-                                  </div>
+                            <!-- Medications & Posology Grid -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                              <!-- Medications Card -->
+                              <div *ngIf="(response.treatment.symptom_treatments[symptom].otc_medications && response.treatment.symptom_treatments[symptom].otc_medications !== 'NaN' && response.treatment.symptom_treatments[symptom].otc_medications !== 'NA' && response.treatment.symptom_treatments[symptom].otc_medications !== 'na' && response.treatment.symptom_treatments[symptom].otc_medications.trim() !== '') || (response.treatment.symptom_treatments[symptom].prescription_medications && response.treatment.symptom_treatments[symptom].prescription_medications !== 'NaN' && response.treatment.symptom_treatments[symptom].prescription_medications !== 'NA' && response.treatment.symptom_treatments[symptom].prescription_medications !== 'na' && response.treatment.symptom_treatments[symptom].prescription_medications.trim() !== '') || (response.treatment.symptom_treatments[symptom].alternative && response.treatment.symptom_treatments[symptom].alternative !== 'NaN' && response.treatment.symptom_treatments[symptom].alternative !== 'NA' && response.treatment.symptom_treatments[symptom].alternative !== 'na' && response.treatment.symptom_treatments[symptom].alternative.trim() !== '') || (response.treatment.symptom_treatments[symptom].treatment_type && response.treatment.symptom_treatments[symptom].treatment_type !== 'NaN' && response.treatment.symptom_treatments[symptom].treatment_type !== 'NA' && response.treatment.symptom_treatments[symptom].treatment_type !== 'na' && response.treatment.symptom_treatments[symptom].treatment_type.trim() !== '')" class="bg-white/5 border border-white/10 rounded-lg p-4">
+                                <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                </svg>
+                                <h4 class="font-semibold text-green-400">Medications</h4>
                                 </div>
-
-                                <!-- 📋 Posologie -->
-                                <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl ">
-                                  <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
-                                    Posology
-                                  </h5>
-                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                    <div class="font-semibold text-blue-300">Dosage</div>
-                                    <div class="text-right">{{ response.treatment.symptom_treatments[symptom].dosage }}
-                                    </div>
+                                <div class="space-y-3">
+                                  <div *ngIf="response.treatment.symptom_treatments[symptom].otc_medications && response.treatment.symptom_treatments[symptom].otc_medications !== 'NaN' && response.treatment.symptom_treatments[symptom].otc_medications !== 'NA' && response.treatment.symptom_treatments[symptom].otc_medications !== 'na' && response.treatment.symptom_treatments[symptom].otc_medications.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                    <span class="text-white/80 text-sm">OTC Medications</span>
+                                    <span class="text-white text-sm font-medium">{{ response.treatment.symptom_treatments[symptom].otc_medications }}</span>
                                   </div>
-                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                    <div class="font-semibold text-blue-300">Frequency</div>
-                                    <div class="text-right">{{ response.treatment.symptom_treatments[symptom].frequency }}
-                                    </div>
+                                  <div *ngIf="response.treatment.symptom_treatments[symptom].prescription_medications && response.treatment.symptom_treatments[symptom].prescription_medications !== 'NaN' && response.treatment.symptom_treatments[symptom].prescription_medications !== 'NA' && response.treatment.symptom_treatments[symptom].prescription_medications !== 'na' && response.treatment.symptom_treatments[symptom].prescription_medications.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                    <span class="text-white/80 text-sm">Prescription</span>
+                                    <span class="text-white text-sm font-medium">{{ response.treatment.symptom_treatments[symptom].prescription_medications }}</span>
                                   </div>
-                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                    <div class="font-semibold text-blue-300">Duration</div>
-                                    <div class="text-right">{{
-                                      response.treatment.symptom_treatments[symptom].recommended_duration }}</div>
+                                  <div *ngIf="response.treatment.symptom_treatments[symptom].alternative && response.treatment.symptom_treatments[symptom].alternative !== 'NaN' && response.treatment.symptom_treatments[symptom].alternative !== 'NA' && response.treatment.symptom_treatments[symptom].alternative !== 'na' && response.treatment.symptom_treatments[symptom].alternative.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                    <span class="text-white/80 text-sm">Alternative</span>
+                                    <span class="text-white text-sm font-medium">{{ response.treatment.symptom_treatments[symptom].alternative }}</span>
                                   </div>
-                                  <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                    <div class="font-semibold text-blue-300">Route</div>
-                                    <div class="text-right">{{
-                                      response.treatment.symptom_treatments[symptom].administration_route }}</div>
+                                  <div *ngIf="response.treatment.symptom_treatments[symptom].treatment_type && response.treatment.symptom_treatments[symptom].treatment_type !== 'NaN' && response.treatment.symptom_treatments[symptom].treatment_type !== 'NA' && response.treatment.symptom_treatments[symptom].treatment_type !== 'na' && response.treatment.symptom_treatments[symptom].treatment_type.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                    <span class="text-white/80 text-sm">Type</span>
+                                    <span class="text-white text-sm font-medium">{{ response.treatment.symptom_treatments[symptom].treatment_type }}</span>
                                   </div>
                                 </div>
                               </div>
 
-                              <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-5">
-                                <!-- ⚠️ Bloc Precautions -->
-                                <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl ">
-                                  <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
-                                    Precautions
-                                  </h5>
-
-                                  <div class="space-y-2">
-                                    <div class="col-span-2 border-b border-white/20 py-2 flex justify-between">
-                                      <div class="font-semibold text-blue-300">Side Effects</div>
-                                      <div class="text-right">{{
-                                        response.treatment.symptom_treatments[symptom].side_effects }}</div>
-                                    </div>
-                                    <div
-                                      class="col-span-2 border-b border-white/20 py-2 flex justify-between items-center">
-                                      <div class="font-semibold text-blue-300">Driving</div>
-                                      <div class="text-right">
-                                        <span [ngClass]="{
-            'bg-green-500 text-white': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('allowed'),
-            'bg-yellow-400 text-black': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('caution'),
-            'bg-red-500 text-white': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('avoid')
-          }" class="px-3 py-0.5 rounded-full font-medium">
-                                          {{
-                                          response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('allowed')
-                                          ? 'Allowed' :
-                                          response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('caution')
-                                          ? 'Caution' :
-                                          response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('avoid')
-                                          ? 'Avoid' :
-                                          'Unknown'
-                                          }}
-                                        </span>
-                                      </div>
-                                    </div>
+                              <!-- Posology Card -->
+                              <div *ngIf="(response.treatment.symptom_treatments[symptom].dosage && response.treatment.symptom_treatments[symptom].dosage !== 'NaN' && response.treatment.symptom_treatments[symptom].dosage !== 'NA' && response.treatment.symptom_treatments[symptom].dosage !== 'na' && response.treatment.symptom_treatments[symptom].dosage.trim() !== '') || (response.treatment.symptom_treatments[symptom].frequency && response.treatment.symptom_treatments[symptom].frequency !== 'NaN' && response.treatment.symptom_treatments[symptom].frequency !== 'NA' && response.treatment.symptom_treatments[symptom].frequency !== 'na' && response.treatment.symptom_treatments[symptom].frequency.trim() !== '') || (response.treatment.symptom_treatments[symptom].recommended_duration && response.treatment.symptom_treatments[symptom].recommended_duration !== 'NaN' && response.treatment.symptom_treatments[symptom].recommended_duration !== 'NA' && response.treatment.symptom_treatments[symptom].recommended_duration !== 'na' && response.treatment.symptom_treatments[symptom].recommended_duration.trim() !== '') || (response.treatment.symptom_treatments[symptom].administration_route && response.treatment.symptom_treatments[symptom].administration_route !== 'NaN' && response.treatment.symptom_treatments[symptom].administration_route !== 'NA' && response.treatment.symptom_treatments[symptom].administration_route !== 'na' && response.treatment.symptom_treatments[symptom].administration_route.trim() !== '')" class="bg-white/5 border border-white/10 rounded-lg p-4">
+                                <div class="flex items-center gap-2 mb-4">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <h4 class="font-semibold text-green-400">Posology</h4>
+                                </div>
+                                <div class="space-y-3">
+                                  <div *ngIf="response.treatment.symptom_treatments[symptom].dosage && response.treatment.symptom_treatments[symptom].dosage !== 'NaN' && response.treatment.symptom_treatments[symptom].dosage !== 'NA' && response.treatment.symptom_treatments[symptom].dosage !== 'na' && response.treatment.symptom_treatments[symptom].dosage.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                    <span class="text-white/80 text-sm">Dosage</span>
+                                    <span class="text-white text-sm font-medium">{{ response.treatment.symptom_treatments[symptom].dosage }}</span>
+                                  </div>
+                                  <div *ngIf="response.treatment.symptom_treatments[symptom].frequency && response.treatment.symptom_treatments[symptom].frequency !== 'NaN' && response.treatment.symptom_treatments[symptom].frequency !== 'NA' && response.treatment.symptom_treatments[symptom].frequency !== 'na' && response.treatment.symptom_treatments[symptom].frequency.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                    <span class="text-white/80 text-sm">Frequency</span>
+                                    <span class="text-white text-sm font-medium">{{ response.treatment.symptom_treatments[symptom].frequency }}</span>
+                                  </div>
+                                  <div *ngIf="response.treatment.symptom_treatments[symptom].recommended_duration && response.treatment.symptom_treatments[symptom].recommended_duration !== 'NaN' && response.treatment.symptom_treatments[symptom].recommended_duration !== 'NA' && response.treatment.symptom_treatments[symptom].recommended_duration !== 'na' && response.treatment.symptom_treatments[symptom].recommended_duration.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                    <span class="text-white/80 text-sm">Duration</span>
+                                    <span class="text-white text-sm font-medium">{{ response.treatment.symptom_treatments[symptom].recommended_duration }}</span>
+                                  </div>
+                                  <div *ngIf="response.treatment.symptom_treatments[symptom].administration_route && response.treatment.symptom_treatments[symptom].administration_route !== 'NaN' && response.treatment.symptom_treatments[symptom].administration_route !== 'NA' && response.treatment.symptom_treatments[symptom].administration_route !== 'na' && response.treatment.symptom_treatments[symptom].administration_route.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                    <span class="text-white/80 text-sm">Route</span>
+                                    <span class="text-white text-sm font-medium">{{ response.treatment.symptom_treatments[symptom].administration_route }}</span>
                                   </div>
                                 </div>
-                                <!-- 📝 Bloc Notes -->
-                                <div class="w-full text-sm bg-blue-700/20 p-4 rounded-xl ">
-                                  <h5 class="font-semibold text-blue-400 text-left text-lg mb-2 tracking-wider">
-                                    Notes
-                                  </h5>
-                                  <p class="text-white">{{
-                                    response.treatment.symptom_treatments[symptom].notes }}</p>
+                              </div>
+                            </div>
+
+                            <!-- Precautions & Notes Grid -->
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                              <!-- Precautions Card -->
+                              <div *ngIf="(response.treatment.symptom_treatments[symptom].side_effects && response.treatment.symptom_treatments[symptom].side_effects !== 'NaN' && response.treatment.symptom_treatments[symptom].side_effects !== 'NA' && response.treatment.symptom_treatments[symptom].side_effects !== 'na' && response.treatment.symptom_treatments[symptom].side_effects.trim() !== '') || (response.treatment.symptom_treatments[symptom].driving_restrictions && response.treatment.symptom_treatments[symptom].driving_restrictions !== 'NaN' && response.treatment.symptom_treatments[symptom].driving_restrictions !== 'NA' && response.treatment.symptom_treatments[symptom].driving_restrictions !== 'na' && response.treatment.symptom_treatments[symptom].driving_restrictions.trim() !== '')" class="bg-white/5 border border-white/10 rounded-lg p-4">
+                                <div class="flex items-center gap-2 mb-4">
+                                  <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                                  </svg>
+                                  <h4 class="font-semibold text-amber-400">Precautions</h4>
                                 </div>
+                                <div class="space-y-3">
+                                  <div *ngIf="response.treatment.symptom_treatments[symptom].side_effects && response.treatment.symptom_treatments[symptom].side_effects !== 'NaN' && response.treatment.symptom_treatments[symptom].side_effects !== 'NA' && response.treatment.symptom_treatments[symptom].side_effects !== 'na' && response.treatment.symptom_treatments[symptom].side_effects.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                    <span class="text-white/80 text-sm">Side Effects</span>
+                                    <span class="text-white text-sm font-medium">{{ response.treatment.symptom_treatments[symptom].side_effects }}</span>
+                                  </div>
+                                  <div *ngIf="response.treatment.symptom_treatments[symptom].driving_restrictions && response.treatment.symptom_treatments[symptom].driving_restrictions !== 'NaN' && response.treatment.symptom_treatments[symptom].driving_restrictions !== 'NA' && response.treatment.symptom_treatments[symptom].driving_restrictions !== 'na' && response.treatment.symptom_treatments[symptom].driving_restrictions.trim() !== ''" class="flex justify-between items-center py-2 border-b border-white/10">
+                                    <span class="text-white/80 text-sm">Driving</span>
+                                    <span [ngClass]="{
+                                      'bg-green-500 text-white': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('allowed'),
+                                      'bg-yellow-400 text-black': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('caution'),
+                                      'bg-red-500 text-white': response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('avoid')
+                                    }" class="px-3 py-1 rounded-full text-xs font-medium">
+                                      {{ response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('allowed') ? 'Allowed' :
+                                         response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('caution') ? 'Caution' :
+                                         response.treatment.symptom_treatments[symptom].driving_restrictions?.toLowerCase().includes('avoid') ? 'Avoid' : 'Unknown' }}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- Notes Card -->
+                              <div *ngIf="response.treatment.symptom_treatments[symptom].notes && response.treatment.symptom_treatments[symptom].notes !== 'NaN' && response.treatment.symptom_treatments[symptom].notes !== 'NA' && response.treatment.symptom_treatments[symptom].notes !== 'na' && response.treatment.symptom_treatments[symptom].notes.trim() !== ''" class="bg-white/5 border border-white/10 rounded-lg p-4">
+                                <div class="flex items-center gap-2 mb-4">
+                                  <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                  </svg>
+                                  <h4 class="font-semibold text-green-400">Notes</h4>
+                                </div>
+                                <p class="text-white text-sm leading-relaxed">{{ response.treatment.symptom_treatments[symptom].notes }}</p>
                               </div>
                             </div>
                           </div>
@@ -868,15 +875,23 @@
               </div>
             </div>
 
-          </div>
-
           <!-- Result action buttons (Download & Analyze Other) -->
-          <div *ngIf="m.role === 'assistant' && m.type === 'result' && response" class="flex justify-start items-baseline gap-3 min-h-[40px]">
-            <div class="flex-shrink-0 w-10 h-10"></div>
+          <div *ngIf="m.role === 'assistant' && m.type === 'result' && response" class="flex justify-start items-baseline gap-3">
+            <div class="flex-shrink-0 w-10"></div>
             <div class="max-w-[85%] w-full">
-              <div class="flex justify-start mt-2">
-                <button (click)="downloadResultPDF()" class="cursor-pointer px-4 py-2 rounded-sm bg-blue-500/20 border border-blue-500/60 text-white hover:bg-blue-500/30 transition-colors">Download My Result</button>
-                <button (click)="resetForm()" class="ml-2 cursor-pointer px-4 py-2 rounded-sm bg-green-500/20 border border-green-500/60 text-white hover:bg-green-500/30 transition-colors">Analyze Other Symptoms</button>
+              <div class="flex justify-start gap-3 mt-1">
+                <button (click)="downloadResultPDF()" class="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white/5 border border-white/10 text-white hover:bg-white/10 transition-all duration-200 text-sm font-medium">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  Download Result
+                </button>
+                <button (click)="resetForm()" class="cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-lg bg-green-500/20 border border-green-500/40 text-white hover:bg-green-500/30 transition-all duration-200 text-sm font-medium">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                  </svg>
+                  New Analysis
+                </button>
               </div>
             </div>
           </div>
@@ -915,7 +930,7 @@
       </div>
 
       <!-- Composer area -->
-      <div class="p-3 border-t border-white/10 bg-[#101010] dark:bg-[#0b0b0b]/70">
+      <div *ngIf="!response" class="p-3 border-t border-white/10 bg-[#101010] dark:bg-[#0b0b0b]/70">
         <!-- Step 1 composer: symptoms -->
         <div *ngIf="step === 1 && !response">
           <div class="space-y-2">

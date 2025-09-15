@@ -1,154 +1,301 @@
-<section class="min-h-screen">
-  <div class="max-w-5xl mx-auto px-4 py-10 text-white">
-
-    <!-- Intro Screen -->
-    <div *ngIf="step === 'intro'" class="space-y-6">
-      <h1 class="text-3xl font-bold text-white text-center">DASS-21 – Mental Health Assessment</h1>
-
-      <div class="mt-8 flex flex-col md:flex-row md:items-stretch md:justify-between gap-4">
-        <!-- Left: Description -->
-        <div class="bg-white rounded-xl shadow p-6 md:w-1/2 space-y-4 flex flex-col justify-between">
-          <div>
-            <p class="text-black text-justify">
-              The DASS-21 is a set of three self-report scales designed to measure the emotional states of depression,
-              anxiety and stress. It is a reliable and valid tool used worldwide.
-            </p>
-
-            <div class="bg-[#101010] p-6 rounded-xl shadow max-w-3xl mx-auto mt-6">
-              <h2 class="text-pink-400 text-xl font-semibold mb-2">Why take the DASS-21?</h2>
-              <ul class="list-disc pl-5 space-y-2 text-gray-200">
-                <li>Evaluate your emotional well-being</li>
-                <li>Track symptoms of depression, anxiety, and stress</li>
-                <li>Evidence-based self-assessment tool</li>
-                <li>Confidential and accessible anytime</li>
-              </ul>
+<!-- 🧠 DASS-21 Stress, Anxiety & Depression Assessment -->
+<section class="min-h-screen w-full px-6 py-16">
+    <!-- Header Section -->
+    <div class="text-center mb-16">
+        <p class="text-sm font-bold uppercase tracking-widest text-green-500 mb-4">Comprehensive Assessment</p>
+        <h1 class="text-lg font-bold text-[#101010] dark:text-white mb-6">
+            DASS-21 – Stress, Anxiety & Depression
+        </h1>
+        <hr class="w-32 mx-auto h-0.5 border-t-0 bg-green-500/90 mb-6" />
+        <p class="text-lg text-[#101010] dark:text-white/80 max-w-3xl mx-auto">
+            A comprehensive assessment measuring Depression, Anxiety and Stress using the DASS-42 questionnaire, 
+            with additional demographic inputs and personality profiling.
+        </p>
             </div>
 
+    <!-- Progress Bar -->
+    <div *ngIf="step !== 'intro' && step !== 'result'" class="max-w-4xl mx-auto mb-8">
+        <div class="w-full bg-green-500/20 rounded-full h-3">
+            <div class="bg-green-500 h-3 rounded-full transition-all duration-300" [style.width.%]="progress"></div>
           </div>
         </div>
 
-        <!-- Right: Disclaimer + Start Button -->
-        <div class="md:w-1/2 space-y-4 flex flex-col">
-          <div>
-            <div class="bg-pink-500 text-white rounded-xl px-6 py-5 shadow-inner text-justify">
-              ⚠️ This is not a diagnostic tool. It’s a self-assessment to help you understand your emotional state.
-              For medical advice, please consult a professional.
+    <!-- Intro Step -->
+    <div *ngIf="step === 'intro'" class="max-w-4xl mx-auto">
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
+            <h2 class="text-xl font-bold text-[#101010] dark:text-white mb-6 text-center">DASS Full Assessment</h2>
+            <p class="text-[#101010] dark:text-white/80 text-center leading-relaxed mb-8">
+                This test helps measure Depression, Anxiety and Stress using the full DASS-42 questionnaire, 
+                with additional optional demographic inputs and personality profiling.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="text-center p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                    <div class="text-2xl mb-2">😔</div>
+                    <h4 class="font-semibold text-[#101010] dark:text-white mb-2">Depression</h4>
+                    <p class="text-sm text-[#101010] dark:text-white/80">Assess mood and emotional state</p>
             </div>
+                <div class="text-center p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                    <div class="text-2xl mb-2">😰</div>
+                    <h4 class="font-semibold text-[#101010] dark:text-white mb-2">Anxiety</h4>
+                    <p class="text-sm text-[#101010] dark:text-white/80">Evaluate worry and tension levels</p>
           </div>
-          <div class="bg-pink-500/10 border-2 border-pink-500 rounded-xl p-6 h-full">
-              <h3 class="font-semibold text-pink-400 mb-2">Understanding your results</h3>
-              <ul class="text-white space-y-4">
-                <li><strong>Depression:</strong> Normal (0–9), Mild (10–13), Moderate (14–20), Severe (21–27), Extremely Severe (28+)</li>
-                <li><strong>Anxiety:</strong> Normal (0–7), Mild (8–9), Moderate (10–14), Severe (15–19), Extremely Severe (20+)</li>
-                <li><strong>Stress:</strong> Normal (0–14), Mild (15–18), Moderate (19–25), Severe (26–33), Extremely Severe (34+)</li>
-              </ul>
+                <div class="text-center p-4 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                    <div class="text-2xl mb-2">😤</div>
+                    <h4 class="font-semibold text-[#101010] dark:text-white mb-2">Stress</h4>
+                    <p class="text-sm text-[#101010] dark:text-white/80">Measure stress response patterns</p>
             </div>
         </div>
       </div>
 
-      <div class="text-right">
-        <button (click)="startTest()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
-          Start the test
+        <div class="text-center">
+            <button (click)="startTest()" 
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                Start Test
         </button>
       </div>
     </div>
 
-    <!-- Question Step -->
-    <form *ngIf="step === 'questions'" (ngSubmit)="nextQuestion()" class="space-y-8 mt-[5vh]">
-      <div class="bg-pink-500/10 border-3 border-pink-500 rounded-xl shadow p-6">
-
-        <!-- Progress bar -->
-        <div class="w-full bg-pink-500/30 rounded-full h-2.5 mb-6">
-          <div class="bg-pink-500 h-2.5 rounded-full transition-all duration-300"
-            [style.width.%]="((currentQuestionIndex + 1) / questions.length) * 100">
+    <!-- Demographic Step -->
+    <div *ngIf="step === 'demographics'" class="max-w-2xl mx-auto">
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
+            <h2 class="text-xl font-bold text-[#101010] dark:text-white mb-6 text-center">
+                Demographic Question {{ currentIndex + 1 }}
+            </h2>
+            
+            <div class="bg-white dark:bg-white/5 p-6 rounded-lg border border-gray-200 dark:border-white/20">
+                <ng-container [ngSwitch]="currentIndex">
+                    <div *ngSwitchCase="0" class="space-y-3">
+                        <label class="block text-sm font-medium text-[#101010] dark:text-white">Age</label>
+                        <input type="number" 
+                            [(ngModel)]="demographics.age" 
+                            name="age" 
+                            class="w-full p-3 border border-gray-200 dark:border-white/20 rounded-lg bg-white dark:bg-white/5 text-[#101010] dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500" 
+                            placeholder="Enter your age" />
+                    </div>
+                    <div *ngSwitchCase="1" class="space-y-3">
+                        <label class="block text-sm font-medium text-[#101010] dark:text-white">Gender</label>
+                        <select [(ngModel)]="demographics.gender" 
+                            name="gender" 
+                            class="w-full p-3 border border-gray-200 dark:border-white/20 rounded-lg bg-white dark:bg-white/5 text-[#101010] dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="1">Male</option>
+                            <option value="2">Female</option>
+                            <option value="3">Other</option>
+                        </select>
+                    </div>
+                    <div *ngSwitchCase="2" class="space-y-3">
+                        <label class="block text-sm font-medium text-[#101010] dark:text-white">Education</label>
+                        <select [(ngModel)]="demographics.education" 
+                            name="education" 
+                            class="w-full p-3 border border-gray-200 dark:border-white/20 rounded-lg bg-white dark:bg-white/5 text-[#101010] dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="1">Less than high school</option>
+                            <option value="2">High school</option>
+                            <option value="3">University degree</option>
+                            <option value="4">Graduate degree</option>
+                        </select>
+                    </div>
+                    <div *ngSwitchCase="3" class="space-y-3">
+                        <label class="block text-sm font-medium text-[#101010] dark:text-white">Childhood Area</label>
+                        <select [(ngModel)]="demographics.urban" 
+                            name="urban" 
+                            class="w-full p-3 border border-gray-200 dark:border-white/20 rounded-lg bg-white dark:bg-white/5 text-[#101010] dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="1">Rural</option>
+                            <option value="2">Suburban</option>
+                            <option value="3">Urban</option>
+                        </select>
+                    </div>
+                    <div *ngSwitchCase="4" class="space-y-3">
+                        <label class="block text-sm font-medium text-[#101010] dark:text-white">Marital Status</label>
+                        <select [(ngModel)]="demographics.married" 
+                            name="married" 
+                            class="w-full p-3 border border-gray-200 dark:border-white/20 rounded-lg bg-white dark:bg-white/5 text-[#101010] dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                            <option value="1">Never married</option>
+                            <option value="2">Currently married</option>
+                            <option value="3">Previously married</option>
+                        </select>
+                    </div>
+                    <div *ngSwitchCase="5" class="space-y-3">
+                        <label class="block text-sm font-medium text-[#101010] dark:text-white">Family Size</label>
+                        <input type="number" 
+                            [(ngModel)]="demographics.familysize" 
+                            name="familysize" 
+                            class="w-full p-3 border border-gray-200 dark:border-white/20 rounded-lg bg-white dark:bg-white/5 text-[#101010] dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500" 
+                            placeholder="Enter family size" />
+                    </div>
+                </ng-container>
           </div>
         </div>
 
-        <!-- Title and Number Row -->
-        <div class="flex items-center justify-between mb-6">
-          <label class="text-lg font-medium pr-6">
-            {{ questions[currentQuestionIndex].text }}
-          </label>
-          <span class="text-white whitespace-nowrap">
-            {{ currentQuestionIndex + 1 }} / {{ questions.length }}
-          </span>
+        <div class="text-center">
+            <button (click)="nextDemographicStep()" 
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                Next
+            </button>
+        </div>
         </div>
 
-        <!-- Options -->
-        <ul class="space-y-4">
-          <li *ngFor="let opt of options" class="w-full">
-            <div class="flex items-center ps-4 border border-gray-200 rounded-sm bg-white text-[#101010]">
-              <input type="radio" [id]="'opt-' + currentQuestionIndex + '-' + opt.value" [value]="opt.value"
-                [name]="'q' + currentQuestionIndex" [(ngModel)]="questions[currentQuestionIndex].answer"
-                class="w-6 h-6 accent-pink-500 bg-pink-500 border-pink-500" required>
-              <label [for]="'opt-' + currentQuestionIndex + '-' + opt.value"
-                class="w-full py-4 ms-2 font-medium text-[#101010]">
-                {{ opt.label }}
+    <!-- Question Step (DASS) -->
+    <form *ngIf="step === 'questions'" (ngSubmit)="nextQuestion()" class="max-w-4xl mx-auto">
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
+            <h2 class="text-xl font-bold text-[#101010] dark:text-white mb-6 text-center">
+                Question {{ currentQuestionIndex + 1 }} / {{ questions.length }}
+            </h2>
+            
+            <div class="bg-white dark:bg-white/5 p-6 rounded-lg border border-gray-200 dark:border-white/20 mb-6">
+                <p class="text-lg text-[#101010] dark:text-white mb-6">{{ questions[currentQuestionIndex].text }}</p>
+                
+                <div class="space-y-4">
+                    <div *ngFor="let opt of options" class="flex items-center">
+                        <label class="flex items-center p-3 w-full border border-gray-200 dark:border-white/20 rounded-lg bg-white dark:bg-white/5 text-[#101010] dark:text-white hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors cursor-pointer">
+                            <input type="radio" 
+                                [(ngModel)]="questions[currentQuestionIndex].answer" 
+                                [value]="opt.value" 
+                                name="q{{ currentQuestionIndex }}" 
+                                required 
+                                class="w-5 h-5 text-green-500 bg-gray-100 border-gray-300 focus:ring-green-500 dark:focus:ring-green-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                            <span class="ml-4 font-medium">{{ opt.label }}</span>
               </label>
             </div>
-          </li>
-        </ul>
-
+                </div>
+            </div>
       </div>
 
-      <!-- Navigation -->
-      <div class="text-right">
-        <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
+        <div class="text-center">
+            <button type="submit" 
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
           Next
         </button>
       </div>
     </form>
 
+    <!-- TIPI Step -->
+    <form *ngIf="step === 'tipi'" (ngSubmit)="nextTipiQuestion()" class="max-w-4xl mx-auto">
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
+            <h2 class="text-xl font-bold text-[#101010] dark:text-white mb-6 text-center">
+                TIPI Question {{ tipiIndex + 1 }} / 10
+            </h2>
+            
+            <div class="bg-white dark:bg-white/5 p-6 rounded-lg border border-gray-200 dark:border-white/20 mb-6">
+                <p class="text-lg text-[#101010] dark:text-white mb-6">{{ tipiQuestions[tipiIndex] }}</p>
+                
+                <select [(ngModel)]="tipi[tipiIndex]" 
+                    name="tipi{{ tipiIndex }}" 
+                    class="w-full p-3 border border-gray-200 dark:border-white/20 rounded-lg bg-white dark:bg-white/5 text-[#101010] dark:text-white focus:ring-2 focus:ring-green-500 focus:border-green-500" 
+                    required>
+                    <option [ngValue]="null" disabled>Select</option>
+                    <option *ngFor="let val of [1,2,3,4,5,6,7]" [value]="val">{{ val }}</option>
+                </select>
+            </div>
+      </div>
+
+        <div class="text-center">
+            <button type="submit" 
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                Next
+            </button>
+        </div>
+    </form>
+
+    <!-- VCL Step -->
+    <form *ngIf="step === 'vcl'" (ngSubmit)="submitVCL()" class="max-w-4xl mx-auto">
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
+            <h2 class="text-xl font-bold text-[#101010] dark:text-white mb-6 text-center">Vocabulary Checklist</h2>
+            
+            <div class="bg-white dark:bg-white/5 p-6 rounded-lg border border-gray-200 dark:border-white/20 mb-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div *ngFor="let word of vclWords; let i = index" class="flex items-center p-3 border border-gray-200 dark:border-white/20 rounded-lg bg-white dark:bg-white/5 hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors">
+                        <label class="flex items-center cursor-pointer w-full">
+                            <input type="checkbox" 
+                                [(ngModel)]="vcl[i]" 
+                                name="vcl{{ i }}" 
+                                class="w-5 h-5 text-green-500 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+                            <span class="ml-3 text-sm text-[#101010] dark:text-white">{{ word }}</span>
+                        </label>
+        </div>
+        </div>
+        </div>
+      </div>
+
+        <div class="text-center">
+            <button type="submit" 
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                Submit
+            </button>
+        </div>
+    </form>
+
     <!-- Result Step -->
-    <div *ngIf="step === 'result'" class="space-y-6">
-      <div class="text-center">
-        <h2 class="text-3xl font-bold text-white">Your DASS-21 Results</h2>
-        <p class="text-gray-400 mt-1 text-sm">Based on your answers, here are your scores:</p>
+    <div *ngIf="step === 'result'" class="max-w-4xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-lg font-bold text-[#101010] dark:text-white mb-4">Your DASS Results</h2>
+            <p class="text-[#101010] dark:text-white/60">Comprehensive assessment of your mental health indicators</p>
+        </div>
+
+        <!-- Results Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md text-center">
+                <div class="text-3xl mb-3">😔</div>
+                <h3 class="text-green-600 dark:text-green-400 font-semibold mb-2">Depression</h3>
+                <p class="text-3xl font-bold text-[#101010] dark:text-white mb-2">{{ depressionScore }}</p>
+                <p class="text-sm text-[#101010] dark:text-white/80">{{ depressionLabel }}</p>
+            </div>
+            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md text-center">
+                <div class="text-3xl mb-3">😰</div>
+                <h3 class="text-blue-600 dark:text-blue-400 font-semibold mb-2">Anxiety</h3>
+                <p class="text-3xl font-bold text-[#101010] dark:text-white mb-2">{{ anxietyScore }}</p>
+                <p class="text-sm text-[#101010] dark:text-white/80">{{ anxietyLabel }}</p>
+            </div>
+            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md text-center">
+                <div class="text-3xl mb-3">😤</div>
+                <h3 class="text-orange-600 dark:text-orange-400 font-semibold mb-2">Stress</h3>
+                <p class="text-3xl font-bold text-[#101010] dark:text-white mb-2">{{ stressScore }}</p>
+                <p class="text-sm text-[#101010] dark:text-white/80">{{ stressLabel }}</p>
+            </div>
       </div>
 
-      <div class="grid md:grid-cols-3 gap-6 text-[#101010]">
-        <div class="bg-white rounded-xl shadow p-6 space-y-2 text-center">
-          <h3 class="text-xl font-semibold text-pink-500">Depression</h3>
-          <p class="text-4xl font-bold">{{ depressionScore }}</p>
-          <p class="text-lg font-medium">{{ depressionLabel }}</p>
-        </div>
-        <div class="bg-white rounded-xl shadow p-6 space-y-2 text-center">
-          <h3 class="text-xl font-semibold text-pink-500">Anxiety</h3>
-          <p class="text-4xl font-bold">{{ anxietyScore }}</p>
-          <p class="text-lg font-medium">{{ anxietyLabel }}</p>
-        </div>
-        <div class="bg-white rounded-xl shadow p-6 space-y-2 text-center">
-          <h3 class="text-xl font-semibold text-pink-500">Stress</h3>
-          <p class="text-4xl font-bold">{{ stressScore }}</p>
-          <p class="text-lg font-medium">{{ stressLabel }}</p>
-        </div>
-      </div>
-
-      <div class="bg-pink-500/10 border-2 border-pink-500 text-white rounded-xl px-6 py-5 shadow-inner text-center">
-        <p>If any of your scores are in the "Severe" or "Extremely Severe" range, consider seeking support from a
-          mental health professional.</p>
-      </div>
-
-      <div class="bg-pink-500/10 border-2 border-pink-500 rounded-xl p-4 text-left">
-        <h3 class="text-pink-400 font-semibold mb-2">Understanding your results</h3>
-        <ul class="text-white space-y-2 text-sm">
-          <li><strong>Depression:</strong> Normal (0–9), Mild (10–13), Moderate (14–20), Severe (21–27), Extremely Severe (28+)</li>
-          <li><strong>Anxiety:</strong> Normal (0–7), Mild (8–9), Moderate (10–14), Severe (15–19), Extremely Severe (20+)</li>
-          <li><strong>Stress:</strong> Normal (0–14), Mild (15–18), Moderate (19–25), Severe (26–33), Extremely Severe (34+)</li>
+        <!-- Interpretation Guide -->
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md mb-8">
+            <h4 class="text-green-600 dark:text-green-400 font-semibold mb-4">Understanding your results</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+                <div>
+                    <h5 class="font-medium text-[#101010] dark:text-white mb-2">Depression Scale</h5>
+                    <ul class="space-y-1 text-[#101010] dark:text-white/80">
+                        <li><strong>0-9:</strong> Normal</li>
+                        <li><strong>10-13:</strong> Mild</li>
+                        <li><strong>14-20:</strong> Moderate</li>
+                        <li><strong>21-27:</strong> Severe</li>
+                        <li><strong>28+:</strong> Extremely Severe</li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-medium text-[#101010] dark:text-white mb-2">Anxiety Scale</h5>
+                    <ul class="space-y-1 text-[#101010] dark:text-white/80">
+                        <li><strong>0-7:</strong> Normal</li>
+                        <li><strong>8-9:</strong> Mild</li>
+                        <li><strong>10-14:</strong> Moderate</li>
+                        <li><strong>15-19:</strong> Severe</li>
+                        <li><strong>20+:</strong> Extremely Severe</li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-medium text-[#101010] dark:text-white mb-2">Stress Scale</h5>
+                    <ul class="space-y-1 text-[#101010] dark:text-white/80">
+                        <li><strong>0-14:</strong> Normal</li>
+                        <li><strong>15-18:</strong> Mild</li>
+                        <li><strong>19-25:</strong> Moderate</li>
+                        <li><strong>26-33:</strong> Severe</li>
+                        <li><strong>34+:</strong> Extremely Severe</li>
         </ul>
+                </div>
+            </div>
       </div>
 
-      <p class="text-xs text-gray-400 text-center">
-        This self-assessment is not a diagnosis. Please consult a healthcare provider if you are concerned about your
-        mental health.
-      </p>
-
-      <div class="text-right">
+        <!-- Restart Button -->
+        <div class="text-center">
         <button (click)="reset()"
-          class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow-md transition">
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
           Restart Assessment
         </button>
-      </div>
     </div>
   </div>
 </section>

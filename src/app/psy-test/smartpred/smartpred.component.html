@@ -1,119 +1,252 @@
-<section class="min-h-screen">
-  <div class="max-w-3xl mx-auto px-4 py-10 text-white">
-
-    <!-- Progress Bar -->
-    <div *ngIf="step !== 'intro' && step !== 'result'" class="mb-8">
-      <div class="w-full bg-pink-500/30 rounded-full h-2.5">
-        <div class="bg-pink-500 h-2.5 rounded-full transition-all duration-300" [style.width.%]="progress"></div>
-      </div>
+<!-- 🧠 Smart Prediction - AI Mental Health Insights -->
+<section class="min-h-screen w-full px-6 py-16">
+    <!-- Header Section -->
+    <div class="text-center mb-16">
+        <p class="text-sm font-bold uppercase tracking-widest text-green-500 mb-4">AI-Powered Analysis</p>
+        <h1 class="text-lg font-bold text-[#101010] dark:text-white mb-6">
+            Smart Prediction – AI Mental Health Insights
+        </h1>
+        <hr class="w-32 mx-auto h-0.5 border-t-0 bg-green-500/90 mb-6" />
+        <p class="text-lg text-[#101010] dark:text-white/80 max-w-3xl mx-auto">
+            Combine answers across different questionnaires and receive AI-based insights into your mental health patterns. 
+            This tool is anonymous and non-diagnostic.
+        </p>
     </div>
 
-    <!-- Intro Step -->
-    <div *ngIf="step === 'intro'" class="space-y-6">
-      <h1 class="text-3xl font-bold text-center">DASS Full Assessment</h1>
-      <p class="text-gray-200 text-justify">
-        This test helps measure Depression, Anxiety and Stress using the full DASS-42 questionnaire, with additional optional demographic inputs and personality profiling.
-      </p>
-      <div class="text-right">
-        <button (click)="startTest()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
-          Start Test
-        </button>
-      </div>
+    <!-- Intro Screen -->
+    <div *ngIf="step === 'intro'" class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Left: Description -->
+            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
+                <h3 class="text-xl font-bold text-[#101010] dark:text-white mb-4">About Smart Prediction</h3>
+                <p class="text-[#101010] dark:text-white/80 mb-6 leading-relaxed">
+                    Our AI-powered analysis combines your responses from multiple mental health assessments to provide 
+                    personalized insights and patterns. This advanced tool helps identify connections between different 
+                    aspects of your mental well-being.
+                </p>
+                
+                <div class="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
+                    <h4 class="text-green-600 dark:text-green-400 font-semibold mb-3">What you'll get</h4>
+                    <ul class="space-y-2 text-[#101010] dark:text-white/80 text-sm">
+                        <li class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            Comprehensive mental health pattern analysis
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            Personalized recommendations and insights
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            Cross-assessment correlation analysis
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            Actionable next steps for improvement
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right: Features & Disclaimer -->
+            <div class="space-y-6">
+                <div class="rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-6">
+                    <div class="flex items-start gap-3">
+                        <span class="text-yellow-600 dark:text-yellow-400 text-xl">⚠️</span>
+                        <div>
+                            <h4 class="text-yellow-600 dark:text-yellow-400 font-semibold mb-2">Important Notice</h4>
+                            <p class="text-[#101010] dark:text-white/80 text-sm">
+                                This AI analysis is for informational purposes only and is not a medical diagnosis. 
+                                Always consult with healthcare professionals for clinical evaluation and treatment.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
+                    <h4 class="text-green-600 dark:text-green-400 font-semibold mb-4">How it works</h4>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+                            <span class="text-[#101010] dark:text-white/80">Complete multiple mental health assessments</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+                            <span class="text-[#101010] dark:text-white/80">AI analyzes patterns across all responses</span>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 bg-green-500 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+                            <span class="text-[#101010] dark:text-white/80">Receive personalized insights and recommendations</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button (click)="startAnalysis()" 
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                Start AI Analysis
+            </button>
+        </div>
     </div>
 
-    <!-- Demographic Step -->
-    <div *ngIf="step === 'demographics'">
-      <h2 class="text-xl font-semibold mb-4">Demographic Question {{ currentIndex + 1 }}</h2>
-      <div class="bg-white text-black p-4 rounded shadow">
-        <ng-container [ngSwitch]="currentIndex">
-          <div *ngSwitchCase="0"><label>Age</label><input type="number" [(ngModel)]="demographics.age" name="age" class="w-full p-2 border rounded" /></div>
-          <div *ngSwitchCase="1"><label>Gender</label><select [(ngModel)]="demographics.gender" name="gender" class="w-full p-2 border rounded"><option value="1">Male</option><option value="2">Female</option><option value="3">Other</option></select></div>
-          <div *ngSwitchCase="2"><label>Education</label><select [(ngModel)]="demographics.education" name="education" class="w-full p-2 border rounded"><option value="1">Less than high school</option><option value="2">High school</option><option value="3">University degree</option><option value="4">Graduate degree</option></select></div>
-          <div *ngSwitchCase="3"><label>Childhood Area</label><select [(ngModel)]="demographics.urban" name="urban" class="w-full p-2 border rounded"><option value="1">Rural</option><option value="2">Suburban</option><option value="3">Urban</option></select></div>
-          <div *ngSwitchCase="4"><label>Marital Status</label><select [(ngModel)]="demographics.married" name="married" class="w-full p-2 border rounded"><option value="1">Never married</option><option value="2">Currently married</option><option value="3">Previously married</option></select></div>
-          <div *ngSwitchCase="5"><label>Family Size</label><input type="number" [(ngModel)]="demographics.familysize" name="familysize" class="w-full p-2 border rounded" /></div>
-        </ng-container>
-      </div>
-      <div class="text-right mt-4">
-        <button (click)="nextDemographicStep()" class="bg-pink-500 text-white px-6 py-2 rounded shadow">Next</button>
-      </div>
+    <!-- Analysis Step -->
+    <div *ngIf="step === 'analyzing'" class="max-w-4xl mx-auto">
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
+            <div class="text-center">
+                <div class="w-16 h-16 mx-auto mb-6">
+                    <div class="animate-spin rounded-full h-16 w-16 border-4 border-green-500/20 border-t-green-500"></div>
+                </div>
+                <h3 class="text-xl font-bold text-[#101010] dark:text-white mb-4">Analyzing Your Data</h3>
+                <p class="text-[#101010] dark:text-white/80 mb-6">
+                    Our AI is processing your responses and identifying patterns across your mental health assessments...
+                </p>
+                
+                <div class="space-y-2 text-sm text-[#101010] dark:text-white/60">
+                    <div class="flex items-center justify-center gap-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span>Processing questionnaire responses</span>
+                    </div>
+                    <div class="flex items-center justify-center gap-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse" style="animation-delay: 0.2s"></div>
+                        <span>Identifying cross-assessment patterns</span>
+                    </div>
+                    <div class="flex items-center justify-center gap-2">
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse" style="animation-delay: 0.4s"></div>
+                        <span>Generating personalized insights</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Question Step (DASS) -->
-    <form *ngIf="step === 'questions'" (ngSubmit)="nextQuestion()" class="space-y-6">
-      <div class="bg-white text-black p-6 rounded shadow">
-        <h2 class="text-xl font-semibold mb-4">Question {{ currentQuestionIndex + 1 }} / {{ questions.length }}</h2>
-        <p class="mb-4">{{ questions[currentQuestionIndex].text }}</p>
-        <div *ngFor="let opt of options" class="mb-2">
-          <label class="flex items-center space-x-2">
-            <input type="radio" [(ngModel)]="questions[currentQuestionIndex].answer" [value]="opt.value" name="q{{ currentQuestionIndex }}" required class="accent-pink-500" />
-            <span>{{ opt.label }}</span>
-          </label>
+    <!-- Results Step -->
+    <div *ngIf="step === 'result'" class="max-w-4xl mx-auto">
+        <!-- Main Title -->
+        <div class="text-center mb-12">
+            <h2 class="text-lg font-bold text-[#101010] dark:text-white mb-4">Your AI Mental Health Analysis</h2>
+            <p class="text-[#101010] dark:text-white/60">Personalized insights based on your assessment responses</p>
         </div>
-      </div>
-      <div class="text-right">
-        <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded shadow">Next</button>
-      </div>
-    </form>
 
-    <!-- TIPI Step -->
-    <form *ngIf="step === 'tipi'" (ngSubmit)="nextTipiQuestion()" class="space-y-6">
-      <div class="bg-white text-black p-6 rounded shadow">
-        <h2 class="text-xl font-semibold mb-4">TIPI Question {{ tipiIndex + 1 }} / 10</h2>
-        <p class="mb-4">{{ tipiQuestions[tipiIndex] }}</p>
-        <select [(ngModel)]="tipi[tipiIndex]" name="tipi{{ tipiIndex }}" class="w-full p-2 border rounded" required>
-          <option [ngValue]="null" disabled>Select</option>
-          <option *ngFor="let val of [1,2,3,4,5,6,7]" [value]="val">{{ val }}</option>
-        </select>
-      </div>
-      <div class="text-right">
-        <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded shadow">Next</button>
-      </div>
-    </form>
+        <!-- Overall Score Card -->
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
+            <div class="text-center mb-8">
+                <div class="text-4xl font-bold text-[#101010] dark:text-white mb-2">Overall Mental Health Score</div>
+                <div class="text-6xl font-bold text-green-500 mb-4">{{ overallScore }}/100</div>
+                <div class="text-lg text-[#101010] dark:text-white/80">{{ overallInterpretation }}</div>
+            </div>
 
-    <!-- VCL Step -->
-    <form *ngIf="step === 'vcl'" (ngSubmit)="submitVCL()" class="space-y-6">
-      <div class="bg-white text-black p-6 rounded shadow">
-        <h2 class="text-xl font-semibold mb-4">Vocabulary Checklist</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div *ngFor="let word of vclWords; let i = index">
-            <label class="flex items-center">
-              <input type="checkbox" [(ngModel)]="vcl[i]" name="vcl{{ i }}" class="mr-2" />
-              {{ word }}
-            </label>
-          </div>
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 dark:bg-white/20 rounded-full h-4 mb-4">
+                <div class="bg-gradient-to-r from-green-500 to-green-600 h-4 rounded-full transition-all duration-1000" 
+                     [style.width.%]="overallScore"></div>
+            </div>
         </div>
-      </div>
-      <div class="text-right">
-        <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded shadow">Submit</button>
-      </div>
-    </form>
 
-    <!-- Result Step -->
-    <div *ngIf="step === 'result'" class="space-y-6">
-      <h2 class="text-2xl font-bold text-center">Your DASS Results</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-black">
-        <div class="bg-white p-6 rounded shadow text-center">
-          <h3 class="text-pink-500 font-semibold">Depression</h3>
-          <p class="text-3xl font-bold">{{ depressionScore }}</p>
-          <p>{{ depressionLabel }}</p>
+        <!-- Detailed Analysis Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <!-- Pattern Analysis -->
+            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
+                <h4 class="text-green-600 dark:text-green-400 font-semibold mb-4">Pattern Analysis</h4>
+                <div class="space-y-4">
+                    <div class="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                        <h5 class="font-medium text-[#101010] dark:text-white mb-2">Key Patterns Identified</h5>
+                        <ul class="space-y-1 text-sm text-[#101010] dark:text-white/80">
+                            <li>• {{ pattern1 }}</li>
+                            <li>• {{ pattern2 }}</li>
+                            <li>• {{ pattern3 }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Factors -->
+            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
+                <h4 class="text-orange-600 dark:text-orange-400 font-semibold mb-4">Risk Assessment</h4>
+                <div class="space-y-4">
+                    <div class="p-4 rounded-lg bg-orange-500/10 border border-orange-500/20">
+                        <h5 class="font-medium text-[#101010] dark:text-white mb-2">Areas of Concern</h5>
+                        <ul class="space-y-1 text-sm text-[#101010] dark:text-white/80">
+                            <li>• {{ risk1 }}</li>
+                            <li>• {{ risk2 }}</li>
+                            <li>• {{ risk3 }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="bg-white p-6 rounded shadow text-center">
-          <h3 class="text-pink-500 font-semibold">Anxiety</h3>
-          <p class="text-3xl font-bold">{{ anxietyScore }}</p>
-          <p>{{ anxietyLabel }}</p>
+
+        <!-- Recommendations -->
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md mb-8">
+            <h4 class="text-green-600 dark:text-green-400 font-semibold mb-4">Personalized Recommendations</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                    <h5 class="font-medium text-[#101010] dark:text-white">Immediate Actions</h5>
+                    <ul class="space-y-2 text-sm text-[#101010] dark:text-white/80">
+                        <li class="flex items-start gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mt-2"></span>
+                            {{ immediateAction1 }}
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full mt-2"></span>
+                            {{ immediateAction2 }}
+                        </li>
+                    </ul>
+                </div>
+                <div class="space-y-3">
+                    <h5 class="font-medium text-[#101010] dark:text-white">Long-term Strategies</h5>
+                    <ul class="space-y-2 text-sm text-[#101010] dark:text-white/80">
+                        <li class="flex items-start gap-2">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
+                            {{ longTermStrategy1 }}
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
+                            {{ longTermStrategy2 }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
-        <div class="bg-white p-6 rounded shadow text-center">
-          <h3 class="text-pink-500 font-semibold">Stress</h3>
-          <p class="text-3xl font-bold">{{ stressScore }}</p>
-          <p>{{ stressLabel }}</p>
+
+        <!-- Professional Support -->
+        <div class="rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-6 mb-8">
+            <div class="flex items-start gap-3">
+                <span class="text-yellow-600 dark:text-yellow-400 text-xl">💡</span>
+                <div>
+                    <h4 class="text-yellow-600 dark:text-yellow-400 font-semibold mb-2">When to Seek Professional Help</h4>
+                    <p class="text-[#101010] dark:text-white/80 text-sm mb-3">
+                        {{ professionalAdvice }}
+                    </p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="px-3 py-1 bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 text-xs rounded-full">Therapist</span>
+                        <span class="px-3 py-1 bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 text-xs rounded-full">Counselor</span>
+                        <span class="px-3 py-1 bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 text-xs rounded-full">Psychiatrist</span>
+                        <span class="px-3 py-1 bg-yellow-500/20 text-yellow-700 dark:text-yellow-300 text-xs rounded-full">Support Groups</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="text-right">
-        <button (click)="reset()" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-2 rounded shadow">
-          Restart
-        </button>
-      </div>
+
+        <!-- Disclaimer -->
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md mb-8">
+            <p class="text-xs text-[#101010] dark:text-white/40 text-center">
+                This AI analysis is for informational purposes only and is not a medical diagnosis. 
+                Always consult with qualified healthcare professionals for clinical evaluation and treatment decisions.
+            </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button (click)="exportResults()" 
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                Export Results
+            </button>
+            <button (click)="reset()" 
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                New Analysis
+            </button>
+        </div>
     </div>
-  </div>
 </section>

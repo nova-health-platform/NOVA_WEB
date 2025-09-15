@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener  } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
   imports: [CommonModule, RouterModule],
   templateUrl: './header.component.html'
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   isLoggedIn$!: Observable<boolean>;
   menuOpen = false;
   isScrolled = false;
@@ -40,6 +40,10 @@ export class HeaderComponent implements OnInit {
   @HostListener('window:scroll', [])
   onWindowScroll() {
     this.isScrolled = window.scrollY > 50;
+  }
+
+  ngOnDestroy(): void {
+    // Nettoyage si nécessaire
   }
 
 }

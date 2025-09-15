@@ -986,24 +986,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     return 50; // fallback
   }
 
-  getSeverityColor(percent: number): string {
-    const clamped = Math.max(0, Math.min(percent, 100));
-    const b = 90;
-
-    let r: number, g: number;
-
-    if (clamped < 50) {
-      // De vert vers jaune
-      g = 255;
-      r = Math.round((clamped / 50) * 255);
-    } else {
-      // De jaune vers rouge
-      g = Math.round(255 - ((clamped - 50) / 50) * 255);
-      r = 255;
-    }
-
-    return `rgb(${r},${g},${b})`;
-  }
 
   animateContagiousGauge(): void {
     const target = 100;
@@ -1029,10 +1011,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     requestAnimationFrame(step);
   }
 
-  getContagiousColor(contagious: string): string {
-    const clean = contagious?.trim().toLowerCase().replace('.', '');
-    return clean === 'yes' ? 'rgb(255, 0, 90)' : 'rgb(0, 255, 90)';
-  }
 
 
   animateCourseGauge(): void {
@@ -1953,143 +1931,377 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   downloadResultPDF(): void {
     const doc = new jsPDF();
     const today = new Date().toLocaleDateString();
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
 
-    /** ✅ Informations patient */
-    //const patientName = this.response?.patient_name || 'Not assigned';
-    const patientAge = this.age ? `${this.age} years` : 'Not assigned';
-    const patientGender = this.sex || 'Not assigned';
+    // Colors palette - Modern and professional
+    const colors = {
+      primary: [34, 197, 94] as [number, number, number],      // green-500
+      primaryDark: [22, 163, 74] as [number, number, number],  // green-600
+      primaryLight: [134, 239, 172] as [number, number, number], // green-300
+      secondary: [16, 16, 16] as [number, number, number],     // #101010
+      accent: [59, 130, 246] as [number, number, number],      // blue-500
+      accentLight: [147, 197, 253] as [number, number, number], // blue-300
+      text: [31, 41, 55] as [number, number, number],          // gray-800
+      textLight: [107, 114, 128] as [number, number, number],  // gray-500
+      background: [248, 250, 252] as [number, number, number], // gray-50
+      backgroundLight: [241, 245, 249] as [number, number, number], // slate-100
+      white: [255, 255, 255] as [number, number, number],
+      border: [226, 232, 240] as [number, number, number]      // slate-200
+    };
 
-    /** ✅ Diagnostic principal */
+    /** ✅ Modern Header with gradient effect */
+    // Background
+    doc.setFillColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+    doc.rect(0, 0, pageWidth, 40, 'F');
+    
+    // Logo area with subtle pattern
+    doc.setFillColor(colors.primaryDark[0], colors.primaryDark[1], colors.primaryDark[2]);
+    doc.rect(0, 0, 60, 40, 'F');
+    
+    // Main title
+    doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text('NOVA', 15, 18);
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Health Assistant', 15, 28);
+    
+    // Report info
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Medical Analysis Report', pageWidth - 15, 18, { align: 'right' });
+    doc.text(today, pageWidth - 15, 28, { align: 'right' });
+
+    /** ✅ Patient Information Card */
+    let currentY = 55;
+    this.addCardHeader(doc, 'Patient Information', currentY, colors);
+    currentY += 12;
+    
+    const patientAge = this.age ? `${this.age} years` : 'Not specified';
+    const patientGender = this.sex || 'Not specified';
+    
+    // Patient info in a clean layout
+    doc.setFontSize(11);
+    doc.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
+    doc.text(`Age: ${patientAge}`, 20, currentY);
+    doc.text(`Gender: ${patientGender}`, 20, currentY + 8);
+
+    /** ✅ Diagnostic Result Card */
+    currentY += 20;
+    this.addCardHeader(doc, 'Diagnostic Result', currentY, colors);
+    currentY += 12;
+    
     const disease = this.response?.predicted_disease
       ? this.formatDiseaseLabel(this.response.predicted_disease)
       : 'Unknown';
     const confidence = this.response?.confidence
-      ? `${(this.response.confidence * 100).toFixed(2)}%`
+      ? `${(this.response.confidence * 100).toFixed(1)}%`
       : 'Unknown';
-    const description = this.response?.disease_info?.description || 'Not available';
-    const advice = this.response?.disease_info?.advice || 'No advice provided';
+    
+    // Disease name with confidence badge
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+    doc.text(disease, 20, currentY);
+    
+    // Confidence indicator with better structure
+    const confidenceText = confidence.toString();
+    const labelText = 'CONFIDENCE';
+    const labelWidth = doc.getTextWidth(labelText);
+    const confidenceWidth = Math.max(doc.getTextWidth(confidenceText), labelWidth) + 20;
+    const confidenceHeight = 16;
+    const badgeX = pageWidth - confidenceWidth - 20;
+    const badgeY = currentY - 10;
+    
+    // Badge background
+    doc.setFillColor(colors.accent[0], colors.accent[1], colors.accent[2]);
+    doc.roundedRect(badgeX, badgeY, confidenceWidth, confidenceHeight, 8, 8, 'F');
+    
+    // Badge border
+    doc.setDrawColor(colors.accentLight[0], colors.accentLight[1], colors.accentLight[2]);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(badgeX, badgeY, confidenceWidth, confidenceHeight, 8, 8, 'S');
+    
+    // Label at the top
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
+    doc.text(labelText, badgeX + confidenceWidth/2, badgeY + 5, { align: 'center' });
+    
+    // Confidence percentage at the bottom
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(colors.white[0], colors.white[1], colors.white[2]);
+    doc.text(confidenceText, badgeX + confidenceWidth/2, badgeY + 12, { align: 'center' });
 
-    /** ✅ Indicateurs cliniques */
+    /** ✅ Clinical Indicators */
+    currentY += 20;
+    this.addCardHeader(doc, 'Clinical Indicators', currentY, colors);
+    currentY += 12;
+    
     const severity = this.response?.disease_info?.severity_level || 'Unknown';
     const contagious = this.response?.disease_info?.contagious || 'Unknown';
     const course = this.response?.disease_info?.chronic_or_acute || 'Unknown';
-
-    /** ✅ HEADER avec Nova branding */
-    doc.setFillColor(44, 62, 80);
-    doc.rect(0, 0, 210, 30, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(18);
-    doc.setFont('helvetica', 'bold');
-    doc.text('Nova Health Assistant', 15, 20);
-    doc.setFontSize(11);
-    doc.text(`Medical Analysis Report - ${today}`, 200, 20, { align: 'right' });
-
-    /** ✅ Patient Info */
-    doc.setTextColor(0);
-    doc.setFontSize(14);
-    doc.text('Patient Information', 15, 45);
-    doc.setFontSize(11);
-    //doc.text(`Name: ${patientName}`, 15, 55);
-    doc.text(`Age: ${patientAge}`, 15, 63);
-    doc.text(`Gender: ${patientGender}`, 15, 71);
-
-    /** ✅ Diagnostic principal */
-    doc.setFontSize(14);
-    doc.text('Diagnostic Result', 15, 85);
-    doc.setFontSize(11);
-    doc.text(`Disease: ${disease}`, 15, 95);
-    doc.text(`Confidence: ${confidence}`, 15, 103);
-
-    /** ✅ Indicateurs cliniques */
-    doc.setFontSize(14);
-    doc.text('Clinical Indicators', 15, 118);
-    doc.setFontSize(11);
-    doc.text(`Severity: ${severity}`, 15, 128);
-    doc.text(`Contagious: ${contagious}`, 15, 136);
-    doc.text(`Course: ${course}`, 15, 144);
-
-    /** ✅ Description */
-    doc.setFontSize(14);
-    doc.text('Disease Description', 15, 160);
-    doc.setFontSize(10);
-    doc.text(doc.splitTextToSize(description, 180), 15, 168);
-
-    /** ✅ Recommended Actions */
-    doc.setFontSize(14);
-    doc.text('Recommended Actions', 15, 190);
-    doc.setFontSize(10);
-    doc.text(doc.splitTextToSize(advice, 180), 15, 198);
-
-    /** ✅ General treatment */
-    const treatment = this.response?.treatment?.disease_treatment || {};
-    autoTable(doc, {
-      startY: 220,
-      head: [['General Treatment Details', 'Value']],
-      body: [
-        ['OTC Medications', treatment.otc_medications || 'Not available'],
-        ['Prescription', treatment.prescription_medications || 'Not available'],
-        ['Alternative', treatment.alternative || 'Not available'],
-        ['Type', treatment.treatment_type || 'Not available'],
-        ['Dosage', treatment.dosage || 'Not available'],
-        ['Frequency', treatment.frequency || 'Not available'],
-        ['Duration', treatment.recommended_duration || 'Not available'],
-        ['Route', treatment.administration_route || 'Not available'],
-        ['Notes', treatment.notes || 'Not available'],
-      ],
-      theme: 'striped',
-      headStyles: { fillColor: [41, 128, 185], textColor: 255 },
-      bodyStyles: { textColor: 50 },
+    
+    // Indicators in modern card layout
+    const indicators = [
+      { label: 'Severity', value: severity, color: this.getSeverityColor(severity), icon: '⚠️' },
+      { label: 'Contagious', value: contagious, color: this.getContagiousColor(contagious), icon: '🦠' },
+      { label: 'Course', value: course, color: colors.accent, icon: '📈' }
+    ];
+    
+    indicators.forEach((indicator, index) => {
+      const x = 20 + (index * 60);
+      const cardWidth = 55;
+      const cardHeight = 20;
+      
+      // Card background
+      doc.setFillColor(colors.background[0], colors.background[1], colors.background[2]);
+      doc.roundedRect(x, currentY - 5, cardWidth, cardHeight, 3, 3, 'F');
+      
+      // Card border
+      doc.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
+      doc.setLineWidth(0.5);
+      doc.roundedRect(x, currentY - 5, cardWidth, cardHeight, 3, 3, 'S');
+      
+      // Label
+      doc.setFontSize(8);
+      doc.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
+      doc.text(indicator.label, x + 3, currentY);
+      
+      // Value with color
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(indicator.color[0], indicator.color[1], indicator.color[2]);
+      doc.text(indicator.value, x + 3, currentY + 8);
     });
 
-    /** ✅ Specific treatments by symptom */
-    /** ✅ Specific treatments by symptom (chained in PDF) */
+    /** ✅ Disease Description */
+    currentY += 20;
+    this.addCardHeader(doc, 'Disease Description', currentY, colors);
+    currentY += 12;
+    
+    const description = this.response?.disease_info?.description || 'No description available';
+    doc.setFontSize(10);
+    doc.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
+    doc.setFont('helvetica', 'normal');
+    const descriptionLines = doc.splitTextToSize(description, pageWidth - 40);
+    doc.text(descriptionLines, 20, currentY);
+
+    /** ✅ Recommended Actions */
+    currentY += descriptionLines.length * 4 + 10;
+    this.addCardHeader(doc, 'Recommended Actions', currentY, colors);
+    currentY += 12;
+    
+    const advice = this.response?.disease_info?.advice || 'No specific advice provided';
+    doc.setFontSize(10);
+    doc.setTextColor(colors.text[0], colors.text[1], colors.text[2]);
+    const adviceLines = doc.splitTextToSize(advice, pageWidth - 40);
+    doc.text(adviceLines, 20, currentY);
+
+    /** ✅ Treatment Information */
+    currentY += adviceLines.length * 4 + 15;
+    
+    // General Treatment
+    const treatment = this.response?.treatment?.disease_treatment || {};
+    if (Object.keys(treatment).length > 0) {
+      this.addCardHeader(doc, 'General Treatment Plan', currentY, colors);
+      currentY += 12;
+      
+      autoTable(doc, {
+        startY: currentY,
+        head: [['Treatment Detail', 'Information']],
+        body: this.formatTreatmentData(treatment),
+        theme: 'striped',
+        margin: { left: 20, right: 20 },
+        headStyles: { 
+          fillColor: colors.primary, 
+          textColor: colors.white, 
+          fontSize: 11,
+          fontStyle: 'bold',
+          halign: 'left',
+          cellPadding: 8
+        },
+        bodyStyles: { 
+          textColor: colors.text, 
+          fontSize: 10,
+          cellPadding: 8,
+          halign: 'left'
+        },
+        alternateRowStyles: {
+          fillColor: colors.backgroundLight
+        },
+        columnStyles: {
+          0: { 
+            cellWidth: 70,
+            fontStyle: 'bold',
+            textColor: colors.primary
+          },
+          1: { 
+            cellWidth: 100,
+            textColor: colors.text
+          }
+        },
+        styles: {
+          lineColor: colors.border,
+          lineWidth: 0.5
+        }
+      });
+      
+      currentY = (doc as any).lastAutoTable.finalY + 15;
+    }
+
+    /** ✅ Symptom-specific Treatments */
     if (this.response?.treatment?.symptom_treatments) {
       const symptoms = Object.keys(this.response.treatment.symptom_treatments || {});
-      let currentY = (doc as any).lastAutoTable?.finalY || 240; // Start under the previous table
-
+      
       symptoms.forEach((symptom) => {
         const sympData = this.response?.treatment?.symptom_treatments?.[symptom] || {};
-
-        // ✅ Block title
-        doc.setFontSize(13);
-        doc.setTextColor(44, 62, 80);
-        doc.text(`Symptom Treatment: ${this.formatSymptom(symptom)}`, 15, currentY + 10);
-
-        // ✅ Table
-        autoTable(doc, {
-          startY: currentY + 15,
-          head: [['Detail', 'Value']],
-          body: [
-            ['OTC Medications', sympData.otc_medications || 'Not available'],
-            ['Prescription', sympData.prescription_medications || 'Not available'],
-            ['Alternative', sympData.alternative || 'Not available'],
-            ['Type', sympData.treatment_type || 'Not available'],
-            ['Dosage', sympData.dosage || 'Not available'],
-            ['Frequency', sympData.frequency || 'Not available'],
-            ['Duration', sympData.recommended_duration || 'Not available'],
-            ['Route', sympData.administration_route || 'Not available'],
-            ['Notes', sympData.notes || 'Not available'],
-          ],
-          theme: 'striped',
-          margin: { left: 15, right: 15 },
-          headStyles: { fillColor: [52, 152, 219], textColor: 255, fontSize: 11 },
-          bodyStyles: { textColor: 50, fontSize: 10 },
-        });
-
-        // ✅ Update for the next block
-        currentY = (doc as any).lastAutoTable.finalY;
+        
+        if (Object.keys(sympData).length > 0) {
+          this.addCardHeader(doc, `Treatment for ${this.formatSymptom(symptom)}`, currentY, colors);
+          currentY += 12;
+          
+          autoTable(doc, {
+            startY: currentY,
+            head: [['Treatment Detail', 'Information']],
+            body: this.formatTreatmentData(sympData),
+            theme: 'striped',
+            margin: { left: 20, right: 20 },
+            headStyles: { 
+              fillColor: colors.primary, 
+              textColor: colors.white, 
+              fontSize: 11,
+              fontStyle: 'bold',
+              halign: 'left',
+              cellPadding: 8
+            },
+            bodyStyles: { 
+              textColor: colors.text, 
+              fontSize: 10,
+              cellPadding: 8,
+              halign: 'left'
+            },
+            alternateRowStyles: {
+              fillColor: colors.backgroundLight
+            },
+            columnStyles: {
+              0: { 
+                cellWidth: 70,
+                fontStyle: 'bold',
+                textColor: colors.primary
+              },
+              1: { 
+                cellWidth: 100,
+                textColor: colors.text
+              }
+            },
+            styles: {
+              lineColor: colors.border,
+              lineWidth: 0.5
+            }
+          });
+          
+          currentY = (doc as any).lastAutoTable.finalY + 15;
+        }
       });
     }
 
-
-    /** ✅ Footer */
-    const pageHeight = doc.internal.pageSize.height;
-    doc.setFontSize(10);
-    doc.setTextColor(150);
-    doc.text(`Generated by Nova AI Health Assistant`, 105, pageHeight - 10, { align: 'center' });
+    /** ✅ Modern Footer */
+    const finalY = (doc as any).lastAutoTable?.finalY || currentY;
+    if (finalY < pageHeight - 40) {
+      // Footer background
+      doc.setFillColor(colors.background[0], colors.background[1], colors.background[2]);
+      doc.rect(0, pageHeight - 35, pageWidth, 35, 'F');
+      
+      // Footer border
+      doc.setDrawColor(colors.border[0], colors.border[1], colors.border[2]);
+      doc.setLineWidth(0.5);
+      doc.line(0, pageHeight - 35, pageWidth, pageHeight - 35);
+      
+      // Nova logo area
+      doc.setFillColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+      doc.rect(20, pageHeight - 30, 4, 20, 'F');
+      
+      // Main footer text
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+      doc.text('Nova AI Health Assistant', 30, pageHeight - 20);
+      
+      // Subtitle
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
+      doc.text('Medical Analysis Report', 30, pageHeight - 15);
+      
+      // Disclaimer
+      doc.setFontSize(7);
+      doc.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
+      doc.text('This report is for informational purposes only. Please consult a healthcare professional.', pageWidth/2, pageHeight - 8, { align: 'center' });
+      
+      // Date
+      doc.setFontSize(8);
+      doc.setTextColor(colors.textLight[0], colors.textLight[1], colors.textLight[2]);
+      doc.text(`Generated on ${today}`, pageWidth - 20, pageHeight - 20, { align: 'right' });
+    }
 
     /** ✅ Download */
-    doc.save(`Nova_Analysis_${today}.pdf`);
+    doc.save(`Nova_Medical_Analysis_${today.replace(/\//g, '-')}.pdf`);
+  }
+
+  private addCardHeader(doc: any, title: string, y: number, colors: any): void {
+    // Simple title without container
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+    doc.text(title, 20, y);
+    
+    // Subtle underline
+    doc.setDrawColor(colors.primary[0], colors.primary[1], colors.primary[2]);
+    doc.setLineWidth(1);
+    const titleWidth = doc.getTextWidth(title);
+    doc.line(20, y + 2, 20 + titleWidth, y + 2);
+  }
+
+  private formatTreatmentData(treatment: any): any[][] {
+    const fields = [
+      { key: 'otc_medications', label: 'OTC Medications' },
+      { key: 'prescription_medications', label: 'Prescription' },
+      { key: 'alternative', label: 'Alternative' },
+      { key: 'treatment_type', label: 'Type' },
+      { key: 'dosage', label: 'Dosage' },
+      { key: 'frequency', label: 'Frequency' },
+      { key: 'recommended_duration', label: 'Duration' },
+      { key: 'administration_route', label: 'Route' },
+      { key: 'notes', label: 'Notes' }
+    ];
+
+    return fields
+      .filter(field => treatment[field.key] && treatment[field.key] !== 'Not available' && treatment[field.key] !== 'NaN' && treatment[field.key] !== 'NA' && treatment[field.key] !== 'na')
+      .map(field => [field.label, treatment[field.key] || 'Not specified']);
+  }
+
+  getSeverityColor(severity: string): [number, number, number] {
+    const severityColors: { [key: string]: [number, number, number] } = {
+      'Low': [34, 197, 94],      // green
+      'Mild': [34, 197, 94],     // green
+      'Moderate': [251, 191, 36], // yellow
+      'High': [239, 68, 68],     // red
+      'Severe': [220, 38, 127]   // pink
+    };
+    return severityColors[severity] || [107, 114, 128]; // default gray
+  }
+
+  getContagiousColor(contagious: string): [number, number, number] {
+    const contagiousColors: { [key: string]: [number, number, number] } = {
+      'Yes': [239, 68, 68],      // red
+      'No': [34, 197, 94],       // green
+      'Unknown': [107, 114, 128] // gray
+    };
+    return contagiousColors[contagious] || [107, 114, 128]; // default gray
   }
 
   submitSymptomsToApi(): void {

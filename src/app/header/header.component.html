@@ -1,4 +1,5 @@
-<header class="fixed w-[calc(100%-2rem)] mx-[1rem] z-50 transition-all duration-300 mt-1">
+<header class="fixed w-full top-0 left-0 z-50 transition-all duration-300" 
+        [class]="isScrolled ? 'bg-white/20 dark:bg-[#101010]/20 backdrop-blur-md' : 'bg-transparent'">
   <div class="mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 items-center justify-between">
       <div class="flex-1 md:flex md:items-center md:gap-12">

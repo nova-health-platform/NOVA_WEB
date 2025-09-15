@@ -1,253 +1,380 @@
-<!-- 📋 Questionnaire Cards -->
-<section class="min-h-screen max-w-6xl mx-auto">
-    <div class="[#101010] text-white pt-16 px-6 text-center rounded-2xl shadow-md mb-10 ">
-        <h1 class="text-4xl font-bold mb-4">Explore Our Mental Health Tools</h1>
-        <p class="text-gray-300 text-lg max-w-2xl mx-auto">
-            Take a few minutes to reflect on your mental well-being. Each questionnaire is science-backed and anonymous.
-            Choose the one that best fits your current state.
+<!-- 🧠 Mental Health Tools Section -->
+<section class="min-h-screen w-full px-6 py-16">
+    <!-- Header Section -->
+    <div class="text-center mb-16">
+        <p class="text-sm font-bold uppercase tracking-widest text-green-500 mb-4">Mental Health Tools</p>
+        <h1 class="text-lg font-bold text-[#101010] dark:text-white mb-6">
+            Your Mental Well-being Matters
+        </h1>
+        <hr class="w-32 mx-auto h-0.5 border-t-0 bg-green-500/90 mb-6" />
+        <p class="text-sm text-[#101010] dark:text-white/80 max-w-3xl mx-auto">
+            Take a few minutes to reflect on your mental well-being. Each questionnaire is science-backed, 
+            anonymous, and designed to help you understand your current state.
         </p>
     </div>
-    <hr class="mb-10 h-0.5 border-t-0 bg-pink-500/30 mx-30" />
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-        
-        <!-- 🔍 Smart Prediction Card -->
-        <div class="relative bg-white text-[#101010] rounded-xl shadow p-6">
-            <span class="absolute top-3 right-3 bg-yellow-400 text-black text-xs font-semibold px-2 py-1 rounded-full shadow">Beta 1.0</span>
-            
-            <div class="flex gap-2 mb-2">
-            <span class="bg-gray-200 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full">~2 min</span>
-            <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full">Smart Insight</span>
-            </div>
-        
-            <h2 class="text-2xl font-semibold mb-2">Smart Prediction (DASS-42 AI-Based)</h2>
-            <p class="text-gray-600 mb-4">
-            Combine answers across different questionnaires and receive AI-based insights into your mental health patterns. This tool is anonymous and non-diagnostic.
-        </p>
-        
-            <div class="flex gap-3">
-                <a href="/smartpred" class="inline-flex items-center justify-center w-48 h-10 rounded-md bg-pink-500 text-sm font-medium text-white shadow hover:bg-pink-600">
-                    Try Smart Prediction
-                </a>
-                <button (click)="openModal('smart')" class="text-sm text-pink-600 hover:underline">Learn more</button>
-            </div>
-        </div>
+    <!-- Tools Table -->
+    <div class="max-w-7xl mx-auto">
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl shadow-md overflow-hidden">
+            <table class="w-full">
+                <thead class="bg-green-500/10 border-b dark:border-white/10 border-[#101010]/10">
+                    <tr>
+                        <th class="w-1/4 px-4 py-4 text-left text-sm font-semibold text-[#101010] dark:text-white">Tool</th>
+                        <th class="w-2/5 px-4 py-4 text-left text-sm font-semibold text-[#101010] dark:text-white">Description</th>
+                        <th class="w-1/12 px-2 py-4 text-center text-sm font-semibold text-[#101010] dark:text-white">Duration</th>
+                        <th class="w-1/8 px-2 py-4 text-center text-sm font-semibold text-[#101010] dark:text-white">Type</th>
+                        <th class="w-1/6 px-4 py-4 text-center text-sm font-semibold text-[#101010] dark:text-white">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y dark:divide-white/10 divide-[#101010]/10">
+
+                    <!-- Smart Prediction Row -->
+                    <tr class="hover:bg-green-500/5 transition-colors">
+                        <td class="w-1/4 px-4 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center">
+                                    <span class="text-yellow-600 dark:text-yellow-400 text-lg">🔍</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white">Smart Prediction</h3>
+                                    <span class="bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 text-xs font-semibold px-2 py-1 rounded-full border border-yellow-500/30">
+                                        Beta 1.0
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="w-2/5 px-4 py-4">
+                            <p class="text-sm text-[#101010] dark:text-white/80 leading-relaxed">
+                                Combine answers across different questionnaires and receive AI-based insights into your mental health patterns. This tool is anonymous and non-diagnostic.
+                            </p>
+                        </td>
+                        <td class="w-1/12 px-2 py-4 text-center">
+                            <span class="bg-gray-200/50 dark:bg-white/10 text-gray-700 dark:text-white/80 text-xs font-medium px-3 py-1 rounded-full">~2 min</span>
+                        </td>
+                        <td class="w-1/8 px-2 py-4 text-center">
+                            <span class="bg-blue-100/50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 text-xs font-medium px-3 py-1 rounded-full">Smart Insight</span>
+                        </td>
+                        <td class="w-1/6 px-4 py-4 text-center">
+                            <div class="flex flex-col gap-2">
+                                <a href="/smartpred" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
+                                    Start
+                                </a>
+                                <button (click)="openModal('smart')" class="text-xs text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors cursor-pointer">
+                                    Learn more
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
         
         <!-- 🔳 Smart Prediction Modal -->
-        <div *ngIf="activeModal === 'smart'" class="fixed inset-0 z-50 flex items-center justify-center">
+        <div *ngIf="activeModal === 'smart'" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <!-- Blurred backdrop -->
-            <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="closeModal()"></div>
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
         
             <!-- Modal content -->
-            <div class="relative z-10 bg-white rounded-xl shadow-xl max-w-md w-full p-6" (click)="$event.stopPropagation()">
-            <h3 class="text-xl font-semibold mb-4">About Smart Prediction</h3>
-            <p class="text-sm text-gray-700 mb-4">
-                This tool uses a machine learning model trained on anonymous questionnaire data to suggest patterns or trends in your mental state. It doesn't provide a diagnosis, but offers insights to reflect on or discuss with a professional.
-            </p>
-            <div class="text-right">
-                <button (click)="closeModal()" class="text-sm text-pink-600 hover:underline">Close</button>
-            </div>
+            <div class="relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border dark:border-white/10 border-[#101010]/10 rounded-2xl shadow-2xl max-w-lg w-full p-8" (click)="$event.stopPropagation()">
+                <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">About Smart Prediction</h3>
+                <p class="text-[#101010] dark:text-white/80 mb-8 leading-relaxed">
+                    This tool uses a machine learning model trained on anonymous questionnaire data to suggest patterns or trends in your mental state. It doesn't provide a diagnosis, but offers insights to reflect on or discuss with a professional.
+                </p>
+                <div class="flex justify-end">
+                    <button (click)="closeModal()" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
+                        Got it
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- 🧠 PHQ-9 Card -->
-        <div class="relative bg-white text-[#101010] rounded-xl shadow p-6">
-            <span class="absolute top-3 right-3 bg-green-400 text-green text-xs font-semibold px-2 py-1 rounded-full shadow">Verified</span>
-            <div class="flex gap-2 mb-2">
-            <span class="bg-gray-200 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full">~3 min</span>
-            <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full">Quick Check</span>
-            </div>
-        
-            <h2 class="text-2xl font-semibold mb-2">PHQ-9 – Depression Screening</h2>
-            <p class="text-gray-600 mb-4">
-            A clinically recognized tool to screen for symptoms of depression. It helps assess mood, motivation, energy, and emotional well-being over the last two weeks.
-            </p>
-        
-            <div class="flex gap-3">
-            <a href="/phq9" class="inline-flex items-center justify-center w-48 h-10 rounded-md bg-pink-500 text-sm font-medium text-white shadow hover:bg-pink-600">
-                Start PHQ-9
-            </a>
-            <button (click)="openModal('phq')" class="text-sm text-pink-600 hover:underline">Learn more</button>
-            </div>
-        </div>
+                    <!-- PHQ-9 Row -->
+                    <tr class="hover:bg-green-500/5 transition-colors">
+                        <td class="w-1/4 px-4 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
+                                    <span class="text-green-600 dark:text-green-400 text-lg">🧠</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white">PHQ-9 – Depression Screening</h3>
+                                    <span class="bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-full border border-green-500/30">
+                                        Verified
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="w-2/5 px-4 py-4">
+                            <p class="text-sm text-[#101010] dark:text-white/80 leading-relaxed">
+                                A clinically recognized tool to screen for symptoms of depression. It helps assess mood, motivation, energy, and emotional well-being over the last two weeks.
+                            </p>
+                        </td>
+                        <td class="w-1/12 px-2 py-4 text-center">
+                            <span class="bg-gray-200/50 dark:bg-white/10 text-gray-700 dark:text-white/80 text-xs font-medium px-3 py-1 rounded-full">~3 min</span>
+                        </td>
+                        <td class="w-1/8 px-2 py-4 text-center">
+                            <span class="bg-green-100/50 dark:bg-green-500/20 text-green-700 dark:text-green-400 text-xs font-medium px-3 py-1 rounded-full">Quick Check</span>
+                        </td>
+                        <td class="w-1/6 px-4 py-4 text-center">
+                            <div class="flex flex-col gap-2">
+                                <a href="/phq9" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
+                                    Start
+                                </a>
+                                <button (click)="openModal('phq')" class="text-xs text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors cursor-pointer">
+                                    Learn more
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
 
         <!-- 🔳 PHQ-9 Modal -->
-        <div *ngIf="activeModal === 'phq'" class="fixed inset-0 z-50 flex items-center justify-center">
+        <div *ngIf="activeModal === 'phq'" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <!-- Blurred backdrop -->
-            <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="closeModal()"></div>
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
             
             <!-- Modal content -->
-            <div class="relative z-10 bg-white rounded-xl shadow-xl max-w-md w-full p-6" (click)="$event.stopPropagation()">
-            <h3 class="text-xl font-semibold mb-4">About PHQ-9</h3>
-            <p class="text-sm text-gray-700 mb-4">
-                The PHQ-9 (Patient Health Questionnaire) is a brief self-assessment tool designed to identify symptoms of depression. It’s commonly used in clinical practice and helps individuals understand whether they might be experiencing depressive episodes.
-            </p>
-            <div class="text-right">
-                <button (click)="closeModal()" class="text-sm text-pink-600 hover:underline">Close</button>
-            </div>
+            <div class="relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border dark:border-white/10 border-[#101010]/10 rounded-2xl shadow-2xl max-w-lg w-full p-8" (click)="$event.stopPropagation()">
+                <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">About PHQ-9</h3>
+                <p class="text-[#101010] dark:text-white/80 mb-8 leading-relaxed">
+                    The PHQ-9 (Patient Health Questionnaire) is a brief self-assessment tool designed to identify symptoms of depression. It's commonly used in clinical practice and helps individuals understand whether they might be experiencing depressive episodes.
+                </p>
+                <div class="flex justify-end">
+                    <button (click)="closeModal()" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
+                        Got it
+                    </button>
+                </div>
             </div>
         </div>
         
 
-        <!-- 🧠 GAD-7 Card -->
-        <div class="relative bg-white text-[#101010] rounded-xl shadow p-6">
-            <span class="absolute top-3 right-3 bg-green-400 text-green text-xs font-semibold px-2 py-1 rounded-full shadow">Verified</span>
-            <div class="flex gap-2 mb-2">
-            <span class="bg-gray-200 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full">~2 min</span>
-            <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full">Quick Check</span>
-            </div>
-        
-            <h2 class="text-2xl font-semibold mb-2">GAD-7 – Anxiety Assessment</h2>
-            <p class="text-gray-600 mb-4">
-            Screens for symptoms of generalized anxiety disorder. It measures how often you’ve felt nervous, worried, or on edge in the last two weeks.
-            </p>
-        
-            <div class="flex gap-3">
-            <a href="/gad7"
-                class="inline-flex items-center justify-center w-48 h-10 rounded-md bg-pink-500 text-sm font-medium text-white shadow hover:bg-pink-600 dark:hover:bg-pink-600">
-                Start GAD-7
-            </a>
-            <button (click)="openModal('gad7')" class="text-sm text-pink-600 hover:underline">Learn more</button>
-            </div>
-        </div>
+                    <!-- GAD-7 Row -->
+                    <tr class="hover:bg-green-500/5 transition-colors">
+                        <td class="w-1/4 px-4 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                                    <span class="text-blue-600 dark:text-blue-400 text-lg">😰</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white">GAD-7 – Anxiety Assessment</h3>
+                                    <span class="bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-full border border-green-500/30">
+                                        Verified
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="w-2/5 px-4 py-4">
+                            <p class="text-sm text-[#101010] dark:text-white/80 leading-relaxed">
+                                Screens for symptoms of generalized anxiety disorder. It measures how often you've felt nervous, worried, or on edge in the last two weeks.
+                            </p>
+                        </td>
+                        <td class="w-1/12 px-2 py-4 text-center">
+                            <span class="bg-gray-200/50 dark:bg-white/10 text-gray-700 dark:text-white/80 text-xs font-medium px-3 py-1 rounded-full">~2 min</span>
+                        </td>
+                        <td class="w-1/8 px-2 py-4 text-center">
+                            <span class="bg-blue-100/50 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 text-xs font-medium px-3 py-1 rounded-full">Quick Check</span>
+                        </td>
+                        <td class="w-1/6 px-4 py-4 text-center">
+                            <div class="flex flex-col gap-2">
+                                <a href="/gad7" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
+                                    Start
+                                </a>
+                                <button (click)="openModal('gad7')" class="text-xs text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors cursor-pointer">
+                                    Learn more
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
         
         <!-- 🔳 GAD-7 Modal -->
-        <div *ngIf="activeModal === 'gad7'" class="fixed inset-0 z-50 flex items-center justify-center">
+        <div *ngIf="activeModal === 'gad7'" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <!-- Blurred backdrop -->
-            <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="closeModal()"></div>
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
         
             <!-- Modal content -->
-            <div class="relative z-10 bg-white rounded-xl shadow-xl max-w-md w-full p-6" (click)="$event.stopPropagation()">
-            <h3 class="text-xl font-semibold mb-4">About GAD-7</h3>
-            <p class="text-sm text-gray-700 mb-4">
-                The GAD-7 (Generalized Anxiety Disorder 7-item scale) is a validated self-assessment tool that helps screen for anxiety severity. It evaluates how often you've felt excessive worry, restlessness, or difficulty relaxing. GAD-7 is widely used by professionals to initiate discussions about mental health.
-            </p>
-            <div class="text-right">
-                <button (click)="closeModal()" class="text-sm text-pink-600 hover:underline">Close</button>
-            </div>
+            <div class="relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border dark:border-white/10 border-[#101010]/10 rounded-2xl shadow-2xl max-w-lg w-full p-8" (click)="$event.stopPropagation()">
+                <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">About GAD-7</h3>
+                <p class="text-[#101010] dark:text-white/80 mb-8 leading-relaxed">
+                    The GAD-7 (Generalized Anxiety Disorder 7-item scale) is a validated self-assessment tool that helps screen for anxiety severity. It evaluates how often you've felt excessive worry, restlessness, or difficulty relaxing. GAD-7 is widely used by professionals to initiate discussions about mental health.
+                </p>
+                <div class="flex justify-end">
+                    <button (click)="closeModal()" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
+                        Got it
+                    </button>
+                </div>
             </div>
         </div>
   
 
-        <!-- 🧠 DASS-21 Card -->
-        <div class="relative bg-white text-[#101010] rounded-xl shadow p-6">
-            <span class="absolute top-3 right-3 bg-green-400 text-green text-xs font-semibold px-2 py-1 rounded-full shadow">Verified</span>
-            <div class="flex gap-2 mb-2">
-            <span class="bg-gray-200 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full">~5 min</span>
-            <span class="bg-orange-100 text-orange-800 text-xs font-medium px-2 py-0.5 rounded-full">In-Depth</span>
-            </div>
-        
-            <h2 class="text-2xl font-semibold mb-2">DASS-21 – Stress, Anxiety & Depression</h2>
-            <p class="text-gray-600 mb-4">
-            A more comprehensive test that measures emotional states like tension, fear, sadness, and irritability across three subscales.
-            </p>
-        
-            <div class="flex gap-3">
-            <a href="/dass21"
-                class="inline-flex items-center justify-center w-48 h-10 rounded-md bg-pink-500 text-sm font-medium text-white shadow hover:bg-pink-600 dark:hover:bg-pink-600">
-                Start DASS-21
-            </a>
-            <button (click)="openModal('dass21')" class="text-sm text-pink-600 hover:underline">Learn more</button>
-            </div>
-        </div>
+                    <!-- DASS-21 Row -->
+                    <tr class="hover:bg-green-500/5 transition-colors">
+                        <td class="w-1/4 px-4 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
+                                    <span class="text-orange-600 dark:text-orange-400 text-lg">😤</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white">DASS-21 – Stress, Anxiety & Depression</h3>
+                                    <span class="bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-full border border-green-500/30">
+                                        Verified
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="w-2/5 px-4 py-4">
+                            <p class="text-sm text-[#101010] dark:text-white/80 leading-relaxed">
+                                A more comprehensive test that measures emotional states like tension, fear, sadness, and irritability across three subscales.
+                            </p>
+                        </td>
+                        <td class="w-1/12 px-2 py-4 text-center">
+                            <span class="bg-gray-200/50 dark:bg-white/10 text-gray-700 dark:text-white/80 text-xs font-medium px-3 py-1 rounded-full">~5 min</span>
+                        </td>
+                        <td class="w-1/8 px-2 py-4 text-center">
+                            <span class="bg-orange-100/50 dark:bg-orange-500/20 text-orange-700 dark:text-orange-400 text-xs font-medium px-3 py-1 rounded-full">In-Depth</span>
+                        </td>
+                        <td class="w-1/6 px-4 py-4 text-center">
+                            <div class="flex flex-col gap-2">
+                                <a href="/dass21" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
+                                    Start
+                                </a>
+                                <button (click)="openModal('dass21')" class="text-xs text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors cursor-pointer">
+                                    Learn more
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
         
         <!-- 🔳 DASS-21 Modal -->
-        <div *ngIf="activeModal === 'dass21'" class="fixed inset-0 z-50 flex items-center justify-center">
+        <div *ngIf="activeModal === 'dass21'" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <!-- Backdrop with blur -->
-            <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="closeModal()"></div>
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
         
             <!-- Modal content -->
-            <div class="relative z-10 bg-white rounded-xl shadow-xl max-w-md w-full p-6" (click)="$event.stopPropagation()">
-            <h3 class="text-xl font-semibold mb-4">About DASS-21</h3>
-            <p class="text-sm text-gray-700 mb-4">
-                The DASS-21 (Depression, Anxiety and Stress Scale – 21 items) is a scientifically validated tool that provides insights across three emotional states. It breaks down how you experience stress, anxiety, and depression, helping you recognize which area might need attention. It’s ideal for gaining a more complete picture of your psychological health.
-            </p>
-            <div class="text-right">
-                <button (click)="closeModal()" class="text-sm text-pink-600 hover:underline">Close</button>
-            </div>
+            <div class="relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border dark:border-white/10 border-[#101010]/10 rounded-2xl shadow-2xl max-w-lg w-full p-8" (click)="$event.stopPropagation()">
+                <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">About DASS-21</h3>
+                <p class="text-[#101010] dark:text-white/80 mb-8 leading-relaxed">
+                    The DASS-21 (Depression, Anxiety and Stress Scale – 21 items) is a scientifically validated tool that provides insights across three emotional states. It breaks down how you experience stress, anxiety, and depression, helping you recognize which area might need attention. It's ideal for gaining a more complete picture of your psychological health.
+                </p>
+                <div class="flex justify-end">
+                    <button (click)="closeModal()" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
+                        Got it
+                    </button>
+                </div>
             </div>
         </div>
         
 
-        <!-- 🌙 ISI Card -->
-        <div class="relative bg-white text-[#101010] rounded-xl shadow p-6">
-            <span class="absolute top-3 right-3 bg-green-400 text-green text-xs font-semibold px-2 py-1 rounded-full shadow">Verified</span>
-            <div class="flex gap-2 mb-2">
-            <span class="bg-gray-200 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full">~3 min</span>
-            <span class="bg-green-100 text-green-800 text-xs font-medium px-2 py-0.5 rounded-full">Quick Check</span>
-            </div>
-        
-            <h2 class="text-2xl font-semibold mb-2">ISI – Sleep Quality</h2>
-            <p class="text-gray-600 mb-4">
-            Evaluates the severity of insomnia and sleep disturbances over the past two weeks, including falling asleep, staying asleep, and satisfaction with sleep.
-            </p>
-        
-            <div class="flex gap-3">
-            <a href="/isi"
-                class="inline-flex items-center justify-center w-48 h-10 rounded-md bg-pink-500 text-sm font-medium text-white shadow hover:bg-pink-600 dark:hover:bg-pink-600">
-                Start ISI
-            </a>
-            <button (click)="openModal('isi')" class="text-sm text-pink-600 hover:underline">Learn more</button>
-            </div>
-        </div>
+                    <!-- ISI Row -->
+                    <tr class="hover:bg-green-500/5 transition-colors">
+                        <td class="w-1/4 px-4 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                                    <span class="text-purple-600 dark:text-purple-400 text-lg">🌙</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white">ISI – Sleep Quality</h3>
+                                    <span class="bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-full border border-green-500/30">
+                                        Verified
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="w-2/5 px-4 py-4">
+                            <p class="text-sm text-[#101010] dark:text-white/80 leading-relaxed">
+                                Evaluates the severity of insomnia and sleep disturbances over the past two weeks, including falling asleep, staying asleep, and satisfaction with sleep.
+                            </p>
+                        </td>
+                        <td class="w-1/12 px-2 py-4 text-center">
+                            <span class="bg-gray-200/50 dark:bg-white/10 text-gray-700 dark:text-white/80 text-xs font-medium px-3 py-1 rounded-full">~3 min</span>
+                        </td>
+                        <td class="w-1/8 px-2 py-4 text-center">
+                            <span class="bg-purple-100/50 dark:bg-purple-500/20 text-purple-700 dark:text-purple-400 text-xs font-medium px-3 py-1 rounded-full">Quick Check</span>
+                        </td>
+                        <td class="w-1/6 px-4 py-4 text-center">
+                            <div class="flex flex-col gap-2">
+                                <a href="/isi" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
+                                    Start
+                                </a>
+                                <button (click)="openModal('isi')" class="text-xs text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors cursor-pointer">
+                                    Learn more
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
         
         <!-- 🔳 ISI Modal -->
-        <div *ngIf="activeModal === 'isi'" class="fixed inset-0 z-50 flex items-center justify-center">
+        <div *ngIf="activeModal === 'isi'" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <!-- Backdrop -->
-            <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="closeModal()"></div>
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
         
             <!-- Modal content -->
-            <div class="relative z-10 bg-white rounded-xl shadow-xl max-w-md w-full p-6" (click)="$event.stopPropagation()">
-            <h3 class="text-xl font-semibold mb-4">About ISI</h3>
-            <p class="text-sm text-gray-700 mb-4">
-                The Insomnia Severity Index (ISI) is a brief and reliable screening tool that evaluates sleep issues such as difficulty falling asleep, maintaining sleep, and waking up too early. It also asks about how much these problems affect your daily functioning, mood, and overall quality of life. It’s often used in clinical and research settings.
-            </p>
-            <div class="text-right">
-                <button (click)="closeModal()" class="text-sm text-pink-600 hover:underline">Close</button>
-            </div>
+            <div class="relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border dark:border-white/10 border-[#101010]/10 rounded-2xl shadow-2xl max-w-lg w-full p-8" (click)="$event.stopPropagation()">
+                <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">About ISI</h3>
+                <p class="text-[#101010] dark:text-white/80 mb-8 leading-relaxed">
+                    The Insomnia Severity Index (ISI) is a brief and reliable screening tool that evaluates sleep issues such as difficulty falling asleep, maintaining sleep, and waking up too early. It also asks about how much these problems affect your daily functioning, mood, and overall quality of life. It's often used in clinical and research settings.
+                </p>
+                <div class="flex justify-end">
+                    <button (click)="closeModal()" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
+                        Got it
+                    </button>
+                </div>
             </div>
         </div>
         
 
-        <!-- 🔥 Burnout Card -->
-        <div class="relative bg-white text-[#101010] rounded-xl shadow p-6">
-            <span class="absolute top-3 right-3 bg-green-400 text-green text-xs font-semibold px-2 py-1 rounded-full shadow">Verified</span>
-            <div class="flex gap-2 mb-2">
-            <span class="bg-gray-200 text-gray-800 text-xs font-medium px-2 py-0.5 rounded-full">~4 min</span>
-            <span class="bg-red-100 text-red-800 text-xs font-medium px-2 py-0.5 rounded-full">Work & Stress</span>
-            </div>
-        
-            <h2 class="text-2xl font-semibold mb-2">Burnout</h2>
-            <p class="text-gray-600 mb-4">
-            Check for signs of emotional exhaustion and chronic workplace stress that may be affecting your productivity and well-being.
-            </p>
-        
-            <div class="flex gap-3">
-            <a href="/burnout"
-                class="inline-flex items-center justify-center w-48 h-10 rounded-md bg-pink-500 text-sm font-medium text-white shadow hover:bg-pink-600 dark:hover:bg-pink-600">
-                Start Burnout Test
-            </a>
-            <button (click)="openModal('burnout')" class="text-sm text-pink-600 hover:underline">Learn more</button>
-            </div>
+                    <!-- Burnout Row -->
+                    <tr class="hover:bg-green-500/5 transition-colors">
+                        <td class="w-1/4 px-4 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
+                                    <span class="text-red-600 dark:text-red-400 text-lg">🔥</span>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white">Burnout Assessment</h3>
+                                    <span class="bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-full border border-green-500/30">
+                                        Verified
+                                    </span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="w-2/5 px-4 py-4">
+                            <p class="text-sm text-[#101010] dark:text-white/80 leading-relaxed">
+                                Check for signs of emotional exhaustion and chronic workplace stress that may be affecting your productivity and well-being.
+                            </p>
+                        </td>
+                        <td class="w-1/12 px-2 py-4 text-center">
+                            <span class="bg-gray-200/50 dark:bg-white/10 text-gray-700 dark:text-white/80 text-xs font-medium px-3 py-1 rounded-full">~4 min</span>
+                        </td>
+                        <td class="w-1/8 px-2 py-4 text-center">
+                            <span class="bg-red-100/50 dark:bg-red-500/20 text-red-700 dark:text-red-400 text-xs font-medium px-3 py-1 rounded-full">Work & Stress</span>
+                        </td>
+                        <td class="w-1/6 px-4 py-4 text-center">
+                            <div class="flex flex-col gap-2">
+                                <a href="/burnout" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
+                                    Start
+                                </a>
+                                <button (click)="openModal('burnout')" class="text-xs text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors cursor-pointer">
+                                    Learn more
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
+    </div>
         
         <!-- 🔳 Burnout Modal -->
-        <div *ngIf="activeModal === 'burnout'" class="fixed inset-0 z-50 flex items-center justify-center">
+        <div *ngIf="activeModal === 'burnout'" class="fixed inset-0 z-50 flex items-center justify-center p-4">
             <!-- Blurred backdrop -->
-            <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" (click)="closeModal()"></div>
+            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
         
             <!-- Modal content -->
-            <div class="relative z-10 bg-white rounded-xl shadow-xl max-w-md w-full p-6" (click)="$event.stopPropagation()">
-            <h3 class="text-xl font-semibold mb-4">About Burnout</h3>
-            <p class="text-sm text-gray-700 mb-4">
-                Burnout is a state of emotional, mental, and physical exhaustion caused by prolonged stress — particularly from work. This questionnaire helps assess symptoms such as lack of motivation, reduced performance, and detachment. Identifying burnout early can be key to restoring balance and preventing long-term consequences.
-            </p>
-            <div class="text-right">
-                <button (click)="closeModal()" class="text-sm text-pink-600 hover:underline">Close</button>
-            </div>
+            <div class="relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border dark:border-white/10 border-[#101010]/10 rounded-2xl shadow-2xl max-w-lg w-full p-8" (click)="$event.stopPropagation()">
+                <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">About Burnout</h3>
+                <p class="text-[#101010] dark:text-white/80 mb-8 leading-relaxed">
+                    Burnout is a state of emotional, mental, and physical exhaustion caused by prolonged stress — particularly from work. This questionnaire helps assess symptoms such as lack of motivation, reduced performance, and detachment. Identifying burnout early can be key to restoring balance and preventing long-term consequences.
+                </p>
+                <div class="flex justify-end">
+                    <button (click)="closeModal()" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
+                        Got it
+                    </button>
+                </div>
             </div>
         </div>
-  
-    </div>
-
 </section>

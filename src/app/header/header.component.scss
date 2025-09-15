@@ -1,0 +1,45 @@
+// Effet de flou pour le header lors du scroll
+:host {
+  header {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    
+    // Effet de flou neutre quand on scroll
+    &.bg-white\/20 {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(255, 255, 255, 0.2) !important;
+      
+      // Dégradé sur le bas pour une transition plus propre
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 20px;
+        background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.05));
+        pointer-events: none;
+      }
+    }
+    
+    &.dark\:bg-\[\#101010\]\/20 {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      background: rgba(16, 16, 16, 0.2) !important;
+      
+      // Dégradé sur le bas pour une transition plus propre
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 20px;
+        background: linear-gradient(to bottom, transparent, rgba(16, 16, 16, 0.05));
+        pointer-events: none;
+      }
+    }
+  }
+}
+

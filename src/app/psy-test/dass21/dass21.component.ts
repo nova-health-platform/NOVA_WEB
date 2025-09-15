@@ -10,8 +10,27 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./dass21.component.scss']
 })
 export class Dass21Component {
-  step: 'intro' | 'questions' | 'result' = 'intro';
+  step: 'intro' | 'demographics' | 'questions' | 'tipi' | 'vcl' | 'result' = 'intro';
   currentQuestionIndex = 0;
+  currentIndex = 0;
+  tipiIndex = 0;
+  
+  // Progress calculation
+  get progress(): number {
+    const totalSteps = 6; // intro, demographics, questions, tipi, vcl, result
+    let currentStep = 0;
+    
+    switch (this.step) {
+      case 'intro': currentStep = 0; break;
+      case 'demographics': currentStep = 1; break;
+      case 'questions': currentStep = 2; break;
+      case 'tipi': currentStep = 3; break;
+      case 'vcl': currentStep = 4; break;
+      case 'result': currentStep = 5; break;
+    }
+    
+    return (currentStep / (totalSteps - 1)) * 100;
+  }
 
   questions = [
     { text: 'I found it hard to wind down', answer: null },
@@ -52,9 +71,63 @@ export class Dass21Component {
   anxietyLabel = '';
   stressLabel = '';
 
+  // Demographics
+  demographics = {
+    age: null,
+    gender: null,
+    education: null,
+    urban: null,
+    married: null,
+    familysize: null
+  };
+
+  // TIPI questions
+  tipiQuestions = [
+    'I see myself as extraverted, enthusiastic.',
+    'I see myself as critical, quarrelsome.',
+    'I see myself as dependable, self-disciplined.',
+    'I see myself as anxious, easily upset.',
+    'I see myself as open to new experiences, complex.',
+    'I see myself as reserved, quiet.',
+    'I see myself as sympathetic, warm.',
+    'I see myself as disorganized, careless.',
+    'I see myself as calm, emotionally stable.',
+    'I see myself as conventional, uncreative.'
+  ];
+
+  tipi: (number | null)[] = new Array(10).fill(null);
+
+  // VCL words
+  vclWords = [
+    'boat', 'incoherent', 'pallid', 'robot', 'audible', 'cuivocal', 'paucity', 'epistemology', 'florted', 'decide', 'pastiche', 'verdid', 'abysmal', 'lucid', 'betray', 'funny'
+  ];
+
+  vcl: boolean[] = new Array(16).fill(false);
+
   startTest() {
-    this.step = 'questions';
-    this.currentQuestionIndex = 0;
+    this.step = 'demographics';
+    this.currentIndex = 0;
+  }
+
+  nextDemographicStep() {
+    if (this.currentIndex < 5) {
+      this.currentIndex++;
+    } else {
+      this.step = 'questions';
+      this.currentQuestionIndex = 0;
+    }
+  }
+
+  nextTipiQuestion() {
+    if (this.tipiIndex < 9) {
+      this.tipiIndex++;
+    } else {
+      this.step = 'vcl';
+    }
+  }
+
+  submitVCL() {
+    this.calculateResults();
   }
 
   nextQuestion() {
@@ -66,7 +139,8 @@ export class Dass21Component {
     if (this.currentQuestionIndex < this.questions.length - 1) {
       this.currentQuestionIndex++;
     } else {
-      this.calculateResults();
+      this.step = 'tipi';
+      this.tipiIndex = 0;
     }
   }
 
@@ -116,12 +190,31 @@ export class Dass21Component {
   reset() {
     this.questions.forEach(q => q.answer = null);
     this.currentQuestionIndex = 0;
+    this.currentIndex = 0;
+    this.tipiIndex = 0;
     this.depressionScore = 0;
     this.anxietyScore = 0;
     this.stressScore = 0;
     this.depressionLabel = '';
     this.anxietyLabel = '';
     this.stressLabel = '';
+    
+    // Reset demographics
+    this.demographics = {
+      age: null,
+      gender: null,
+      education: null,
+      urban: null,
+      married: null,
+      familysize: null
+    };
+    
+    // Reset TIPI
+    this.tipi = new Array(10).fill(null);
+    
+    // Reset VCL
+    this.vcl = new Array(16).fill(false);
+    
     this.step = 'intro';
   }
 }

@@ -1,219 +1,295 @@
-<section class="min-h-screen">
-  <div class="max-w-5xl mx-auto px-4 py-10 text-white">
+<!-- 🧠 Burnout Self-Assessment -->
+<section class="min-h-screen w-full px-6 py-16">
+    <!-- Header Section -->
+    <div class="text-center mb-16">
+        <p class="text-sm font-bold uppercase tracking-widest text-green-500 mb-4">Workplace Wellness</p>
+        <h1 class="text-lg font-bold text-[#101010] dark:text-white mb-6">
+            Burnout Self-Assessment
+        </h1>
+        <hr class="w-32 mx-auto h-0.5 border-t-0 bg-green-500/90 mb-6" />
+        <p class="text-lg text-[#101010] dark:text-white/80 max-w-3xl mx-auto">
+            This burnout questionnaire helps identify signs of emotional exhaustion, depersonalization,
+            and reduced personal accomplishment. It is inspired by tools such as the Maslach Burnout Inventory.
+        </p>
+    </div>
 
     <!-- Intro Screen -->
-    <div *ngIf="step === 'intro'" class="space-y-6">
-      <h1 class="text-3xl font-bold text-white text-center">Burnout Self-Assessment</h1>
-
-      <div class="mt-8 flex flex-col md:flex-row md:items-stretch md:justify-between gap-4">
-        <!-- Left: Description -->
-        <div class="bg-white rounded-xl shadow p-6 md:w-1/2 space-y-4 flex flex-col justify-between">
-          <div>
-            <p class="text-black text-justify">
-              This burnout questionnaire helps identify signs of emotional exhaustion, depersonalization,
-              and reduced personal accomplishment. It is inspired by tools such as the Maslach Burnout Inventory.
-            </p>
-            <div class="bg-[#101010] p-6 rounded-xl shadow max-w-3xl mx-auto mt-6">
-              <h2 class="text-pink-400 text-xl font-semibold mb-2">Why take this assessment?</h2>
-              <ul class="list-disc pl-5 space-y-2 text-gray-200">
-                <li>Gauge your risk of burnout</li>
-                <li>Take early action to prevent worsening</li>
-                <li>Reflect on your work-related stress</li>
-                <li>Fast, anonymous, and evidence-informed</li>
-              </ul>
+    <div *ngIf="step === 'intro'" class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Left: Description -->
+            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
+                <h3 class="text-xl font-bold text-[#101010] dark:text-white mb-4">About Burnout Assessment</h3>
+                <p class="text-[#101010] dark:text-white/80 mb-6 leading-relaxed">
+                    This burnout questionnaire helps identify signs of emotional exhaustion, depersonalization,
+                    and reduced personal accomplishment. It is inspired by tools such as the Maslach Burnout Inventory.
+                </p>
+                
+                <div class="bg-green-500/10 border border-green-500/20 rounded-xl p-4">
+                    <h4 class="text-green-600 dark:text-green-400 font-semibold mb-3">Why take this assessment?</h4>
+                    <ul class="space-y-2 text-[#101010] dark:text-white/80 text-sm">
+                        <li class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            Gauge your risk of burnout
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            Take early action to prevent worsening
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            Reflect on your work-related stress
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                            Fast, anonymous, and evidence-informed
+                        </li>
+                    </ul>
+                </div>
             </div>
-          </div>
+
+            <!-- Right: Interpretation Guide -->
+            <div class="space-y-6">
+                <div class="rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-6">
+                    <div class="flex items-start gap-3">
+                        <span class="text-yellow-600 dark:text-yellow-400 text-xl">⚠️</span>
+                        <div>
+                            <h4 class="text-yellow-600 dark:text-yellow-400 font-semibold mb-2">Important Notice</h4>
+                            <p class="text-[#101010] dark:text-white/80 text-sm">
+                                This tool is not a diagnosis. It provides guidance based on your answers. If you're overwhelmed,
+                                talk to a healthcare provider.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
+                    <h4 class="text-green-600 dark:text-green-400 font-semibold mb-4">Understanding your results</h4>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[#101010] dark:text-white/80">0 – 18</span>
+                            <span class="text-green-600 dark:text-green-400 font-medium">Low risk of burnout</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[#101010] dark:text-white/80">19 – 36</span>
+                            <span class="text-yellow-600 dark:text-yellow-400 font-medium">Moderate signs of burnout</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-[#101010] dark:text-white/80">37 – 54</span>
+                            <span class="text-red-600 dark:text-red-400 font-medium">High risk of burnout</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Right: Disclaimer + Start -->
-        <div class="md:w-1/2 space-y-4 flex flex-col justify-between">
-          <div>
-            <div class="bg-pink-500 text-white rounded-xl px-6 py-5 mb-4 shadow-inner text-justify">
-              ⚠️ This tool is not a diagnosis. It provides guidance based on your answers. If you're overwhelmed,
-              talk to a healthcare provider.
-            </div>
-            <div class="bg-pink-500/10 border-2 border-pink-500 rounded-xl p-6 text-left text-pink-500">
-              <h3 class="font-semibold text-pink-400 mb-2">Understanding your results</h3>
-              <ul class="space-y-4 text-white">
-                <li><strong>0 – 18 : </strong> Low risk of burnout</li>
-                <li><strong>19 – 36 : </strong> Moderate signs of burnout</li>
-                <li><strong>37 – 54 : </strong> High risk of burnout</li>
-              </ul>
-            </div>
-          </div>
+        <div class="text-center">
+            <button (click)="startTest()" 
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                Start the test
+            </button>
         </div>
-      </div>
-
-      <div class="text-right">
-        <button (click)="startTest()"
-          class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
-          Start the test
-        </button>
-      </div>
     </div>
 
     <!-- Questions Step -->
-    <form *ngIf="step === 'questions'" (ngSubmit)="nextQuestion()" class="space-y-8 mt-[5vh]">
-      <div class="bg-pink-500/10 border-3 border-pink-500 rounded-xl shadow p-6">
-        <!-- Progress Bar -->
-        <div class="w-full bg-pink-500/30 rounded-full h-2.5 mb-6">
-          <div class="bg-pink-500 h-2.5 rounded-full transition-all duration-300"
-            [style.width.%]="((currentQuestionIndex + 1) / (questions.length + 1)) * 100">
-          </div>
-        </div>
-
-        <!-- Question and Index -->
-        <div class="flex items-center justify-between mb-6">
-          <label class="text-lg font-medium pr-6">
-            {{ questions[currentQuestionIndex].text }}
-          </label>
-          <span class="text-white whitespace-nowrap">
-            {{ currentQuestionIndex + 1 }} / {{ questions.length + 1 }}
-          </span>
-        </div>
-
-        <!-- Options -->
-        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <li *ngFor="let opt of options" class="w-full">
-            <div class="flex items-center ps-4 border border-gray-200 rounded-sm bg-white text-[#101010]">
-              <input type="radio" [id]="'opt-' + currentQuestionIndex + '-' + opt.value"
-                [value]="opt.value" [name]="'q' + currentQuestionIndex"
-                [(ngModel)]="questions[currentQuestionIndex].answer"
-                class="w-6 h-6 accent-pink-500 bg-pink-500 border-pink-500" required>
-              <label [for]="'opt-' + currentQuestionIndex + '-' + opt.value"
-                class="w-full py-4 ms-2 font-medium text-[#101010]">
-                {{ opt.label }}
-              </label>
+    <form *ngIf="step === 'questions'" (ngSubmit)="nextQuestion()" class="max-w-4xl mx-auto">
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
+            <!-- Progress Bar -->
+            <div class="w-full bg-green-500/20 rounded-full h-3 mb-8">
+                <div class="bg-green-500 h-3 rounded-full transition-all duration-300"
+                    [style.width.%]="((currentQuestionIndex + 1) / (questions.length + 1)) * 100">
+                </div>
             </div>
-          </li>
-        </ul>
-      </div>
 
-      <div class="text-right">
-        <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
-          Next
-        </button>
-      </div>
+            <!-- Question Header -->
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-xl font-bold text-[#101010] dark:text-white pr-6">
+                    {{ questions[currentQuestionIndex].text }}
+                </h3>
+                <span class="text-[#101010] dark:text-white/60 text-sm font-medium whitespace-nowrap">
+                    {{ currentQuestionIndex + 1 }} / {{ questions.length + 1 }}
+                </span>
+            </div>
+
+            <!-- Options -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div *ngFor="let opt of options" class="w-full">
+                    <label class="flex items-center p-4 border border-gray-200 dark:border-white/20 rounded-lg bg-white dark:bg-white/5 text-[#101010] dark:text-white hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors cursor-pointer">
+                        <input type="radio" 
+                            [id]="'opt-' + currentQuestionIndex + '-' + opt.value"
+                            [value]="opt.value" 
+                            [name]="'q' + currentQuestionIndex"
+                            [(ngModel)]="questions[currentQuestionIndex].answer"
+                            class="w-5 h-5 text-green-500 bg-gray-100 border-gray-300 focus:ring-green-500 dark:focus:ring-green-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
+                            required>
+                        <span class="ml-4 font-medium">{{ opt.label }}</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" 
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                Next
+            </button>
+        </div>
     </form>
 
     <!-- Impact Step -->
-    <form *ngIf="step === 'impact'" (ngSubmit)="submitForm()" class="space-y-8 mt-[5vh]">
-      <div class="bg-pink-500/10 border-3 border-pink-500 rounded-xl shadow p-6">
-        <div class="w-full bg-pink-500/30 rounded-full h-2.5 mb-6">
-          <div class="bg-pink-500 h-2.5 rounded-full transition-all duration-500 ease-in-out" [style.width.%]="100"></div>
-        </div>
-
-        <div class="flex items-center justify-between mb-6">
-          <label class="text-lg font-medium pr-6">
-            If you had these issues, how much did they affect your work, home life, or relationships?
-          </label>
-          <span class="text-white whitespace-nowrap">
-            {{ questions.length + 1 }} / {{ questions.length + 1 }}
-          </span>
-        </div>
-
-        <ul class="space-y-4">
-          <li *ngFor="let opt of [
-            { label: 'Not at all', value: 0 },
-            { label: 'Somewhat', value: 1 },
-            { label: 'A lot', value: 2 },
-            { label: 'Extremely', value: 3 }
-          ]" class="w-full">
-            <div class="flex items-center ps-4 border border-gray-200 rounded-sm bg-white text-[#101010]">
-              <input type="radio" [id]="'impact-' + opt.value" [value]="opt.value" name="impact"
-                [(ngModel)]="impact" class="w-6 h-6 accent-pink-500 bg-pink-500 border-pink-500" required>
-              <label [for]="'impact-' + opt.value" class="w-full py-4 ms-2 font-medium text-[#101010]">
-                {{ opt.label }}
-              </label>
+    <form *ngIf="step === 'impact'" (ngSubmit)="submitForm()" class="max-w-4xl mx-auto">
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
+            <!-- Progress Bar -->
+            <div class="w-full bg-green-500/20 rounded-full h-3 mb-8">
+                <div class="bg-green-500 h-3 rounded-full transition-all duration-500 ease-in-out" [style.width.%]="100"></div>
             </div>
-          </li>
-        </ul>
-      </div>
 
-      <div class="text-right">
-        <button type="submit" class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow">
-          View Results
-        </button>
-      </div>
+            <!-- Question Header -->
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-xl font-bold text-[#101010] dark:text-white pr-6">
+                    If you had these issues, how much did they affect your work, home life, or relationships?
+                </h3>
+                <span class="text-[#101010] dark:text-white/60 text-sm font-medium whitespace-nowrap">
+                    {{ questions.length + 1 }} / {{ questions.length + 1 }}
+                </span>
+            </div>
+
+            <!-- Options -->
+            <div class="space-y-4">
+                <div *ngFor="let opt of [
+                    { label: 'Not at all', value: 0 },
+                    { label: 'Somewhat', value: 1 },
+                    { label: 'A lot', value: 2 },
+                    { label: 'Extremely', value: 3 }
+                ]" class="w-full">
+                    <label class="flex items-center p-4 border border-gray-200 dark:border-white/20 rounded-lg bg-white dark:bg-white/5 text-[#101010] dark:text-white hover:bg-green-50 dark:hover:bg-green-500/10 transition-colors cursor-pointer">
+                        <input type="radio" 
+                            [id]="'impact-' + opt.value" 
+                            [value]="opt.value" 
+                            name="impact"
+                            [(ngModel)]="impact" 
+                            class="w-5 h-5 text-green-500 bg-gray-100 border-gray-300 focus:ring-green-500 dark:focus:ring-green-500 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" 
+                            required>
+                        <span class="ml-4 font-medium">{{ opt.label }}</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" 
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                View Results
+            </button>
+        </div>
     </form>
 
     <!-- Results Step -->
-    <div *ngIf="step === 'result'" class="space-y-4">
-      <div class="text-center">
-        <h2 class="text-3xl font-bold text-white">Your Burnout Result</h2>
-        <p class="text-gray-400 mt-1 text-sm">This is a reflection of your recent experience.</p>
-      </div>
-
-      <div class="bg-white rounded-xl shadow-md p-6 space-y-4">
-        <div class="text-center mb-4">
-          <div class="text-xl font-bold text-[#101010]">Your Score: {{ totalScore }}</div>
-          <div class="text-md text-[#101010]">{{ interpretation }}</div>
+    <div *ngIf="step === 'result'" class="max-w-4xl mx-auto">
+        <!-- Main Title -->
+        <div class="text-center mb-12">
+            <h2 class="text-lg font-bold text-[#101010] dark:text-white mb-4">Your Burnout Result</h2>
+            <p class="text-[#101010] dark:text-white/60">This is a reflection of your recent experience.</p>
         </div>
 
-        <!-- Bar & Labels -->
-        <div class="space-y-3">
-          <div class="flex w-full h-4 gap-1">
-            <div class="flex-1 bg-pink-500/40 rounded overflow-hidden">
-              <div class="h-full bg-pink-500 transition-all duration-500" [style.width.%]="(totalScore / 54) * 100"></div>
+        <!-- Score Card -->
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
+            <!-- Score & Interpretation -->
+            <div class="text-center mb-8">
+                <div class="text-4xl font-bold text-[#101010] dark:text-white mb-2">Your Score: {{ totalScore }}</div>
+                <div class="text-lg text-[#101010] dark:text-white/80">{{ interpretation }}</div>
             </div>
-          </div>
-          <div class="flex justify-between text-xs text-[#101010] px-1">
-            <span>Low</span>
-            <span>Moderate</span>
-            <span>High</span>
-          </div>
+
+            <!-- Progress Bar -->
+            <div class="space-y-4">
+                <div class="flex w-full h-6 gap-1">
+                    <div class="flex-1 bg-gray-200 dark:bg-white/20 rounded overflow-hidden">
+                        <div class="h-full bg-green-500 transition-all duration-500" [style.width.%]="(totalScore / 54) * 100"></div>
+                    </div>
+                </div>
+                <div class="flex justify-between text-xs text-[#101010] dark:text-white/60 px-1">
+                    <span>Low</span>
+                    <span>Moderate</span>
+                    <span>High</span>
+                </div>
+            </div>
+
+            <!-- Personalized Advice -->
+            <div class="mt-8 p-6 rounded-xl border border-green-500/20 bg-green-500/10">
+                <div *ngIf="totalScore <= 18" class="text-center text-[#101010] dark:text-white/80">
+                    You show low signs of burnout. Maintain healthy routines and boundaries.
+                </div>
+                <div *ngIf="totalScore > 18 && totalScore <= 36" class="text-center text-[#101010] dark:text-white/80">
+                    Moderate signs of burnout. Consider small changes and talk to someone you trust.
+                </div>
+                <div *ngIf="totalScore > 36" class="text-center text-[#101010] dark:text-white/80">
+                    High risk of burnout. It's time to prioritize recovery. Please seek professional or peer support.
+                </div>
+            </div>
+
+            <p class="text-xs text-[#101010] dark:text-white/40 mt-6 text-center">
+                This is not a diagnosis. If you're feeling overwhelmed, talk to a health or mental health professional.
+            </p>
         </div>
 
-        <!-- Personalized Advice -->
-        <div class="bg-pink-500/10 border-2 border-pink-500 text-[#101010] rounded-xl px-6 py-5 mb-4 shadow-inner text-center">
-          <div *ngIf="totalScore <= 18">
-            You show low signs of burnout. Maintain healthy routines and boundaries.
-          </div>
-          <div *ngIf="totalScore > 18 && totalScore <= 36">
-            Moderate signs of burnout. Consider small changes and talk to someone you trust.
-          </div>
-          <div *ngIf="totalScore > 36">
-            High risk of burnout. It's time to prioritize recovery. Please seek professional or peer support.
-          </div>
+        <!-- Support Resources -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Understanding Results -->
+            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
+                <h4 class="text-green-600 dark:text-green-400 font-semibold mb-4">Understanding your results</h4>
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[#101010] dark:text-white/80">0 – 18</span>
+                        <span class="text-green-600 dark:text-green-400 font-medium">Low risk of burnout — maintain self-care and balance.</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[#101010] dark:text-white/80">19 – 36</span>
+                        <span class="text-yellow-600 dark:text-yellow-400 font-medium">Moderate signs of burnout — reflect, set limits, and consider adjustments.</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-[#101010] dark:text-white/80">37 – 54</span>
+                        <span class="text-red-600 dark:text-red-400 font-medium">High risk — reduce load, prioritize rest, seek support or counseling.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practical Tips -->
+            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
+                <h4 class="text-green-600 dark:text-green-400 font-semibold mb-4">Tips to reduce burnout</h4>
+                <ul class="space-y-3 text-sm text-[#101010] dark:text-white/80">
+                    <li class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                        Take regular breaks and disconnect outside work hours
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                        Set realistic goals and manage expectations
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                        Practice mindfulness, breathing exercises, or light activity
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                        Seek social support from colleagues, friends or family
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                        Speak with a supervisor about workload or role clarity
+                    </li>
+                    <li class="flex items-center gap-2">
+                        <span class="w-2 h-2 bg-green-500 rounded-full"></span>
+                        Consider speaking with a coach, therapist, or counselor
+                    </li>
+                </ul>
+            </div>
         </div>
 
+        <!-- Restart Button -->
+        <div class="text-center">
+            <button (click)="reset()" 
+                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                Restart Assessment
+            </button>
+        </div>
     </div>
-    <!-- Two-column section: Understanding + Tips -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <!-- Understanding Results -->
-      <div class="bg-pink-500/10 border-2 border-pink-500 rounded-xl p-6 text-left text-pink-500">
-        <h3 class="font-semibold text-pink-400 mb-2">Understanding your results</h3>
-        <ul class="space-y-4 text-white">
-          <li><strong>0 – 18 : </strong> Low risk of burnout — maintain self-care and balance.</li>
-          <li><strong>19 – 36 : </strong> Moderate signs of burnout — reflect, set limits, and consider adjustments.</li>
-          <li><strong>37 – 54 : </strong> High risk — reduce load, prioritize rest, seek support or counseling.</li>
-        </ul>
-      </div>
-
-      <!-- Practical Tips -->
-      <div class="bg-white p-6 rounded-xl text-[#101010] space-y-2">
-        <h3 class="text-pink-500 font-semibold mb-2">Tips to reduce burnout</h3>
-        <ul class="list-disc pl-5 space-y-1">
-          <li>Take regular breaks and disconnect outside work hours</li>
-          <li>Set realistic goals and manage expectations</li>
-          <li>Practice mindfulness, breathing exercises, or light activity</li>
-          <li>Seek social support from colleagues, friends or family</li>
-          <li>Speak with a supervisor about workload or role clarity</li>
-          <li>Consider speaking with a coach, therapist, or counselor</li>
-        </ul>
-      </div>
-    </div>
-
-    <p class="text-xs text-gray-400 mt-4 text-center">
-      This is not a diagnosis. If you're feeling overwhelmed, talk to a health or mental health professional.
-    </p>
-
-      <div class="text-right">
-        <button (click)="reset()"
-          class="bg-pink-500 hover:bg-pink-600 text-white px-6 py-3 rounded-md shadow-md transition">
-          Restart Assessment
-        </button>
-      </div>
-    </div>
-  </div>
 </section>

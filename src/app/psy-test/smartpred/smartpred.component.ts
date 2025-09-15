@@ -11,201 +11,102 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./smartpred.component.scss']
 })
 export class SmartpredComponent {
-  step: 'intro' | 'demographics' | 'questions' | 'tipi' | 'vcl' | 'result' = 'intro';
-  currentIndex = 0;
-  currentQuestionIndex = 0;
-  tipiIndex = 0;
-  startTime = 0;
+  step: 'intro' | 'analyzing' | 'result' = 'intro';
+  // AI Analysis Results
+  overallScore = 0;
+  overallInterpretation = '';
+  pattern1 = '';
+  pattern2 = '';
+  pattern3 = '';
+  risk1 = '';
+  risk2 = '';
+  risk3 = '';
+  immediateAction1 = '';
+  immediateAction2 = '';
+  longTermStrategy1 = '';
+  longTermStrategy2 = '';
+  professionalAdvice = '';
 
-  depressionScore = 0;
-  anxietyScore = 0;
-  stressScore = 0;
-  depressionLabel = '';
-  anxietyLabel = '';
-  stressLabel = '';
-
-  demographics = {
-    education: null,
-    urban: null,
-    gender: null,
-    age: null,
-    married: null,
-    familysize: null
-  };
-
-  questions = [
-    { text: 'I found myself getting upset by quite trivial things.', answer: null },
-    { text: 'I was aware of dryness of my mouth.', answer: null },
-    { text: "I couldn't seem to experience any positive feeling at all.", answer: null },
-    { text: 'I experienced breathing difficulty (e.g., excessively rapid breathing, breathlessness).', answer: null },
-    { text: "I just couldn't seem to get going.", answer: null },
-    { text: 'I tended to over-react to situations.', answer: null },
-    { text: 'I had a feeling of shakiness (e.g., legs going to give way).', answer: null },
-    { text: 'I found it difficult to relax.', answer: null },
-    { text: 'I found myself in situations that made me so anxious I was most relieved when they ended.', answer: null },
-    { text: 'I felt that I had nothing to look forward to.', answer: null },
-    { text: 'I found myself getting upset rather easily.', answer: null },
-    { text: 'I felt that I was using a lot of nervous energy.', answer: null },
-    { text: 'I felt sad and depressed.', answer: null },
-    { text: 'I found myself getting impatient when I was delayed in any way.', answer: null },
-    { text: 'I had a feeling of faintness.', answer: null },
-    { text: 'I felt that I had lost interest in just about everything.', answer: null },
-    { text: "I felt I wasn't worth much as a person.", answer: null },
-    { text: 'I felt that I was rather touchy.', answer: null },
-    { text: 'I perspired noticeably (e.g., hands sweaty) in the absence of exertion.', answer: null },
-    { text: 'I felt scared without any good reason.', answer: null },
-    { text: "I felt that life wasn't worthwhile.", answer: null },
-    { text: 'I found it hard to wind down.', answer: null },
-    { text: 'I had difficulty in swallowing.', answer: null },
-    { text: "I couldn't seem to get any enjoyment out of the things I did.", answer: null },
-    { text: 'I was aware of the action of my heart in the absence of exertion.', answer: null },
-    { text: 'I felt down-hearted and blue.', answer: null },
-    { text: 'I found that I was very irritable.', answer: null },
-    { text: 'I felt I was close to panic.', answer: null },
-    { text: 'I found it hard to calm down after something upset me.', answer: null },
-    { text: 'I feared that I would be "thrown" by some trivial but unfamiliar task.', answer: null },
-    { text: 'I was unable to become enthusiastic about anything.', answer: null },
-    { text: 'I found it difficult to tolerate interruptions to what I was doing.', answer: null },
-    { text: 'I was in a state of nervous tension.', answer: null },
-    { text: 'I felt I was pretty worthless.', answer: null },
-    { text: 'I was intolerant of anything that kept me from getting on with what I was doing.', answer: null },
-    { text: 'I felt terrified.', answer: null },
-    { text: 'I could see nothing in the future to be hopeful about.', answer: null },
-    { text: 'I felt that life was meaningless.', answer: null },
-    { text: 'I found myself getting agitated.', answer: null },
-    { text: 'I was worried about situations in which I might panic and make a fool of myself.', answer: null },
-    { text: 'I experienced trembling (e.g., in the hands).', answer: null },
-    { text: 'I found it difficult to work up the initiative to do things.', answer: null }
-  ];
-
-  tipi = Array(10).fill(null);
-  tipiQuestions = [
-    'Extraverted, enthusiastic',
-    'Critical, quarrelsome',
-    'Dependable, self-disciplined',
-    'Anxious, easily upset',
-    'Open to new experiences, complex',
-    'Reserved, quiet',
-    'Sympathetic, warm',
-    'Disorganized, careless',
-    'Calm, emotionally stable',
-    'Conventional, uncreative'
-  ];
-
-  vcl = Array(16).fill(false);
-  vclWords = [
-    'boat', 'incoherent', 'pallid', 'robot', 'audible', 'cuivocal', 'paucity', 'epistemology',
-    'florted', 'decide', 'pastiche', 'verdid', 'abysmal', 'lucid', 'betray', 'funny'
-  ];
-
-  options = [
-    { label: 'Did not apply to me at all', value: 1 },
-    { label: 'Applied to me to some degree, or some of the time', value: 2 },
-    { label: 'Applied to me to a considerable degree, or a good part of the time', value: 3 },
-    { label: 'Applied to me very much, or most of the time', value: 4 }
-  ];
 
   constructor(private http: HttpClient) {}
 
-  get progress(): number {
-    const totalSteps = 6 + this.questions.length + this.tipi.length + 1; // demographics + dass + tipi + vcl
-    const completed = this.step === 'demographics' ? this.currentIndex
-      : this.step === 'questions' ? 6 + this.currentQuestionIndex
-      : this.step === 'tipi' ? 6 + this.questions.length + this.tipiIndex
-      : this.step === 'vcl' ? 6 + this.questions.length + this.tipi.length
-      : totalSteps;
-    return (completed / totalSteps) * 100;
+  startAnalysis() {
+    this.step = 'analyzing';
+    
+    // Simulate AI analysis with realistic data
+    setTimeout(() => {
+      this.generateMockResults();
+      this.step = 'result';
+    }, 3000);
   }
 
-  startTest() {
-    this.step = 'demographics';
-    this.currentIndex = 0;
-    this.startTime = Date.now();
-  }
-
-  nextDemographicStep() {
-    if (this.currentIndex < 5) {
-      this.currentIndex++;
+  private generateMockResults() {
+    // Generate realistic mock data for demonstration
+    this.overallScore = Math.floor(Math.random() * 40) + 60; // 60-100 range
+    
+    if (this.overallScore >= 80) {
+      this.overallInterpretation = 'Excellent mental health indicators';
+    } else if (this.overallScore >= 70) {
+      this.overallInterpretation = 'Good mental health with minor areas for improvement';
+    } else if (this.overallScore >= 60) {
+      this.overallInterpretation = 'Moderate mental health with some concerns';
     } else {
-      this.step = 'questions';
-      this.currentQuestionIndex = 0;
+      this.overallInterpretation = 'Significant mental health concerns detected';
     }
+
+    this.pattern1 = 'Consistent stress patterns during work hours';
+    this.pattern2 = 'Positive correlation between sleep quality and mood';
+    this.pattern3 = 'Social support appears to be a protective factor';
+
+    this.risk1 = 'Work-related stress levels are elevated';
+    this.risk2 = 'Sleep quality could be improved';
+    this.risk3 = 'Limited coping strategies identified';
+
+    this.immediateAction1 = 'Practice 10 minutes of daily mindfulness meditation';
+    this.immediateAction2 = 'Establish a consistent sleep schedule';
+
+    this.longTermStrategy1 = 'Develop stress management techniques';
+    this.longTermStrategy2 = 'Build stronger social support networks';
+
+    this.professionalAdvice = 'Consider speaking with a mental health professional if symptoms persist or worsen over time.';
   }
 
-  nextQuestion() {
-    if (this.questions[this.currentQuestionIndex].answer == null) {
-      alert('Please answer the question.');
-      return;
-    }
-    if (this.currentQuestionIndex < this.questions.length - 1) {
-      this.currentQuestionIndex++;
-    } else {
-      this.step = 'tipi';
-      this.tipiIndex = 0;
-    }
-  }
-
-  nextTipiQuestion() {
-    if (this.tipi[this.tipiIndex] == null) {
-      alert('Please select a value.');
-      return;
-    }
-    if (this.tipiIndex < this.tipi.length - 1) {
-      this.tipiIndex++;
-    } else {
-      this.step = 'vcl';
-    }
-  }
-
-  submitVCL() {
-    const elapsed = (Date.now() - this.startTime) / 1000;
-    const payload = {
-      answers: this.questions.map(q => q.answer),
-      tipi: this.tipi,
-      vcl: this.vcl,
-      demographics: this.demographics,
-      testelapse: elapsed
+  exportResults() {
+    const results = {
+      overallScore: this.overallScore,
+      interpretation: this.overallInterpretation,
+      patterns: [this.pattern1, this.pattern2, this.pattern3],
+      risks: [this.risk1, this.risk2, this.risk3],
+      immediateActions: [this.immediateAction1, this.immediateAction2],
+      longTermStrategies: [this.longTermStrategy1, this.longTermStrategy2],
+      professionalAdvice: this.professionalAdvice,
+      timestamp: new Date().toISOString()
     };
 
-    this.http.post<any>('http://localhost:5000/api/mental-health/analyze', payload).subscribe({
-      next: (res) => {
-        this.depressionScore = res.depression;
-        this.anxietyScore = res.anxiety;
-        this.stressScore = res.stress;
-        this.depressionLabel = res.labels.depression;
-        this.anxietyLabel = res.labels.anxiety;
-        this.stressLabel = res.labels.stress;
-        this.step = 'result';
-      },
-      error: (err) => {
-        alert('Failed to analyze.');
-        console.error(err);
-      }
-    });
+    const dataStr = JSON.stringify(results, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'mental-health-analysis.json';
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   reset() {
     this.step = 'intro';
-    this.currentIndex = 0;
-    this.currentQuestionIndex = 0;
-    this.tipiIndex = 0;
-    this.startTime = 0;
-    this.depressionScore = 0;
-    this.anxietyScore = 0;
-    this.stressScore = 0;
-    this.depressionLabel = '';
-    this.anxietyLabel = '';
-    this.stressLabel = '';
-    this.demographics = {
-      education: null,
-      urban: null,
-      gender: null,
-      age: null,
-      married: null,
-      familysize: null
-    };
-    this.questions.forEach(q => q.answer = null);
-    this.tipi.fill(null);
-    this.vcl.fill(false);
+    this.overallScore = 0;
+    this.overallInterpretation = '';
+    this.pattern1 = '';
+    this.pattern2 = '';
+    this.pattern3 = '';
+    this.risk1 = '';
+    this.risk2 = '';
+    this.risk3 = '';
+    this.immediateAction1 = '';
+    this.immediateAction2 = '';
+    this.longTermStrategy1 = '';
+    this.longTermStrategy2 = '';
+    this.professionalAdvice = '';
   }
 }

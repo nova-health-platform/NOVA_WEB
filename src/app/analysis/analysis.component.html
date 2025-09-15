@@ -542,54 +542,47 @@
                     <ng-container *ngTemplateOutlet="tabNavigation"></ng-container>
                     
                     <!-- Gender Distribution Container -->
-                    <div *ngIf="showGenderChart" class="bg-transparent backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden mb-4 w-full">
-                      <div class="p-6">
-                        <div class="flex items-center space-x-4 mb-4">
-                          <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+                    <div *ngIf="showGenderChart" class="mb-8 w-full border border-white/10 rounded-xl p-6">
+                      <div class="mb-6">
+                        <div class="flex items-start space-x-4 mb-3">
+                          <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path>
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
                             </svg>
                           </div>
-                          <div>
-                            <h3 class="text-xl font-bold text-white">Gender Distribution</h3>
-                            <p class="text-white/70 text-sm">Male vs Female cases</p>
+                          <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-white mb-1">Gender Distribution</h3>
+                            <p class="text-white/60 text-sm leading-relaxed">Distribution of disease cases between men and women</p>
                           </div>
                         </div>
-                        
-                        <div class="bg-green-500/10 backdrop-blur-sm rounded-xl p-4 border border-green-500/20">
-                          <div class="w-full aspect-square max-w-[200px] mx-auto mb-4">
-                            <canvas id="genderChart" class="w-full h-full"></canvas>
-                          </div>
-                          <div class="text-sm text-white/80 text-center leading-relaxed">
-                            Distribution of disease cases between men and women
-                          </div>
+                      </div>
+                      
+                      <div class="flex justify-center">
+                        <div class="w-64 h-64">
+                          <canvas id="genderChart" class="w-full h-full"></canvas>
                         </div>
                       </div>
                     </div>
 
                     <!-- Age Distribution Container -->
-                    <div *ngIf="showAgeChart" class="bg-transparent backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden mb-4">
-                      <div class="p-6">
-                        <div class="flex items-center space-x-4 mb-4">
-                          <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+                    <div *ngIf="showAgeChart" class="mb-4 w-full border border-white/10 rounded-xl p-6">
+                      <div class="mb-6">
+                        <div class="flex items-start space-x-4 mb-3">
+                          <div class="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
                           </div>
-                          <div>
-                            <h3 class="text-xl font-bold text-white">Age Distribution</h3>
-                            <p class="text-white/70 text-sm">Cases by age groups</p>
+                          <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-white mb-1">Age Distribution</h3>
+                            <p class="text-white/60 text-sm leading-relaxed">Distribution of disease cases across different age groups</p>
                           </div>
                         </div>
-                        
-                        <div class="bg-green-500/10 backdrop-blur-sm rounded-xl p-4 border border-green-500/20">
-                          <div class="w-full h-48 mb-4">
-                            <canvas id="ageChart" class="w-full h-full"></canvas>
-                          </div>
-                          <div class="text-sm text-white/80 text-center leading-relaxed">
-                            Distribution of disease cases across different age groups
-                          </div>
-                        </div>
+                      </div>
+                      
+                      <div class="w-full h-80">
+                        <canvas id="ageChart" class="w-full h-full"></canvas>
                       </div>
                     </div>
                   </div>

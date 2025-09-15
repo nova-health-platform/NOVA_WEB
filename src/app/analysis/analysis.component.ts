@@ -84,6 +84,9 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   showDemographicsSection = false;
   showGenderChart = false;
   showAgeChart = false;
+  
+  // Flag pour éviter les appels multiples simultanés
+  private isRenderingCharts = false;
 
   // Demographic data for Quick Summary
   genderData: { labels: string[], values: number[] } = { labels: [], values: [] };
@@ -1220,13 +1223,14 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     if (!this.response) return '';
     
     // Parse demographics data if available to ensure variables are set
+    // ✅ NE PAS modifier les flags ici - laisser renderDemographicCharts() s'en occuper
     if (this.response?.disease_info?.demographics) {
       const demographics = this.parseDemographics(this.response.disease_info.demographics);
       this.genderData = demographics.genderData;
       this.ageData = demographics.ageData;
-      this.showDemographicsSection = true;
-      this.showGenderChart = demographics.isGenderDataValid;
-      this.showAgeChart = demographics.isAgeDataValid;
+      // ✅ Supprimé : this.showDemographicsSection = true;
+      // ✅ Supprimé : this.showGenderChart = demographics.isGenderDataValid;
+      // ✅ Supprimé : this.showAgeChart = demographics.isAgeDataValid;
     }
     
     const confidenceValue = this.response.confidence ? Math.round(this.response.confidence * 100) : 0;
@@ -1241,7 +1245,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     }
     
     // Add demographics only if we have valid data
-    if (this.showDemographicsSection) {
+    // ✅ Vérifier directement les données au lieu des flags
+    if (this.response?.disease_info?.demographics && this.genderData.labels.length > 0) {
       const genderText = this.getGenderDistributionText();
       const ageText = this.getAgeDistributionText();
       
@@ -1557,18 +1562,49 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
 
   renderDemographicCharts(): void {
+    console.log('🔍 renderDemographicCharts() called');
+    console.log('📊 Current flags:', {
+      showDemographicsSection: this.showDemographicsSection,
+      showGenderChart: this.showGenderChart,
+      showAgeChart: this.showAgeChart,
+      isRenderingCharts: this.isRenderingCharts
+    });
+    
+    // ✅ Protection contre les appels multiples simultanés
+    if (this.isRenderingCharts) {
+      console.log('⚠️ Charts already rendering, skipping...');
+      return;
+    }
+    
+    // ✅ Protection supplémentaire : vérifier que response existe
+    if (!this.response) {
+      console.log('❌ No response data available for charts');
+      return;
+    }
+    
+    this.isRenderingCharts = true;
     const demographics = this.response?.disease_info?.demographics;
-    this.showDemographicsSection = false;
-    this.showGenderChart = false;
-    this.showAgeChart = false;
+    console.log('📈 Demographics data:', demographics);
 
     if (!demographics || !demographics.includes('Male') || !demographics.includes('Female')) {
+      // ✅ Seulement maintenant on peut réinitialiser si pas de données
+      console.log('❌ No valid demographics data found, hiding charts');
+      this.showDemographicsSection = false;
+      this.showGenderChart = false;
+      this.showAgeChart = false;
+      this.isRenderingCharts = false; // ✅ Libérer le flag
       return;
     }
 
     const { genderData, ageData, isGenderDataValid, isAgeDataValid } = this.parseDemographics(demographics);
 
     if (!isGenderDataValid && !isAgeDataValid) {
+      // ✅ Seulement maintenant on peut réinitialiser si données invalides
+      console.log('❌ Invalid gender/age data, hiding charts');
+      this.showDemographicsSection = false;
+      this.showGenderChart = false;
+      this.showAgeChart = false;
+      this.isRenderingCharts = false; // ✅ Libérer le flag
       return;
     }
 
@@ -1576,6 +1612,12 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.genderData = genderData;
     this.ageData = ageData;
 
+    // ✅ Mettre à jour les flags seulement si tout est valide
+    console.log('✅ Setting flags:', {
+      showDemographicsSection: true,
+      showGenderChart: isGenderDataValid,
+      showAgeChart: isAgeDataValid
+    });
     this.showDemographicsSection = true;
     this.showGenderChart = isGenderDataValid;
     this.showAgeChart = isAgeDataValid;
@@ -1586,6 +1628,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       const ageCanvas = document.getElementById('ageChart') as HTMLCanvasElement | null;
 
     if (isGenderDataValid && genderCanvas) {
+      console.log('🎯 Creating gender chart with canvas:', genderCanvas);
       let highlightIndexGender = -1;
       if (this.sex) {
         highlightIndexGender = genderData.labels.findIndex(label =>
@@ -1593,8 +1636,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         );
       }
 
-      const highlightBorderColorGender = 'rgb(255, 255, 255)';
-      const highlightBorderWidthGender = 3;
+      // Variables supprimées car maintenant définies directement dans le map
 
       new Chart(genderCanvas, {
         type: 'pie',
@@ -1603,25 +1645,38 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
           datasets: [{
             data: genderData.values,
             backgroundColor: genderData.values.map((_, i) =>
-              i === highlightIndexGender ? 'rgb(255, 255, 255)' : 
-              i === 0 ? 'rgb(34, 197, 94)' : 'rgb(16, 185, 129)'
+              i === highlightIndexGender ? 'rgb(34, 197, 94)' : 'rgb(22, 163, 74)' // Vert normal pour l'utilisateur, vert sombre pour les autres
             ),
             borderColor: genderData.values.map((_, i) =>
-              i === highlightIndexGender ? highlightBorderColorGender : 'transparent'
+              'transparent' // Pas de bordure
             ),
             borderWidth: genderData.values.map((_, i) =>
-              i === highlightIndexGender ? highlightBorderWidthGender : 0
+              0 // Pas de bordure
             ),
-            hoverOffset: 6
+            hoverOffset: 6,
+            spacing: 0.5, // Espace réduit entre les sections
+            offset: genderData.values.map((_, i) => 
+              i === highlightIndexGender ? 12 : 0 // La section de l'utilisateur se détache de 12px du centre
+            )
           }]
         },
         options: {
           responsive: true,
+          maintainAspectRatio: false,
           plugins: {
             legend: { display: false },
             datalabels: {
-              color: 'white',
-              font: { weight: 'bold', size: 12 },
+              color: (context) => {
+                // Texte blanc et en gras pour la section de l'utilisateur, grisé pour les autres
+                return context.dataIndex === highlightIndexGender ? 'white' : 'rgba(255, 255, 255, 0.6)';
+              },
+              font: (context) => {
+                // Gras pour la section de l'utilisateur, normal pour les autres
+                return {
+                  weight: context.dataIndex === highlightIndexGender ? 'bold' : 'normal',
+                  size: 14
+                };
+              },
               align: 'center',
               formatter: (value: number, context) => {
                 const label = context.chart.data.labels?.[context.dataIndex];
@@ -1629,19 +1684,23 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
               }
             },
             tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: 'white',
+              bodyColor: 'white',
+              borderColor: 'rgb(34, 197, 94)',
+              borderWidth: 1,
               callbacks: {
                 label: (context) => {
-                  const value = context.parsed; // La valeur correspond au pourcentage
+                  const value = context.parsed;
                   return `${value}% of total cases`;
                 }
               }
             }
-
           },
-          layout: { padding: 0 },
+          layout: { padding: 10 },
           elements: {
             arc: {
-              spacing: 0.35
+              spacing: 0.2
             }
           }
         },
@@ -1653,50 +1712,67 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
     /** ✅ AGE BAR CHART */
     if (isAgeDataValid && ageCanvas) {
-      const customAgeLabels = [
+      console.log('📊 Creating age chart with canvas:', ageCanvas);
+      const allAgeLabels = [
         '0-5', '6-10', '11-15', '16-20', '21-25', '26-30',
         '31-35', '36-40', '41-45', '46-50', '51-55',
         '56-60', '61-65', '65+'
       ];
 
+      // Filtrer les labels et données pour enlever les plages avec 0%
+      const filteredData = [];
+      const filteredLabels = [];
+      const originalToFilteredIndex = [];
+      
+      for (let i = 0; i < ageData.values.length; i++) {
+        if (ageData.values[i] > 0) {
+          filteredData.push(ageData.values[i]);
+          filteredLabels.push(allAgeLabels[i]);
+          originalToFilteredIndex[i] = filteredData.length - 1;
+        } else {
+          originalToFilteredIndex[i] = -1; // Marquer comme supprimé
+        }
+      }
+
       let highlightIndex = -1;
       if (this.age !== null) {
         const userAge = this.age;
-        for (let i = 0; i < customAgeLabels.length; i++) {
-          const label = customAgeLabels[i];
-          if (label.includes('+')) {
-            const min = parseInt(label);
-            if (userAge >= min) {
-              highlightIndex = i;
-            }
-          } else {
-            const [min, max] = label.split('-').map(n => parseInt(n));
-            if (userAge >= min && userAge <= max) {
-              highlightIndex = i;
-              break;
+        for (let i = 0; i < allAgeLabels.length; i++) {
+          const label = allAgeLabels[i];
+          if (ageData.values[i] > 0) { // Seulement si cette plage a des données
+            if (label.includes('+')) {
+              const min = parseInt(label);
+              if (userAge >= min) {
+                highlightIndex = originalToFilteredIndex[i];
+              }
+            } else {
+              const [min, max] = label.split('-').map(n => parseInt(n));
+              if (userAge >= min && userAge <= max) {
+                highlightIndex = originalToFilteredIndex[i];
+                break;
+              }
             }
           }
         }
       }
 
-      const highlightBorderColor = 'rgb(255, 255, 255)';
-      const highlightBorderWidth = 3;
+      // Variables supprimées car maintenant définies directement dans le map
 
       new Chart(ageCanvas, {
         type: 'bar',
         data: {
-          labels: customAgeLabels,
+          labels: filteredLabels,
           datasets: [{
             label: 'Age Distribution (%)',
-            data: ageData.values,
-            backgroundColor: ageData.values.map((_, i) =>
-              i === highlightIndex ? 'rgb(255, 255, 255)' : 'rgb(34, 197, 94)'
+            data: filteredData,
+            backgroundColor: filteredData.map((_, i) =>
+              i === highlightIndex ? 'rgb(34, 197, 94)' : 'rgb(22, 163, 74)' // Vert normal pour l'utilisateur, vert sombre pour les autres
             ),
-            borderColor: ageData.values.map((_, i) =>
-              i === highlightIndex ? highlightBorderColor : 'transparent'
+            borderColor: filteredData.map((_, i) =>
+              'transparent' // Pas de bordure
             ),
-            borderWidth: ageData.values.map((_, i) =>
-              i === highlightIndex ? highlightBorderWidth : 0
+            borderWidth: filteredData.map((_, i) =>
+              0 // Pas de bordure
             ),
             borderRadius: 4
           }]
@@ -1709,33 +1785,59 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
               title: {
                 display: true,
                 text: 'Age Groups',
-                color: 'white',
-                font: { size: 12, weight: 'bold' }
+                color: 'rgba(255, 255, 255, 0.6)', // Grisé
+                font: { size: 13, weight: 'bold' }
               },
-              ticks: { color: 'white' }
+              ticks: { 
+                color: 'rgba(255, 255, 255, 0.6)', // Grisé
+                font: { size: 11 }
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              }
             },
             y: {
               title: {
                 display: true,
                 text: 'Percentage (%)',
-                color: 'white',
-                font: { size: 12, weight: 'bold' }
+                color: 'rgba(255, 255, 255, 0.6)', // Grisé
+                font: { size: 13, weight: 'bold' }
               },
-              ticks: { color: 'white' },
+              ticks: { 
+                color: 'rgba(255, 255, 255, 0.6)', // Grisé
+                font: { size: 11 }
+              },
+              grid: {
+                color: 'rgba(255, 255, 255, 0.1)'
+              },
               beginAtZero: true,
-              suggestedMax: Math.max(...ageData.values) + 5
+              suggestedMax: Math.max(...filteredData) + 5
             }
           },
           plugins: {
             legend: { display: false },
             datalabels: {
-              color: 'white',
+              color: (context) => {
+                // Blanc pour la section de l'utilisateur, grisé pour les autres
+                return context.dataIndex === highlightIndex ? 'white' : 'rgba(255, 255, 255, 0.6)';
+              },
               anchor: 'end',
               align: 'top',
-              font: { weight: 'bold' },
+              font: (context) => {
+                // Gras et plus gros pour la section de l'utilisateur, normal pour les autres
+                return {
+                  weight: context.dataIndex === highlightIndex ? 'bold' : 'normal',
+                  size: context.dataIndex === highlightIndex ? 14 : 11
+                };
+              },
               formatter: (value: number) => value > 0 ? value + '%' : ''
             },
             tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: 'white',
+              bodyColor: 'white',
+              borderColor: 'rgb(34, 197, 94)',
+              borderWidth: 1,
               callbacks: {
                 label: (context) => `${context.parsed.y}% of total cases`
               }
@@ -1747,14 +1849,52 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     }
 
     }, 100); // End of setTimeout
+    
+    // ✅ Libérer le flag après un délai pour permettre le rendu
+    setTimeout(() => {
+      this.isRenderingCharts = false;
+    }, 200);
   }
 
   // Function to switch to demographics tab and render charts
   switchToDemographicsTab(): void {
     this.currentResultView = 'demographics';
     setTimeout(() => {
+      this.checkCanvasState(); // ✅ Vérifier l'état avant le rendu
       this.renderDemographicCharts();
     }, 50);
+  }
+
+  // ✅ Méthode pour forcer le rendu des graphiques
+  private forceRenderCharts(): void {
+    if (this.response?.disease_info?.demographics) {
+      // Réinitialiser le flag de rendu pour forcer un nouveau rendu
+      this.isRenderingCharts = false;
+      setTimeout(() => {
+        this.renderDemographicCharts();
+      }, 100);
+    }
+  }
+
+  // ✅ Méthode pour vérifier l'état des canvas
+  private checkCanvasState(): void {
+    const genderCanvas = document.getElementById('genderChart') as HTMLCanvasElement | null;
+    const ageCanvas = document.getElementById('ageChart') as HTMLCanvasElement | null;
+    
+    console.log('🔍 Canvas state check:', {
+      genderCanvas: genderCanvas ? 'Found' : 'Missing',
+      ageCanvas: ageCanvas ? 'Found' : 'Missing',
+      showGenderChart: this.showGenderChart,
+      showAgeChart: this.showAgeChart,
+      currentResultView: this.currentResultView
+    });
+  }
+
+  // ✅ Méthode publique pour forcer le rendu (utile pour le débogage)
+  public forceRenderDemographicCharts(): void {
+    console.log('🚀 Force rendering demographic charts');
+    this.checkCanvasState();
+    this.forceRenderCharts();
   }
 
   // Function to switch to analysis tab and animate confidence
@@ -2136,7 +2276,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     const idx = views.indexOf(this.currentResultView);
     this.currentResultView = views[(idx + 1) % views.length];
     if (this.currentResultView === 'demographics') {
-      setTimeout(() => this.renderDemographicCharts(), 0);
+      // ✅ Utiliser la méthode de forçage pour s'assurer que les graphiques apparaissent
+      this.forceRenderCharts();
     }
   }
 
@@ -2145,7 +2286,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     const idx = views.indexOf(this.currentResultView);
     this.currentResultView = views[(idx - 1 + views.length) % views.length];
     if (this.currentResultView === 'demographics') {
-      setTimeout(() => this.renderDemographicCharts(), 0);
+      // ✅ Utiliser la méthode de forçage pour s'assurer que les graphiques apparaissent
+      this.forceRenderCharts();
     }
   }
 

@@ -2,6 +2,8 @@ import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angula
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../services/auth.service';
+import { Router } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 
 import ChartDataLabels from 'chartjs-plugin-datalabels';
@@ -122,6 +124,23 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   weight: number | null = null;
   height: number | null = null;
 
+  // User authentication and profiles
+  isLoggedIn: boolean = false;
+  userProfiles: any[] = [];
+  selectedProfile: any = null;
+  loadingProfiles: boolean = false;
+  currentUser: any = null;
+  canCreateProfile: boolean = false;
+  canPerformAnalysis: boolean = false;
+  lastAnalysisTime: Date | null = null;
+  premiumAnalysesWithoutProfile: number = 0; // Counter for Premium users without profile
+  showManualEntry: boolean = false;
+  timeUntilNextAnalysis: string = '';
+  timeUntilNextAnalysisSeconds: number = 0;
+  countdownInterval: any = null;
+  isTimerLoading: boolean = true;
+  isPageLoading: boolean = true;
+
   svgFrontPaths: SvgPath[] = [];
   svgBackPaths: SvgPath[] = [];
   showPainQuestion: boolean = false;
@@ -141,7 +160,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   synonymToCanonical: { [normalizedSynonym: string]: string } = {};
 
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private authService: AuthService, private router: Router) {
     Chart.register(...registerables);
   }
 
@@ -298,9 +317,22 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.loadSymptoms();
     this.loadSynonyms();
     this.loadSvgPaths();
+    this.loadLastAnalysisTime();
+    
+    // Check auth status after a delay to ensure everything is loaded
+    setTimeout(() => {
+      this.checkAuthStatus();
+      // Hide page loading after auth check
+      setTimeout(() => {
+        this.isPageLoading = false;
+      }, 1000); // Additional delay to ensure smooth transition
+    }, 500);
 
-    this.simulateFakeResponse();
+    //this.simulateFakeResponse();
     this.setInitialActiveTab();
+
+    // Start countdown timer for real-time updates
+    this.startCountdownTimer();
   }
 
 
@@ -310,6 +342,11 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         this.renderDemographicCharts();
       }
     }, 0);
+  }
+
+  ngOnDestroy(): void {
+    // Clean up countdown timer
+    this.stopCountdownTimer();
   }
 
   private preloadProfileImage(): void {
@@ -802,12 +839,44 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   }
 
   submitPatientInfo(): void {
+    // Check if user can perform analysis
+    if (this.isLoggedIn && !this.canPerformAnalysis) {
+      return; // Don't proceed if analysis is not allowed
+    }
+
+    // Check Premium plan limitations
+    if (this.isLoggedIn && this.currentUser?.subscription_plan === 'premium' && !this.selectedProfile) {
+      if (this.premiumAnalysesWithoutProfile >= 5) {
+        this.errorMessage = 'You have reached the limit of 5 analyses without a profile. Please create or select a profile for unlimited analyses.';
+        return;
+      }
+    }
+
+    // Check if we have patient information (either from profile or manual entry)
     if (!this.age || !this.sex || !this.weight || !this.height) {
-      this.errorMessage = 'Please enter your age, gender, weight and height.';
+      this.errorMessage = 'Please select a profile or enter patient information.';
       return;
     }
     this.errorMessage = '';
-    this.messages.push({ role: 'user', type: 'text', content: `Age: ${this.age}, Gender: ${this.sex}, Weight: ${this.weight}kg, Height: ${this.height}cm` });
+
+    // Record analysis time for free plan users
+    if (this.isLoggedIn && this.currentUser?.subscription_plan === 'free') {
+      this.lastAnalysisTime = new Date();
+      localStorage.setItem('lastAnalysisTime', this.lastAnalysisTime.toISOString());
+    }
+
+    // Record analysis count for Premium users without profile
+    if (this.isLoggedIn && this.currentUser?.subscription_plan === 'premium' && !this.selectedProfile) {
+      this.premiumAnalysesWithoutProfile++;
+      this.savePremiumAnalysisCount();
+    }
+
+    // Add patient info to messages
+    const patientInfo = this.selectedProfile 
+      ? `Profile: ${this.selectedProfile.first_name} ${this.selectedProfile.last_name} (Age: ${this.age}, Gender: ${this.sex}, Weight: ${this.weight}kg, Height: ${this.height}cm)`
+      : `Age: ${this.age}, Gender: ${this.sex}, Weight: ${this.weight}kg, Height: ${this.height}cm`;
+    
+    this.messages.push({ role: 'user', type: 'text', content: patientInfo });
     this.step = 3;
     // brief thinking animation before pain question (bottom typing indicator)
     this.showThinking(1000);
@@ -2885,4 +2954,416 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         return '';
     }
   }
+
+  // Enhanced textarea interaction methods
+  onTextareaFocus(): void {
+    // Add any focus-specific logic here
+    console.log('Textarea focused');
+  }
+
+  onTextareaBlur(): void {
+    // Add any blur-specific logic here
+    console.log('Textarea blurred');
+  }
+
+  onTextareaKeydown(event: KeyboardEvent): void {
+    // Check if Enter key is pressed without Shift
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault(); // Prevent new line
+      if (this.freeTextSymptoms.trim()) {
+        this.extractSymptomsFromFreeText();
+      }
+    }
+  }
+
+  // Check if any symptoms are selected
+  hasSelectedSymptoms(): boolean {
+    return this.extractedRecognized.some(item => item.selected);
+  }
+
+  // Check authentication status and load profiles
+  checkAuthStatus(): void {
+    this.authService.isLoggedIn().subscribe(isLoggedIn => {
+      this.isLoggedIn = isLoggedIn;
+      if (isLoggedIn) {
+        // Check if token exists before making API calls
+        const token = this.authService.getToken();
+        if (token) {
+          this.loadCurrentUser();
+          this.loadUserProfiles();
+        } else {
+          // Token doesn't exist, treat as not logged in
+          this.isLoggedIn = false;
+          this.resetUserData();
+        }
+      } else {
+        this.resetUserData();
+      }
+    });
+  }
+
+  // Reset user data when not authenticated
+  resetUserData(): void {
+    this.currentUser = null;
+    this.userProfiles = [];
+    this.selectedProfile = null;
+    this.canPerformAnalysis = true; // Allow analysis for non-authenticated users
+    this.isTimerLoading = false; // No timer needed for non-authenticated users
+    this.isPageLoading = false; // Hide page loading
+    console.log('User not logged in, allowing analysis');
+  }
+
+  // Load current user information
+  loadCurrentUser(): void {
+    const token = this.authService.getToken();
+    if (!token) {
+      console.log('No token found, user not authenticated');
+      this.isLoggedIn = false;
+      this.resetUserData();
+      return;
+    }
+    
+    this.http.get<any>('http://localhost:5000/api/me', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    }).subscribe({
+      next: (user) => {
+        this.currentUser = user;
+        this.checkUserLimitations();
+        this.isPageLoading = false; // Hide page loading when user is loaded
+      },
+      error: (err) => {
+        if (err.status === 401) {
+          console.log('Token expired or invalid, logging out user');
+          this.isLoggedIn = false;
+          this.resetUserData();
+          // Optionally logout from auth service
+          this.authService.logout();
+        } else {
+          console.log('Error loading user:', err.status);
+        }
+      }
+    });
+  }
+
+  // Check user limitations based on subscription plan
+  checkUserLimitations(): void {
+    if (!this.currentUser) return;
+
+    const plan = this.currentUser.subscription_plan;
+    const maxProfiles = this.currentUser.max_profiles || 1;
+
+    // Check if user can create more profiles
+    this.canCreateProfile = this.userProfiles.length < maxProfiles;
+
+    // Check analysis limitations
+    this.checkAnalysisLimitations();
+  }
+
+  // Load Premium analysis count from localStorage
+  loadPremiumAnalysisCount(): void {
+    const stored = localStorage.getItem('premiumAnalysesWithoutProfile');
+    this.premiumAnalysesWithoutProfile = stored ? parseInt(stored, 10) : 0;
+  }
+
+  // Save Premium analysis count to localStorage
+  savePremiumAnalysisCount(): void {
+    localStorage.setItem('premiumAnalysesWithoutProfile', this.premiumAnalysesWithoutProfile.toString());
+  }
+
+  // Check if Premium user has reached limit without profile
+  isPremiumLimitReached(): boolean {
+    return this.isLoggedIn && 
+           this.currentUser?.subscription_plan === 'premium' && 
+           !this.selectedProfile && 
+           this.premiumAnalysesWithoutProfile >= 5;
+  }
+
+  // Update analysis permissions when profile selection changes
+  updateAnalysisPermissions(): void {
+    if (this.currentUser?.subscription_plan === 'premium') {
+      this.canPerformAnalysis = !this.isPremiumLimitReached();
+    }
+  }
+
+  // Check analysis limitations
+  checkAnalysisLimitations(): void {
+    if (!this.currentUser) return;
+
+    const plan = this.currentUser.subscription_plan;
+    const now = new Date();
+
+    switch (plan) {
+      case 'free':
+        // 1 analysis every 5 hours
+        if (this.lastAnalysisTime) {
+          const timeDiff = now.getTime() - this.lastAnalysisTime.getTime();
+          const hoursDiff = timeDiff / (1000 * 60 * 60);
+          this.canPerformAnalysis = hoursDiff >= 5;
+        } else {
+          this.canPerformAnalysis = true;
+        }
+        break;
+      case 'premium':
+        // Unlimited analyses with profile, 5 analyses max without profile
+        this.loadPremiumAnalysisCount();
+        this.canPerformAnalysis = !this.isPremiumLimitReached();
+        break;
+      case 'enterprise':
+        // Unlimited analyses
+        this.canPerformAnalysis = true;
+        break;
+      default:
+        this.canPerformAnalysis = false;
+    }
+
+    // Start countdown for free plan users
+    if (plan === 'free') {
+      this.startCountdownTimer();
+    } else {
+      // For non-free plans, no timer needed
+      this.isTimerLoading = false;
+    }
+  }
+
+  // Load user profiles
+  loadUserProfiles(): void {
+    this.loadingProfiles = true;
+    
+    const token = this.authService.getToken();
+    if (!token) {
+      console.log('No token found, cannot load profiles');
+      this.loadingProfiles = false;
+      this.isLoggedIn = false;
+      this.resetUserData();
+      return;
+    }
+    
+    this.http.get<any[]>('http://localhost:5000/api/profiles', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    }).subscribe({
+      next: (profiles) => {
+        this.userProfiles = profiles;
+        this.loadingProfiles = false;
+        this.checkUserLimitations(); // Re-check limitations after loading profiles
+        this.isPageLoading = false; // Hide page loading when profiles are loaded
+      },
+      error: (err) => {
+        this.loadingProfiles = false;
+        if (err.status === 401) {
+          console.log('Token expired or invalid, logging out user');
+          this.isLoggedIn = false;
+          this.resetUserData();
+          this.authService.logout();
+        } else {
+          console.log('Error loading profiles:', err.status);
+          this.userProfiles = [];
+        }
+      }
+    });
+  }
+
+  // Select a profile
+  selectProfile(profile: any): void {
+    if (profile === null) {
+      // Back to profile selection
+      this.selectedProfile = null;
+      this.showManualEntry = false;
+      this.updateAnalysisPermissions();
+      return;
+    }
+    
+    this.selectedProfile = profile;
+    this.showManualEntry = false;
+    this.updateAnalysisPermissions();
+    
+    console.log('Selected profile:', profile);
+    
+    if (profile && profile.birth_date) {
+      // Calculate age from birth_date
+      const birthDate = new Date(profile.birth_date);
+      const today = new Date();
+      this.age = today.getFullYear() - birthDate.getFullYear();
+      this.sex = profile.sex;
+      this.weight = parseFloat(profile.weight) || null;
+      this.height = parseFloat(profile.height) || null;
+      
+      console.log('Profile data loaded:', {
+        age: this.age,
+        sex: this.sex,
+        weight: this.weight,
+        height: this.height,
+        rawProfile: profile
+      });
+    }
+  }
+
+  // Select manual entry
+  selectManualEntry(): void {
+    this.selectedProfile = null;
+    this.showManualEntry = true;
+    this.updateAnalysisPermissions();
+    // Reset form fields
+    this.age = null;
+    this.sex = '';
+    this.weight = null;
+    this.height = null;
+  }
+
+  // Navigate to account page
+  goToAccount(): void {
+    this.router.navigate(['/account']);
+  }
+
+  // Navigate to login page
+  goToLogin(): void {
+    this.router.navigate(['/login']);
+  }
+
+  // Get plan limitations info
+  getPlanInfo(): any {
+    if (!this.currentUser) return null;
+    
+    const plan = this.currentUser.subscription_plan;
+    switch (plan) {
+      case 'free':
+        return {
+          name: 'Free',
+          maxProfiles: 1,
+          analysisLimit: '1 analysis every 5 hours',
+          hasHistory: false
+        };
+      case 'premium':
+        return {
+          name: 'Premium',
+          maxProfiles: 5,
+          analysisLimit: 'Unlimited analyses with profile, 5 max without profile',
+          hasHistory: true
+        };
+      case 'enterprise':
+        return {
+          name: 'Enterprise',
+          maxProfiles: -1, // Unlimited
+          analysisLimit: 'Unlimited analyses',
+          hasHistory: true
+        };
+      default:
+        return null;
+    }
+  }
+
+  // Calculate initial time until next analysis (called once at load)
+  calculateInitialTimeUntilNextAnalysis(): number {
+    if (!this.currentUser || this.currentUser.subscription_plan !== 'free') {
+      return 0;
+    }
+
+    // If no lastAnalysisTime, create a fake one for testing (4 hours ago)
+    let testLastAnalysisTime = this.lastAnalysisTime;
+    if (!testLastAnalysisTime) {
+      testLastAnalysisTime = new Date(Date.now() - 4 * 60 * 60 * 1000); // 4 hours ago
+    }
+
+    const now = new Date();
+    const timeDiff = now.getTime() - testLastAnalysisTime.getTime();
+    const hoursDiff = timeDiff / (1000 * 60 * 60);
+    const remainingHours = 5 - hoursDiff;
+
+    if (remainingHours <= 0) return 0;
+
+    // Return total seconds remaining
+    return Math.floor(remainingHours * 60 * 60);
+  }
+
+  // Format seconds into readable time string
+  formatTimeFromSeconds(totalSeconds: number): string {
+    if (totalSeconds <= 0) return '';
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m ${seconds}s`;
+    } else if (minutes > 0) {
+      return `${minutes}m ${seconds}s`;
+    } else {
+      return `${seconds}s`;
+    }
+  }
+
+  // Start countdown timer (local countdown, no database calls)
+  startCountdownTimer(): void {
+    // Clear any existing timer
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+
+    // Show loading state
+    this.isTimerLoading = true;
+
+    // Simulate loading delay for better UX
+    setTimeout(() => {
+      // Calculate initial time remaining
+      this.timeUntilNextAnalysisSeconds = this.calculateInitialTimeUntilNextAnalysis();
+      
+      if (this.timeUntilNextAnalysisSeconds <= 0) {
+        this.timeUntilNextAnalysis = '';
+        this.isTimerLoading = false;
+        return;
+      }
+
+      // Update display immediately
+      this.timeUntilNextAnalysis = this.formatTimeFromSeconds(this.timeUntilNextAnalysisSeconds);
+      this.isTimerLoading = false;
+
+      // Store the start time for more accurate timing
+      const startTime = Date.now();
+      const targetEndTime = startTime + (this.timeUntilNextAnalysisSeconds * 1000);
+
+      // Start countdown with more precise timing
+      this.countdownInterval = setInterval(() => {
+        const currentTime = Date.now();
+        const remainingMs = targetEndTime - currentTime;
+        const remainingSeconds = Math.max(0, Math.ceil(remainingMs / 1000));
+        
+        if (remainingSeconds <= 0) {
+          this.timeUntilNextAnalysis = '';
+          clearInterval(this.countdownInterval);
+          this.countdownInterval = null;
+          // Optionally refresh the page or update canPerformAnalysis
+          this.checkAnalysisLimitations();
+        } else {
+          this.timeUntilNextAnalysis = this.formatTimeFromSeconds(remainingSeconds);
+        }
+      }, 1000); // Update every second
+    }, 800); // 800ms loading delay
+  }
+
+  // Stop countdown timer
+  stopCountdownTimer(): void {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+      this.countdownInterval = null;
+    }
+  }
+
+  // Navigate to subscription page
+  goToSubscription(): void {
+    this.router.navigate(['/subscription']);
+  }
+
+  // Load last analysis time from localStorage
+  loadLastAnalysisTime(): void {
+    const lastAnalysisTimeStr = localStorage.getItem('lastAnalysisTime');
+    if (lastAnalysisTimeStr) {
+      this.lastAnalysisTime = new Date(lastAnalysisTimeStr);
+    }
+  }
+
 }

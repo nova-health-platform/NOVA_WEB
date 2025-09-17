@@ -22,12 +22,17 @@ export class AuthInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 && localStorage.getItem('refresh_token')) {
           return this.authService.refreshToken().pipe(
-            switchMap(() => {
-              const newToken = this.authService.getToken();
-              const retryReq = req.clone({
-                headers: req.headers.set('Authorization', `Bearer ${newToken}`)
-              });
-              return next.handle(retryReq);
+            switchMap((refreshResult) => {
+              if (refreshResult && refreshResult.access_token) {
+                const newToken = this.authService.getToken();
+                const retryReq = req.clone({
+                  headers: req.headers.set('Authorization', `Bearer ${newToken}`)
+                });
+                return next.handle(retryReq);
+              } else {
+                this.authService.logout();
+                return throwError(() => error);
+              }
             }),
             catchError(err => {
               this.authService.logout();

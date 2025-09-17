@@ -11,7 +11,11 @@ import { CommonModule } from '@angular/common';
 export class CancelComponent {
   constructor(private router: Router) {}
 
-  retryPayment() {
+  goToAccount() {
+    this.router.navigate(['/account']); // Redirection vers le compte
+  }
+
+  retryUpgrade() {
     this.router.navigate(['/subscription']); // Redirection vers la page d'abonnement
   }
 }

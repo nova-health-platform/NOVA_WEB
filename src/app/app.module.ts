@@ -12,6 +12,7 @@ import { HomeComponent } from './home/home.component';
 import { AnalysisComponent } from './analysis/analysis.component';
 import { ScanBodyComponent } from './scan-body/scan-body.component';
 import { AuthInterceptor } from './services/auth.interceptor';
+import { AuthService } from './services/auth.service';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { AuthInterceptor } from './services/auth.interceptor';
     FormsModule
   ],
   providers: [
+    AuthService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

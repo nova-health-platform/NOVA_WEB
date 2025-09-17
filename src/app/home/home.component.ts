@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Application } from '@splinetool/runtime';
 import { AuthService } from '../services/auth.service';
 import { RouterModule } from '@angular/router';
@@ -13,17 +13,20 @@ import lottie from 'lottie-web';
   styleUrls: ['./home.component.scss'],
   imports: [RouterModule],
 })
-export class HomeComponent implements AfterViewInit {
+export class HomeComponent implements OnInit, AfterViewInit {
   isAuthenticated = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private cdr: ChangeDetectorRef) {}
+
+  ngOnInit(): void {
+    this.authService.isLoggedIn().subscribe((loggedIn) => {
+      this.isAuthenticated = loggedIn;
+      this.cdr.detectChanges();
+    });
+  }
 
   ngAfterViewInit(): void {
     window.scrollTo({ top: 0, behavior: 'auto' });
-
-    this.authService.isLoggedIn().subscribe((loggedIn) => {
-      this.isAuthenticated = loggedIn;
-    });
 
     this.initAOS();
     this.setupSpline_aura().catch((e) => {

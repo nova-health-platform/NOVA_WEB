@@ -2,6 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-account',
@@ -78,12 +79,10 @@ export class AccountComponent implements OnInit {
 
   vaccinationList: string[] = [];
 
-  medicationList: string[] = [];
-
   /** ✅ URL API (centralisée) */
   private apiUrl = 'http://localhost:5000/api';
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private router: Router) { }
 
   ngOnInit() {
     this.loadUser();
@@ -94,23 +93,13 @@ export class AccountComponent implements OnInit {
     this.loadChronicConditionTypes();
     this.loadFamilyHistoryOptions();
     this.loadVaccinationList();
-    this.loadMedicationList();
   }
 
-  loadMedicationList() {
-    this.http.get<{ medications: string[] }>('assets/medications.json').subscribe({
-      next: (data) => {
-        this.medicationList = data.medications;
-      },
-      error: () => console.error('Erreur lors du chargement des médicaments')
-    });
-  }
 
   loadVaccinationList() {
     this.http.get<{ vaccines: string[] }>('assets/vaccinations.json').subscribe({
       next: (data) => {
         this.vaccinationList = data.vaccines;
-        console.log('Vaccines loaded:', this.vaccinationList);
       },
       error: () => console.error('Erreur lors du chargement des vaccins')
     });
@@ -441,5 +430,10 @@ export class AccountComponent implements OnInit {
     document.body.style.overflow = '';
     document.body.style.position = '';
     document.body.style.width = '';
+  }
+
+  /** ✅ Navigation vers la page subscription */
+  goToSubscription() {
+    this.router.navigate(['/subscription']);
   }
 }

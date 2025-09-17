@@ -11,7 +11,11 @@ import { CommonModule } from '@angular/common';
 export class SuccessComponent {
   constructor(private router: Router) {}
 
-  goToDashboard() {
+  goToAccount() {
+    this.router.navigate(['/account']); // Redirection vers le compte
+  }
+
+  goToAnalysis() {
     this.router.navigate(['/analysis']); // Redirection vers l'analyse
   }
 }

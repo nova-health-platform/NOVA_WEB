@@ -35,11 +35,11 @@ export const routes: Routes = [
 
     { path: 'account', component: AccountComponent, canActivate: [AuthGuard] },
 
-    { path: 'subscription', component: SubscriptionComponent },
+    { path: 'subscription', component: SubscriptionComponent, canActivate: [AuthGuard] },
 
-    { path: 'success', component: SuccessComponent },
+    { path: 'success', component: SuccessComponent, canActivate: [AuthGuard] },
 
-    { path: 'cancel', component: CancelComponent },
+    { path: 'cancel', component: CancelComponent, canActivate: [AuthGuard] },
 
     { path: 'analysis', component: AnalysisComponent },
 

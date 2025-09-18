@@ -1,8 +1,9 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-account',
@@ -10,7 +11,7 @@ import { Router } from '@angular/router';
   imports: [CommonModule, FormsModule],
   templateUrl: './account.component.html'
 })
-export class AccountComponent implements OnInit {
+export class AccountComponent implements OnInit, OnDestroy {
   /** ✅ Données utilisateur */
   user: any = {
     first_name: '',
@@ -49,6 +50,8 @@ export class AccountComponent implements OnInit {
   showEditModal = false;
   selectedProfile: any = null;
   isUpdating = false;
+  isCreating = false;
+  showAddProfileForm = false;
 
   showResetPasswordModal = false;
   isResetting = false;
@@ -60,10 +63,16 @@ export class AccountComponent implements OnInit {
   showAdvanced = false;          // Pour l'ajout de profil
   showAdvancedFields = false;    // Pour l'édition de profil
 
+  /** ✅ Dynamic Advanced Details */
+  selectedDetailType = '';
+  visibleDetailSections: string[] = [];
+  activeDetailSections: string[] = [];
+
   /** ✅ Pays */
   countries: any[] = [];
   filteredCountries: any[] = [];
   countrySearch = '';
+  showCountryDropdown = false;
 
   showDeleteModal = false;
   profileToDelete: any = null;
@@ -81,18 +90,49 @@ export class AccountComponent implements OnInit {
 
   /** ✅ URL API (centralisée) */
   private apiUrl = 'http://localhost:5000/api';
+  private tokenCheckInterval: any;
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private router: Router) { }
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private router: Router, private authService: AuthService) { }
 
   ngOnInit() {
-    this.loadUser();
-    this.loadProfiles();
-    this.loadHistory();
-    this.loadCountries();
-    this.loadAllergyTypes();
-    this.loadChronicConditionTypes();
-    this.loadFamilyHistoryOptions();
-    this.loadVaccinationList();
+    // Vérifier et rafraîchir le token si nécessaire avant de charger les données
+    this.authService.checkAndRefreshToken().subscribe((isValid) => {
+      if (isValid) {
+        this.loadUser();
+        this.loadProfiles();
+        this.loadHistory();
+        this.loadCountries();
+        this.loadAllergyTypes();
+        this.loadChronicConditionTypes();
+        this.loadFamilyHistoryOptions();
+        this.loadVaccinationList();
+        
+        // Démarrer la vérification périodique du token (toutes les 4 minutes)
+        this.startTokenCheck();
+      } else {
+        console.error('[ACCOUNT] Token validation failed');
+        this.router.navigate(['/login']);
+      }
+    });
+  }
+
+  /** ✅ Démarrer la vérification périodique du token */
+  private startTokenCheck() {
+    this.tokenCheckInterval = setInterval(() => {
+      this.authService.checkAndRefreshToken().subscribe((isValid) => {
+        if (!isValid) {
+          console.error('[ACCOUNT] Token validation failed during periodic check');
+          this.router.navigate(['/login']);
+        }
+      });
+    }, 4 * 60 * 1000); // Vérifier toutes les 4 minutes
+  }
+
+  /** ✅ Nettoyer les timers */
+  ngOnDestroy() {
+    if (this.tokenCheckInterval) {
+      clearInterval(this.tokenCheckInterval);
+    }
   }
 
 
@@ -161,13 +201,32 @@ export class AccountComponent implements OnInit {
     this.filteredCountries = this.countries.filter((c) =>
       c.name.toLowerCase().includes(search)
     );
+    this.showCountryDropdown = true;
+  }
+
+  selectCountry(countryName: string) {
+    this.user.country = countryName;
+    this.countrySearch = countryName;
+    this.showCountryDropdown = false;
+  }
+
+  closeCountryDropdown() {
+    this.showCountryDropdown = false;
+  }
+
+  onCountryInputBlur() {
+    setTimeout(() => this.closeCountryDropdown(), 150);
   }
 
   /** ✅ Charger les infos utilisateur */
   loadUser() {
     this.http.get(`${this.apiUrl}/me`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-    }).subscribe((data) => this.user = data);
+    }).subscribe((data) => {
+      this.user = data;
+      // Initialiser le champ de recherche avec le pays actuel
+      this.countrySearch = this.user.country || '';
+    });
   }
 
   /** ✅ Charger les profils */
@@ -179,9 +238,19 @@ export class AccountComponent implements OnInit {
 
   /** ✅ Charger l'historique */
   loadHistory() {
+    // Ne pas charger l'historique pour les utilisateurs FREE
+    if (this.user?.subscription_plan === 'free') {
+      this.history = [];
+      return;
+    }
+    
     this.http.get<any[]>(`${this.apiUrl}/history`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
-    }).subscribe((data) => this.history = data);
+    }).subscribe((data) => {
+      this.history = data;
+      // Forcer la détection de changement pour mettre à jour l'affichage
+      this.cdr.detectChanges();
+    });
   }
 
   /** ✅ Vérifier si les champs obligatoires sont remplis */
@@ -194,9 +263,20 @@ export class AccountComponent implements OnInit {
     );
   }
 
+  /** ✅ Basculer l'affichage du formulaire d'ajout */
+  toggleAddProfileForm() {
+    this.showAddProfileForm = !this.showAddProfileForm;
+    if (!this.showAddProfileForm) {
+      this.showAdvanced = false;
+      this.resetNewProfile();
+    }
+  }
+
   /** ✅ Créer un profil */
   createProfile() {
     if (!this.isFormValid() || this.profiles.length >= this.user?.max_profiles) return;
+
+    this.isCreating = true;
 
     this.http.post(`${this.apiUrl}/profiles`, this.newProfile, {
       headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
@@ -205,8 +285,13 @@ export class AccountComponent implements OnInit {
         this.loadProfiles();
         this.resetNewProfile();
         this.showAdvanced = false;
+        this.showAddProfileForm = false;
+        this.isCreating = false;
       },
-      error: () => alert('Failed to create profile.')
+      error: () => {
+        this.isCreating = false;
+        alert('Failed to create profile.');
+      }
     });
   }
 
@@ -269,6 +354,87 @@ export class AccountComponent implements OnInit {
   /** ✅ Toggle détails avancés (Édition) */
   toggleAdvancedFields() {
     this.showAdvancedFields = !this.showAdvancedFields;
+    // Reset visible sections when toggling
+    if (!this.showAdvancedFields) {
+      this.visibleDetailSections = [];
+      this.activeDetailSections = [];
+      this.selectedDetailType = '';
+    }
+  }
+
+  /** ✅ Dynamic Advanced Details Management */
+  addNewDetail() {
+    if (this.selectedDetailType && !this.visibleDetailSections.includes(this.selectedDetailType)) {
+      this.visibleDetailSections.push(this.selectedDetailType);
+      this.selectedDetailType = ''; // Reset selection
+    }
+  }
+
+  removeDetailSection(sectionType: string) {
+    this.visibleDetailSections = this.visibleDetailSections.filter(section => section !== sectionType);
+    this.activeDetailSections = this.activeDetailSections.filter(section => section !== sectionType);
+  }
+
+  showDetailSection(sectionType: string): boolean {
+    return this.visibleDetailSections.includes(sectionType);
+  }
+
+  /** ✅ Toggle Detail Section On/Off */
+  toggleDetailSection(sectionType: string) {
+    if (this.activeDetailSections.includes(sectionType)) {
+      // Désactiver la section
+      this.activeDetailSections = this.activeDetailSections.filter(section => section !== sectionType);
+      this.visibleDetailSections = this.visibleDetailSections.filter(section => section !== sectionType);
+    } else {
+      // Activer la section
+      this.activeDetailSections.push(sectionType);
+      this.visibleDetailSections.push(sectionType);
+      
+      // Initialiser avec un élément vide si le tableau est vide
+      this.initializeSectionData(sectionType);
+    }
+  }
+
+  /** ✅ Initialiser les données d'une section */
+  initializeSectionData(sectionType: string) {
+    if (!this.selectedProfile) return;
+    
+    switch (sectionType) {
+      case 'allergies':
+        if (!this.selectedProfile.allergies || this.selectedProfile.allergies.length === 0) {
+          this.selectedProfile.allergies = [{allergy_type: '', substance: '', severity: ''}];
+        }
+        break;
+      case 'medications':
+        if (!this.selectedProfile.medications || this.selectedProfile.medications.length === 0) {
+          this.selectedProfile.medications = [{medication_name: '', dosage_value: '', dosage_unit: 'mg', frequency: '', frequency_hours: '', other_details: ''}];
+        }
+        break;
+      case 'chronic_conditions':
+        if (!this.selectedProfile.chronic_conditions || this.selectedProfile.chronic_conditions.length === 0) {
+          this.selectedProfile.chronic_conditions = [{condition_name: '', diagnosed_date: ''}];
+        }
+        break;
+      case 'surgeries':
+        if (!this.selectedProfile.surgeries || this.selectedProfile.surgeries.length === 0) {
+          this.selectedProfile.surgeries = [{surgery_type: '', surgery_date: '', other_details: ''}];
+        }
+        break;
+      case 'family_history':
+        if (!this.selectedProfile.family_history || this.selectedProfile.family_history.length === 0) {
+          this.selectedProfile.family_history = [{relation: '', condition: '', other_condition: '', other_details: ''}];
+        }
+        break;
+      case 'vaccinations':
+        if (!this.selectedProfile.vaccinations || this.selectedProfile.vaccinations.length === 0) {
+          this.selectedProfile.vaccinations = [{vaccine_name: '', vaccination_date: '', dose_number: '', notes: ''}];
+        }
+        break;
+    }
+  }
+
+  isDetailSectionActive(sectionType: string): boolean {
+    return this.activeDetailSections.includes(sectionType);
   }
 
   /** ✅ Supprimer un profil */
@@ -435,5 +601,33 @@ export class AccountComponent implements OnInit {
   /** ✅ Navigation vers la page subscription */
   goToSubscription() {
     this.router.navigate(['/subscription']);
+  }
+
+  /** ✅ Méthodes pour les statistiques d'analyses */
+  getUsedAnalyses(): number {
+    return this.history?.length || 0;
+  }
+
+  getMaxAnalyses(): number {
+    if (this.user?.subscription_plan === 'enterprise') {
+      return 999; // Illimité
+    } else if (this.user?.subscription_plan === 'premium') {
+      return 999; // Illimité avec profil, 5 sans profil
+    } else {
+      return 1; // Plan gratuit
+    }
+  }
+
+  getUsagePercentage(): number {
+    const used = this.getUsedAnalyses();
+    const max = this.getMaxAnalyses();
+    
+    if (max === 999) {
+      return 100; // Barre pleine pour les plans illimités
+    }
+    
+    // Pour les plans limités, retourner au moins 10% pour que la barre soit visible
+    const percentage = (used / max) * 100;
+    return Math.max(percentage, 10);
   }
 }

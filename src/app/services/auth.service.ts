@@ -71,9 +71,9 @@ export class AuthService {
   }
 
   /** ✅ Rafraîchit le token avec le refresh_token */
-  refreshToken(): Observable<any> {
+  refreshToken(): Observable<boolean> {
     const refresh_token = localStorage.getItem('refresh_token');
-    if (!refresh_token) return of(null);
+    if (!refresh_token) return of(false);
 
     return this.http.post(`${this.apiUrl}/refresh`, {}, {
       headers: new HttpHeaders({ Authorization: `Bearer ${refresh_token}` })
@@ -81,11 +81,14 @@ export class AuthService {
       tap((res: any) => {
         if (res.access_token) {
           localStorage.setItem('access_token', res.access_token);
+          console.log('[AUTH] Token refreshed successfully');
         }
       }),
-      catchError(() => {
+      map((res: any) => !!res.access_token),
+      catchError((error) => {
+        console.error('[AUTH] Token refresh failed:', error);
         this.logout();
-        return of(null);
+        return of(false);
       })
     );
   }
@@ -93,6 +96,30 @@ export class AuthService {
   /** ✅ Récupère les infos utilisateur */
   getCurrentUser(): Observable<any> {
     return this.http.get(`${this.apiUrl}/me`);
+  }
+
+  /** ✅ Vérifie si le token est proche de l'expiration et le rafraîchit si nécessaire */
+  checkAndRefreshToken(): Observable<boolean> {
+    const token = this.getToken();
+    if (!token) return of(false);
+
+    try {
+      // Décoder le JWT pour vérifier l'expiration
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const now = Math.floor(Date.now() / 1000);
+      const timeUntilExpiry = payload.exp - now;
+
+      // Si le token expire dans moins de 5 minutes, le rafraîchir
+      if (timeUntilExpiry < 300) {
+        console.log('[AUTH] Token expires soon, refreshing...');
+        return this.refreshToken();
+      }
+
+      return of(true);
+    } catch (error) {
+      console.error('[AUTH] Error checking token:', error);
+      return of(false);
+    }
   }
 
   /** ✅ Vérifie la session */

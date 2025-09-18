@@ -11,3 +11,27 @@ body.modal-open {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
+
+/* Custom select styles for dark theme */
+select {
+  option {
+    background-color: #1a1a1a;
+    color: white;
+  }
+}
+
+/* Ensure select options have proper styling */
+select option {
+  background-color: #1a1a1a !important;
+  color: white !important;
+}
+
+select option:checked {
+  background-color: #22c55e !important;
+  color: white !important;
+}
+
+select option:hover {
+  background-color: #374151 !important;
+  color: white !important;
+}

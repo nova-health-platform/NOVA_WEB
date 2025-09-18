@@ -2384,10 +2384,13 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       sex: this.sex,
       weight: this.weight !== null ? Number(this.weight) : null,
       height: this.height !== null ? Number(this.height) : null,
-      painLocations: this.selectedPainLocations
+      painLocations: this.selectedPainLocations,
+      profile_id: this.selectedProfile?.id || null
     };
 
-    this.http.post<any>('http://localhost:5000/api/nova/start', requestData).subscribe({
+    this.http.post<any>('http://localhost:5000/api/nova/start', requestData, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+    }).subscribe({
       next: (data) => {
         this.state = data.state || {};
         this.askedQuestions = data.question ? [data.question.question] : [];
@@ -2427,11 +2430,14 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       sex: this.sex,
       weight: this.weight !== null ? Number(this.weight) : null,
       height: this.height !== null ? Number(this.height) : null,
-      painLocations: this.selectedPainLocations
+      painLocations: this.selectedPainLocations,
+      profile_id: this.selectedProfile?.id || null
     };
 
     this.loading = true;
-    this.http.post<any>('http://localhost:5000/api/nova/refine', answerPayload).subscribe({
+    this.http.post<any>('http://localhost:5000/api/nova/refine', answerPayload, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('access_token')}` }
+    }).subscribe({
       next: (data) => {
         this.state = data.state || {};
         this.askedQuestions = data.asked_questions || [];
@@ -2508,6 +2514,10 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.showDemographicsSection = false;
     this.showGenderChart = false;
     this.showAgeChart = false;
+    
+    // Mettre à jour les permissions d'analyse après réinitialisation
+    this.checkAnalysisLimitations();
+    
     this.pushAssistantTextAnimated("Hello, describe your symptoms. Add several items and send.");
     this.scrollToBottomSoon();
   }

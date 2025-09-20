@@ -223,11 +223,9 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
             "alternative": "Communication aids",
             "dosage": "NaN",
             "driving_restrictions": "NaN",
-            "frequency": "Regular sessions as advised by a therapist",
             "notes": "Early intervention can improve outcomes",
             "otc_medications": "NaN",
             "prescription_medications": "Speech therapy is the primary treatment",
-            "recommended_duration": "Long-term, ongoing",
             "side_effects": "NaN",
             "treatment_type": "Symptomatic"
           },
@@ -250,7 +248,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
             "dosage": "Typically 25-100 mg per day",
             "driving_restrictions": "Caution if experiencing dizziness",
             "frequency": "Once or twice daily",
-            "notes": "Palpitations should be assessed to rule out cardiac complications.",
             "otc_medications": "NaN",
             "prescription_medications": "Beta-blockers (e.g., Metoprolol)",
             "recommended_duration": "As prescribed",
@@ -328,7 +325,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       }, 1000); // Additional delay to ensure smooth transition
     }, 500);
 
-    //this.simulateFakeResponse();
+    this.simulateFakeResponse();
     this.setInitialActiveTab();
 
     // Start countdown timer for real-time updates
@@ -1108,7 +1105,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
   getCourseColor(course: string): string {
     const clean = course?.trim().toLowerCase().replace('.', '');
-    return clean === 'chronic' ? 'rgb(255, 0, 90)' : 'rgb(0, 255, 90)';
+    return clean === 'chronic' ? '#ef4444' : '#22c55e'; // red-500 for chronic, green-500 for acute
   }
 
   formatDiseaseLabel(label: string): string {
@@ -2116,8 +2113,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     
     // Indicators in modern card layout
     const indicators = [
-      { label: 'Severity', value: severity, color: this.getSeverityColor(severity), icon: '⚠️' },
-      { label: 'Contagious', value: contagious, color: this.getContagiousColor(contagious), icon: '🦠' },
+      { label: 'Severity', value: severity, color: this.getSeverityColorRGB(severity), icon: '⚠️' },
+      { label: 'Contagious', value: contagious, color: this.getContagiousColorRGB(contagious), icon: '🦠' },
       { label: 'Course', value: course, color: colors.accent, icon: '📈' }
     ];
     
@@ -2353,21 +2350,44 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       .map(field => [field.label, treatment[field.key] || 'Not specified']);
   }
 
-  getSeverityColor(severity: string): [number, number, number] {
+  getSeverityColor(severity: string): string {
+    const severityColors: { [key: string]: string } = {
+      'Low': '#22c55e',      // green-500
+      'Mild': '#22c55e',     // green-500
+      'Moderate': '#fbbf24', // yellow/amber
+      'High': '#ef4444',     // red-500
+      'Severe': '#ef4444'    // red-500
+    };
+    return severityColors[severity] || '#6b7280'; // default gray
+  }
+
+  getSeverityColorRGB(severity: string): [number, number, number] {
     const severityColors: { [key: string]: [number, number, number] } = {
-      'Low': [34, 197, 94],      // green
-      'Mild': [34, 197, 94],     // green
-      'Moderate': [251, 191, 36], // yellow
-      'High': [239, 68, 68],     // red
-      'Severe': [220, 38, 127]   // pink
+      'Low': [34, 197, 94],      // green-500
+      'Mild': [34, 197, 94],     // green-500
+      'Moderate': [251, 191, 36], // yellow/amber
+      'High': [239, 68, 68],     // red-500
+      'Severe': [239, 68, 68]    // red-500
     };
     return severityColors[severity] || [107, 114, 128]; // default gray
   }
 
-  getContagiousColor(contagious: string): [number, number, number] {
+  getContagiousColor(contagious: string): string {
+    // Nettoyer la chaîne en supprimant les points et en normalisant la casse
+    const cleanContagious = contagious?.replace(/\./g, '').trim().toLowerCase();
+    
+    const contagiousColors: { [key: string]: string } = {
+      'yes': '#ef4444',      // red-500
+      'no': '#22c55e',       // green-500
+      'unknown': '#6b7280'   // gray
+    };
+    return contagiousColors[cleanContagious] || '#6b7280'; // default gray
+  }
+
+  getContagiousColorRGB(contagious: string): [number, number, number] {
     const contagiousColors: { [key: string]: [number, number, number] } = {
-      'Yes': [239, 68, 68],      // red
-      'No': [34, 197, 94],       // green
+      'Yes': [239, 68, 68],      // red-500
+      'No': [34, 197, 94],       // green-500
       'Unknown': [107, 114, 128] // gray
     };
     return contagiousColors[contagious] || [107, 114, 128]; // default gray
@@ -3375,5 +3395,118 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       this.lastAnalysisTime = new Date(lastAnalysisTimeStr);
     }
   }
+
+  // Treatment container classes for full width when alone
+  getTreatmentContainerClasses(treatment: any, type: string): string {
+    const hasMedications = this.hasMedicationsData(treatment);
+    const hasPosology = this.hasPosologyData(treatment);
+    const hasPrecautions = this.hasPrecautionsData(treatment);
+    const hasNotes = this.hasNotesData(treatment);
+    
+    const visibleContainers = [hasMedications, hasPosology, hasPrecautions, hasNotes].filter(Boolean).length;
+    
+    // If only one container is visible, make it full width
+    if (visibleContainers === 1) {
+      return 'bg-white/5 border border-white/10 rounded-lg p-4 col-span-2';
+    }
+    
+    // If 3 containers are visible, the last one should be full width
+    if (visibleContainers === 3) {
+      const containerOrder = ['medications', 'posology', 'precautions', 'notes'];
+      const visibleTypes = [];
+      
+      if (hasMedications) visibleTypes.push('medications');
+      if (hasPosology) visibleTypes.push('posology');
+      if (hasPrecautions) visibleTypes.push('precautions');
+      if (hasNotes) visibleTypes.push('notes');
+      
+      // If this is the last visible container, make it full width
+      if (visibleTypes[visibleTypes.length - 1] === type) {
+        return 'bg-white/5 border border-white/10 rounded-lg p-4 col-span-2';
+      }
+    }
+    
+    return 'bg-white/5 border border-white/10 rounded-lg p-4';
+  }
+
+  getSymptomContainerClasses(symptomTreatment: any, type: string): string {
+    const hasMedications = this.hasSymptomMedicationsData(symptomTreatment);
+    const hasPosology = this.hasSymptomPosologyData(symptomTreatment);
+    const hasPrecautions = this.hasSymptomPrecautionsData(symptomTreatment);
+    const hasNotes = this.hasSymptomNotesData(symptomTreatment);
+    
+    const visibleContainers = [hasMedications, hasPosology, hasPrecautions, hasNotes].filter(Boolean).length;
+    
+    // If only one container is visible, make it full width
+    if (visibleContainers === 1) {
+      return 'bg-white/5 border border-white/10 rounded-lg p-4 col-span-2';
+    }
+    
+    // If 3 containers are visible, the last one should be full width
+    if (visibleContainers === 3) {
+      const containerOrder = ['medications', 'posology', 'precautions', 'notes'];
+      const visibleTypes = [];
+      
+      if (hasMedications) visibleTypes.push('medications');
+      if (hasPosology) visibleTypes.push('posology');
+      if (hasPrecautions) visibleTypes.push('precautions');
+      if (hasNotes) visibleTypes.push('notes');
+      
+      // If this is the last visible container, make it full width
+      if (visibleTypes[visibleTypes.length - 1] === type) {
+        return 'bg-white/5 border border-white/10 rounded-lg p-4 col-span-2';
+      }
+    }
+    
+    return 'bg-white/5 border border-white/10 rounded-lg p-4';
+  }
+
+  // Helper methods to check if data exists
+  hasMedicationsData(treatment: any): boolean {
+    return (treatment.otc_medications && treatment.otc_medications !== 'NaN' && treatment.otc_medications !== 'NA' && treatment.otc_medications !== 'na' && treatment.otc_medications.trim() !== '') ||
+           (treatment.prescription_medications && treatment.prescription_medications !== 'NaN' && treatment.prescription_medications !== 'NA' && treatment.prescription_medications !== 'na' && treatment.prescription_medications.trim() !== '') ||
+           (treatment.alternative && treatment.alternative !== 'NaN' && treatment.alternative !== 'NA' && treatment.alternative !== 'na' && treatment.alternative.trim() !== '') ||
+           (treatment.treatment_type && treatment.treatment_type !== 'NaN' && treatment.treatment_type !== 'NA' && treatment.treatment_type !== 'na' && treatment.treatment_type.trim() !== '');
+  }
+
+  hasPosologyData(treatment: any): boolean {
+    return (treatment.dosage && treatment.dosage !== 'NaN' && treatment.dosage !== 'NA' && treatment.dosage !== 'na' && treatment.dosage.trim() !== '') ||
+           (treatment.frequency && treatment.frequency !== 'NaN' && treatment.frequency !== 'NA' && treatment.frequency !== 'na' && treatment.frequency.trim() !== '') ||
+           (treatment.recommended_duration && treatment.recommended_duration !== 'NaN' && treatment.recommended_duration !== 'NA' && treatment.recommended_duration !== 'na' && treatment.recommended_duration.trim() !== '') ||
+           (treatment.administration_route && treatment.administration_route !== 'NaN' && treatment.administration_route !== 'NA' && treatment.administration_route !== 'na' && treatment.administration_route.trim() !== '');
+  }
+
+  hasPrecautionsData(treatment: any): boolean {
+    return (treatment.side_effects && treatment.side_effects !== 'NaN' && treatment.side_effects !== 'NA' && treatment.side_effects !== 'na' && treatment.side_effects.trim() !== '') ||
+           (treatment.driving_restrictions && treatment.driving_restrictions !== 'NaN' && treatment.driving_restrictions !== 'NA' && treatment.driving_restrictions !== 'na' && treatment.driving_restrictions.trim() !== '');
+  }
+
+  hasNotesData(treatment: any): boolean {
+    return treatment.notes && treatment.notes !== 'NaN' && treatment.notes !== 'NA' && treatment.notes !== 'na' && treatment.notes.trim() !== '';
+  }
+
+  hasSymptomMedicationsData(symptomTreatment: any): boolean {
+    return (symptomTreatment.otc_medications && symptomTreatment.otc_medications !== 'NaN' && symptomTreatment.otc_medications !== 'NA' && symptomTreatment.otc_medications !== 'na' && symptomTreatment.otc_medications.trim() !== '') ||
+           (symptomTreatment.prescription_medications && symptomTreatment.prescription_medications !== 'NaN' && symptomTreatment.prescription_medications !== 'NA' && symptomTreatment.prescription_medications !== 'na' && symptomTreatment.prescription_medications.trim() !== '') ||
+           (symptomTreatment.alternative && symptomTreatment.alternative !== 'NaN' && symptomTreatment.alternative !== 'NA' && symptomTreatment.alternative !== 'na' && symptomTreatment.alternative.trim() !== '') ||
+           (symptomTreatment.treatment_type && symptomTreatment.treatment_type !== 'NaN' && symptomTreatment.treatment_type !== 'NA' && symptomTreatment.treatment_type !== 'na' && symptomTreatment.treatment_type.trim() !== '');
+  }
+
+  hasSymptomPosologyData(symptomTreatment: any): boolean {
+    return (symptomTreatment.dosage && symptomTreatment.dosage !== 'NaN' && symptomTreatment.dosage !== 'NA' && symptomTreatment.dosage !== 'na' && symptomTreatment.dosage.trim() !== '') ||
+           (symptomTreatment.frequency && symptomTreatment.frequency !== 'NaN' && symptomTreatment.frequency !== 'NA' && symptomTreatment.frequency !== 'na' && symptomTreatment.frequency.trim() !== '') ||
+           (symptomTreatment.recommended_duration && symptomTreatment.recommended_duration !== 'NaN' && symptomTreatment.recommended_duration !== 'NA' && symptomTreatment.recommended_duration !== 'na' && symptomTreatment.recommended_duration.trim() !== '') ||
+           (symptomTreatment.administration_route && symptomTreatment.administration_route !== 'NaN' && symptomTreatment.administration_route !== 'NA' && symptomTreatment.administration_route !== 'na' && symptomTreatment.administration_route.trim() !== '');
+  }
+
+  hasSymptomPrecautionsData(symptomTreatment: any): boolean {
+    return (symptomTreatment.side_effects && symptomTreatment.side_effects !== 'NaN' && symptomTreatment.side_effects !== 'NA' && symptomTreatment.side_effects !== 'na' && symptomTreatment.side_effects.trim() !== '') ||
+           (symptomTreatment.driving_restrictions && symptomTreatment.driving_restrictions !== 'NaN' && symptomTreatment.driving_restrictions !== 'NA' && symptomTreatment.driving_restrictions !== 'na' && symptomTreatment.driving_restrictions.trim() !== '');
+  }
+
+  hasSymptomNotesData(symptomTreatment: any): boolean {
+    return symptomTreatment.notes && symptomTreatment.notes !== 'NaN' && symptomTreatment.notes !== 'NA' && symptomTreatment.notes !== 'na' && symptomTreatment.notes.trim() !== '';
+  }
+
 
 }

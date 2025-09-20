@@ -30,6 +30,27 @@ export class AccountComponent implements OnInit, OnDestroy {
   profiles: any[] = [];
   history: any[] = [];
 
+  /** ✅ Filtres pour l'historique */
+  historyFilters = {
+    selectedProfile: 'all', // 'all' ou ID du profil
+    dateFrom: '',
+    dateTo: ''
+  };
+
+  /** ✅ Recherche de profil */
+  profileSearch = {
+    query: '',
+    showDropdown: false,
+    filteredProfiles: [] as any[]
+  };
+
+  /** ✅ Pagination pour l'historique Enterprise */
+  historyPagination = {
+    currentPage: 1,
+    itemsPerPage: 100,
+    totalItems: 0
+  };
+
   /** ✅ Nouveau profil avec champs avancés */
   newProfile: any = {
     first_name: '',
@@ -629,5 +650,161 @@ export class AccountComponent implements OnInit, OnDestroy {
     // Pour les plans limités, retourner au moins 10% pour que la barre soit visible
     const percentage = (used / max) * 100;
     return Math.max(percentage, 10);
+  }
+
+  /** ✅ Récupérer le nom du profil basé sur l'ID */
+  getProfileName(profileId: number): string {
+    const profile = this.profiles.find(p => p.id === profileId);
+    if (profile) {
+      return `${profile.first_name} ${profile.last_name}`.trim();
+    }
+    return `Profile #${profileId}`;
+  }
+
+  /** ✅ Filtrer l'historique selon les critères sélectionnés et le plan */
+  getFilteredHistory(): any[] {
+    let filtered = [...this.history];
+
+    // Filtrer par profil
+    if (this.historyFilters.selectedProfile !== 'all') {
+      const profileId = parseInt(this.historyFilters.selectedProfile);
+      filtered = filtered.filter(h => h.profile_id === profileId);
+    }
+
+    // Filtrer par date
+    if (this.historyFilters.dateFrom) {
+      const fromDate = new Date(this.historyFilters.dateFrom);
+      filtered = filtered.filter(h => new Date(h.created_at) >= fromDate);
+    }
+
+    if (this.historyFilters.dateTo) {
+      const toDate = new Date(this.historyFilters.dateTo);
+      toDate.setHours(23, 59, 59, 999); // Fin de journée
+      filtered = filtered.filter(h => new Date(h.created_at) <= toDate);
+    }
+
+    // Limiter selon le plan
+    if (this.user?.subscription_plan === 'premium') {
+      // Premium : 50 derniers seulement
+      filtered = filtered.slice(0, 50);
+    } else if (this.user?.subscription_plan === 'enterprise') {
+      // Enterprise : Pagination
+      const startIndex = (this.historyPagination.currentPage - 1) * this.historyPagination.itemsPerPage;
+      const endIndex = startIndex + this.historyPagination.itemsPerPage;
+      filtered = filtered.slice(startIndex, endIndex);
+    }
+
+    return filtered;
+  }
+
+  /** ✅ Réinitialiser les filtres */
+  resetHistoryFilters(): void {
+    this.historyFilters = {
+      selectedProfile: 'all',
+      dateFrom: '',
+      dateTo: ''
+    };
+  }
+
+  /** ✅ Méthodes de pagination pour Enterprise */
+  getTotalPages(): number {
+    if (this.user?.subscription_plan !== 'enterprise') return 1;
+    return Math.ceil(this.history.length / this.historyPagination.itemsPerPage);
+  }
+
+  goToPage(page: number): void {
+    if (this.user?.subscription_plan !== 'enterprise') return;
+    const totalPages = this.getTotalPages();
+    if (page >= 1 && page <= totalPages) {
+      this.historyPagination.currentPage = page;
+    }
+  }
+
+  getPageNumbers(): number[] {
+    if (this.user?.subscription_plan !== 'enterprise') return [];
+    const totalPages = this.getTotalPages();
+    const currentPage = this.historyPagination.currentPage;
+    const pages: number[] = [];
+    
+    // Afficher max 5 pages autour de la page courante
+    const start = Math.max(1, currentPage - 2);
+    const end = Math.min(totalPages, currentPage + 2);
+    
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
+    }
+    
+    return pages;
+  }
+
+  /** ✅ Vérifier si l'historique est disponible selon le plan */
+  isHistoryAvailable(): boolean {
+    return this.user?.subscription_plan !== 'free';
+  }
+
+  /** ✅ Obtenir le message d'information selon le plan */
+  getHistoryInfoMessage(): string {
+    if (this.user?.subscription_plan === 'premium') {
+      return 'Showing your 50 most recent analyses';
+    } else if (this.user?.subscription_plan === 'enterprise') {
+      return `Showing ${this.getFilteredHistory().length} of ${this.history.length} analyses`;
+    }
+    return '';
+  }
+
+  /** ✅ Obtenir le texte de l'historique selon le plan */
+  getHistoryText(): string {
+    if (this.user?.subscription_plan === 'free') {
+      return 'No';
+    } else if (this.user?.subscription_plan === 'premium') {
+      return 'Last 50 analysis';
+    } else if (this.user?.subscription_plan === 'enterprise') {
+      return 'Unlimited';
+    }
+    return 'No';
+  }
+
+  /** ✅ Méthodes pour la recherche de profil */
+  onProfileSearchInput(): void {
+    if (this.profileSearch.query.length === 0) {
+      this.profileSearch.filteredProfiles = [];
+      this.profileSearch.showDropdown = false;
+      this.historyFilters.selectedProfile = 'all';
+      return;
+    }
+
+    this.profileSearch.filteredProfiles = this.profiles.filter(profile => {
+      const fullName = `${profile.first_name} ${profile.last_name}`.toLowerCase();
+      return fullName.includes(this.profileSearch.query.toLowerCase());
+    });
+
+    this.profileSearch.showDropdown = this.profileSearch.filteredProfiles.length > 0;
+  }
+
+  selectProfile(profile: any): void {
+    this.historyFilters.selectedProfile = profile.id.toString();
+    this.profileSearch.query = `${profile.first_name} ${profile.last_name}`;
+    this.profileSearch.showDropdown = false;
+  }
+
+  clearProfileSearch(): void {
+    this.profileSearch.query = '';
+    this.profileSearch.showDropdown = false;
+    this.historyFilters.selectedProfile = 'all';
+  }
+
+  getSelectedProfileName(): string {
+    if (this.historyFilters.selectedProfile === 'all') {
+      return 'All Profiles';
+    }
+    const profile = this.profiles.find(p => p.id.toString() === this.historyFilters.selectedProfile);
+    return profile ? `${profile.first_name} ${profile.last_name}` : 'All Profiles';
+  }
+
+  /** ✅ Gérer le blur avec délai */
+  onProfileSearchBlur(): void {
+    setTimeout(() => {
+      this.profileSearch.showDropdown = false;
+    }, 200);
   }
 }

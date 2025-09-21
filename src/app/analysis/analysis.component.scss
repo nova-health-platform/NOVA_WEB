@@ -49,9 +49,11 @@ input[type=number] {
 .typewriter-bubble {
   transition: width 0.2s ease-out, min-width 0.2s ease-out;
   overflow: hidden;
-  white-space: nowrap;
+  white-space: normal;
   width: fit-content;
   min-width: 200px;
+  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .typewriter-bubble-multiline {
@@ -279,6 +281,174 @@ button:disabled {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Custom fadeInUp animation for collapsible sections */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+/* Smooth container expansion animation */
+@keyframes expandContainer {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scaleY(0.8);
+    transform-origin: top;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    transform-origin: top;
+  }
+}
+
+.animate-expand-container {
+  animation: expandContainer 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  opacity: 0;
+}
+
+/* Staggered animation for child elements */
+@keyframes staggerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-stagger {
+  animation: staggerFadeIn 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+/* Staggered animation that only runs once when container is expanded */
+.animate-stagger-once {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease-out;
+}
+
+.animate-stagger-once.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hide content when container is collapsed */
+.collapsible-content.collapsed .animate-stagger-once {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: none;
+}
+
+/* Enhanced slide animations for collapsible content */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    max-height: 500px;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Smooth height expansion animation */
+@keyframes expandHeight {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 800px;
+    transform: translateY(0);
+  }
+}
+
+.animate-expand-height {
+  animation: expandHeight 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  overflow: hidden;
+  opacity: 0;
+  max-height: 0;
+  transform: translateY(-10px);
+}
+
+/* Smooth transition for collapsible content */
+.collapsible-content {
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+}
+
+.collapsible-content.expanded {
+  opacity: 1;
+  max-height: 800px;
+  transform: translateY(0);
+  margin-top: 1rem;
+}
+
+.collapsible-content.collapsed {
+  opacity: 0;
+  max-height: 0;
+  transform: translateY(-10px);
+  margin-top: 0;
+  padding: 0;
+  border: none;
+  overflow: hidden;
+}
+
+/* Padding only for Recommended Actions */
+.recommended-actions-content {
+  padding: 1rem;
+}
+
+.recommended-actions-content.collapsed {
+  padding: 0;
+}
+
+/* Remove space-y when collapsed */
+.collapsible-content.collapsed > * {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.collapsible-content.expanded > * {
+  margin-top: 1rem;
+}
+
+.collapsible-content.expanded > *:first-child {
+  margin-top: 0;
+}
+
 
 /* Responsive improvements */
 @media (max-width: 640px) {

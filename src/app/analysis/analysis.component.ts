@@ -1,4 +1,5 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -44,7 +45,30 @@ interface SelectionCircle {
   standalone: true,
   imports: [FormsModule, CommonModule],
   templateUrl: './analysis.component.html',
-  styleUrls: ['./analysis.component.scss']
+  styleUrls: ['./analysis.component.scss'],
+  animations: [
+    trigger('slideInOut', [
+      transition(':enter', [
+        style({ 
+          opacity: 0, 
+          transform: 'translateY(-10px) scaleY(0.8)',
+          transformOrigin: 'top'
+        }),
+        animate('400ms cubic-bezier(0.4, 0, 0.2, 1)', style({ 
+          opacity: 1, 
+          transform: 'translateY(0) scaleY(1)',
+          transformOrigin: 'top'
+        }))
+      ]),
+      transition(':leave', [
+        animate('300ms cubic-bezier(0.4, 0, 0.2, 1)', style({ 
+          opacity: 0, 
+          transform: 'translateY(-5px) scaleY(0.9)',
+          transformOrigin: 'top'
+        }))
+      ])
+    ])
+  ]
 })
 export class AnalysisComponent implements OnInit, AfterViewInit {
   // Chat message model
@@ -123,6 +147,9 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   sex: string = '';
   weight: number | null = null;
   height: number | null = null;
+
+  // Gender dropdown
+  showGenderDropdown: boolean = false;
 
   // User authentication and profiles
   isLoggedIn: boolean = false;
@@ -325,7 +352,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
       }, 1000); // Additional delay to ensure smooth transition
     }, 500);
 
-    this.simulateFakeResponse();
+    //this.simulateFakeResponse();
     this.setInitialActiveTab();
 
     // Start countdown timer for real-time updates
@@ -817,6 +844,12 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
   backToEditFreeText(): void {
     this.showExtractionConfirm = false;
+    
+    // Remove the first user message (green message) that was added when submitting the free text
+    // This is the message containing the user's symptom description
+    if (this.messages.length > 0 && this.messages[0].role === 'user') {
+      this.messages.splice(0, 1);
+    }
   }
 
   confirmRecognizedSelection(): void {
@@ -831,7 +864,28 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     for (const i of chosen) this.selectedSources[i.canonical] = 'suggested';
     // Proceed to demographics step
     this.step = 2;
-    this.pushAssistantImmediateTextAnimated('Thanks. Enter your info: age, gender, weight, height.');
+    // Professional medical assistant messages
+    const medicalMessages = [
+      'Thank you for sharing your symptoms. 😊 I need some basic information: age, gender, weight, and height.',
+      'I understand your concerns. 😊 Please provide your age, gender, weight, and height.',
+      'I\'m here to help. 😊 Let\'s gather your age, gender, weight, and height.',
+      'Thank you for the details. 😊 Now I need your age, gender, weight, and height.',
+      'I appreciate you sharing this. 😊 Please tell me your age, gender, weight, and height.',
+      'Thank you for describing your symptoms. 😊 I need your age, gender, weight, and height.',
+      'I understand your situation. 😊 Please provide your age, gender, weight, and height.',
+      'Thank you for being detailed. 😊 Now I need your age, gender, weight, and height.'
+    ];
+    
+    let randomMessage = medicalMessages[Math.floor(Math.random() * medicalMessages.length)];
+    
+    // Add profile information if user is logged in
+    if (this.isLoggedIn) {
+      randomMessage += ' You can also choose from your saved profiles.';
+    } else {
+      randomMessage += ' You can either enter this information manually or create an account for more reliable long-term tracking.';
+    }
+    
+    this.pushAssistantImmediateTextAnimated(randomMessage);
     this.scrollToBottomSoon();
   }
 
@@ -909,6 +963,15 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     if (this.step > 1) {
       this.step -= 1;
       this.errorMessage = '';
+      
+      // Remove the last assistant message when going back to symptoms
+      // This removes the assistant's analysis message that was displayed
+      if (this.messages.length > 0) {
+        const lastMessage = this.messages[this.messages.length - 1];
+        if (lastMessage.role === 'assistant') {
+          this.messages.splice(this.messages.length - 1, 1);
+        }
+      }
     }
   }
 
@@ -3243,6 +3306,16 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.sex = '';
     this.weight = null;
     this.height = null;
+  }
+
+  // Gender dropdown methods
+  toggleGenderDropdown(): void {
+    this.showGenderDropdown = !this.showGenderDropdown;
+  }
+
+  selectGender(gender: string): void {
+    this.sex = gender;
+    this.showGenderDropdown = false;
   }
 
   // Navigate to account page

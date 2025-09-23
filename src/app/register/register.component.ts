@@ -16,6 +16,7 @@ export class RegisterComponent implements OnInit {
   last_name = '';
   email = '';
   password = '';
+  confirmPassword = '';
   phone = '';
   country = '';
   consent_rgpd = false;
@@ -23,6 +24,7 @@ export class RegisterComponent implements OnInit {
 
   countries: any[] = [];
   filteredCountries: any[] = [];
+  showCountryDropdown = false;
 
   loading = false;
   errorMessage = '';
@@ -42,9 +44,20 @@ export class RegisterComponent implements OnInit {
     this.filteredCountries = this.countries.filter(c => c.name.toLowerCase().includes(query));
   }
 
+  hideCountryDropdown() {
+    setTimeout(() => {
+      this.showCountryDropdown = false;
+    }, 200);
+  }
+
   register() {
-    if (!this.first_name || !this.last_name || !this.email || !this.password || !this.country) {
+    if (!this.first_name || !this.last_name || !this.email || !this.password || !this.confirmPassword || !this.country) {
       this.errorMessage = 'All fields are required.';
+      return;
+    }
+
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = 'Passwords do not match.';
       return;
     }
 

@@ -1,0 +1,56 @@
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(34, 197, 94, 0.5);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 197, 94, 0.7);
+}
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hover effects for links */
+a {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Card hover effects */
+.bg-white\/5:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+  transition: all 0.2s ease-in-out;
+}
+
+/* Icon animations */
+svg {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid.md\\:grid-cols-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .grid.md\\:grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Smooth transitions for all elements */
+* {
+  transition: all 0.2s ease-in-out;
+}

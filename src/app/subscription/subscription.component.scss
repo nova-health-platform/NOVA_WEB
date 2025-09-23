@@ -1,38 +1,62 @@
-// Spinner styles
+/* Spinner animation */
 .spinner {
-  position: relative;
   width: 20px;
   height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top: 2px solid #22c55e;
   border-radius: 50%;
-}
-
-.spinner::before,
-.spinner::after {
-  content: "";
-  position: absolute;
-  border-radius: inherit;
-}
-
-.spinner::before {
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(0deg, #22c55e 0%, #212121 50%);
-  animation: spin .5s infinite linear;
-}
-
-.spinner::after {
-  width: 85%;
-  height: 85%;
-  background-color: #101010;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(34, 197, 94, 0.5);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 197, 94, 0.7);
+}
+
+/* Card hover effects */
+.bg-white\/5:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Button hover effects */
+button:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+/* Smooth transitions */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .grid.md\\:grid-cols-3 {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 
 
 

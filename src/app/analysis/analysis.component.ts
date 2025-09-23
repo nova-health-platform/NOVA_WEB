@@ -924,15 +924,15 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
 
     // Add patient info to messages
     const patientInfo = this.selectedProfile 
-      ? `Profile: ${this.selectedProfile.first_name} ${this.selectedProfile.last_name} (Age: ${this.age}, Gender: ${this.sex}, Weight: ${this.weight}kg, Height: ${this.height}cm)`
-      : `Age: ${this.age}, Gender: ${this.sex}, Weight: ${this.weight}kg, Height: ${this.height}cm`;
+      ? `<strong>Patient Information:</strong><br>• Last Name: ${this.selectedProfile.last_name}<br>• First Name: ${this.selectedProfile.first_name}<br>• Age: ${this.age} years<br>• Gender: ${this.sex}<br>• Weight: ${this.weight}kg<br>• Height: ${this.height}cm`
+      : `<strong>Patient Information:</strong><br>• Age: ${this.age} years<br>• Gender: ${this.sex}<br>• Weight: ${this.weight}kg<br>• Height: ${this.height}cm`;
     
     this.messages.push({ role: 'user', type: 'text', content: patientInfo });
     this.step = 3;
     // brief thinking animation before pain question (bottom typing indicator)
     this.showThinking(1000);
     setTimeout(() => {
-      this.pushAssistantPainAnimated('Are you experiencing physical pain?');
+      this.pushAssistantPainAnimated('Are you experiencing physical pain? 🤕');
     }, 1000);
   }
 
@@ -940,7 +940,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.painAnswer = answer;
     
     // Add user's response to the chat
-    this.messages.push({ role: 'user', type: 'text', content: answer ? 'Yes' : 'No' });
+    this.messages.push({ role: 'user', type: 'text', content: answer ? 'You answered Yes ✅' : 'You answered No ❌' });
     this.scrollToBottomSoon();
     
     // Mark the pain question as answered (hide buttons)
@@ -949,7 +949,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     if (answer) {
       this.showBodySelection = true;
       this.step = 4;
-      this.showThinking(1000);
       setTimeout(() => {
         this.pushAssistantBodySelectionAnimated('Indicate your pain locations on the body.');
       }, 1000);
@@ -978,7 +977,6 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
   validateBodySelection(): void {
     this.showBodySelection = false;
     this.markLastMessageAnswered('bodySelection');
-    this.showThinking(1000);
 
     setTimeout(() => {
       // 👉 on affiche d'abord le message utilisateur
@@ -2498,7 +2496,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     if (!this.currentClarification) return;
     
     // Add user's response to the chat immediately
-    this.messages.push({ role: 'user', type: 'text', content: value ? 'Yes' : 'No' });
+    this.messages.push({ role: 'user', type: 'text', content: value ? 'You answered yes ✅' : 'You answered no ❌' });
     this.scrollToBottomSoon();
     
     this.showThinking(1000);
@@ -2624,6 +2622,23 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     }
   }
 
+  hasUnansweredYesNoQuestion(): boolean {
+    const lastMessage = this.messages[this.messages.length - 1];
+    return lastMessage && 
+           (lastMessage.type === 'clarification' || lastMessage.type === 'pain') && 
+           !lastMessage.answered && 
+           !lastMessage.isAnimating;
+  }
+
+  answerCurrentYesNoQuestion(answer: boolean) {
+    const lastMessage = this.messages[this.messages.length - 1];
+    if (lastMessage && lastMessage.type === 'clarification') {
+      this.answerClarification(answer);
+    } else if (lastMessage && lastMessage.type === 'pain') {
+      this.answerPainQuestion(answer);
+    }
+  }
+
   private stripLastTypingIndicator(): void {
     for (let i = this.messages.length - 1; i >= 0; i--) {
       const msg = this.messages[i];
@@ -2691,7 +2706,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         break;
       }
     }
-    this.messages.push({ role: 'user', type: 'text', content: value ? 'Yes' : 'No' });
+    this.messages.push({ role: 'user', type: 'text', content: value ? 'You answered Yes ✅' : 'You answered No ❌' });
     this.scrollToBottomSoon();
     if (!value) {
       return;
@@ -2845,8 +2860,17 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.messages.push(message);
     this.scrollToBottomSoon();
     
-    // Start animation after a short delay
-    setTimeout(() => this.animateText(message), 50);
+    // Wait for spinner to disappear before starting animation
+    const waitForSpinner = () => {
+      if (this.thinking) {
+        setTimeout(waitForSpinner, 100);
+      } else {
+        // Start animation after spinner is gone
+        setTimeout(() => this.animateText(message), 50);
+      }
+    };
+    
+    waitForSpinner();
   }
 
   isDetailedAnalysisVisible(): boolean {
@@ -2978,13 +3002,8 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.messages.push(message);
     this.scrollToBottomSoon();
     
-    // Show thinking spinner
-    this.thinking = true;
-    setTimeout(() => {
-      this.thinking = false;
-      // Start animation immediately after DOM update
-      setTimeout(() => this.animateText(message), 50);
-    }, 1000);
+    // Start animation immediately without spinner
+    setTimeout(() => this.animateText(message), 50);
   }
 
   private pushAssistantExtrasAnimated(content: string): void {

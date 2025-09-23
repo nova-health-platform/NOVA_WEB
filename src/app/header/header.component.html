@@ -21,11 +21,9 @@
         <!-- Navigation -->
         <nav aria-label="Global" class="hidden md:block">
           <ul class="flex items-center gap-6 text-sm">
-            <li><a class="text-[#101010] hover:text-green-500 dark:text-white" routerLink="/analysis">Symptom analysis</a>
-            </li>
-            <li><a class="text-[#101010] hover:text-green-500 dark:text-white" routerLink="/skinCheck">Skin check</a></li>
-            <li><a class="text-[#101010] hover:text-green-500 dark:text-white" routerLink="/mentalHealth">Mental
-                health</a></li>
+            <li><a class="text-[#101010] hover:text-green-500 dark:text-white" routerLink="/analysis">Analysis</a></li>
+            <li><a class="text-[#101010] hover:text-green-500 dark:text-white" routerLink="/mentalHealth">Mental health</a></li>
+            <li><a class="text-[#101010] hover:text-green-500 dark:text-white" routerLink="/docs">Documentation</a></li>
           </ul>
         </nav>
 
@@ -33,11 +31,11 @@
         <div class="flex items-center gap-4">
           <!-- Not logged in -->
           <ng-container *ngIf="!(isLoggedIn$ | async)">
-            <a class="rounded-md bg-green-500 px-5 py-3 text-sm font-medium text-white hover:bg-green-600"
+            <a class="rounded-md bg-green-700 px-5 py-3 text-sm font-medium text-white hover:bg-green-800"
               routerLink="/login">
               Login
             </a>
-            <a class="rounded-md px-5 py-2.5 text-sm font-medium bg-green-500/10 border-2 border-green-500 dark:text-white text-green-500 hover:bg-green-500 hover:text-white"
+            <a class="rounded-md px-5 py-2.5 text-sm font-medium bg-green-700/10 border-2 border-green-700 dark:text-white text-green-700 hover:bg-green-700 hover:text-white"
               routerLink="/register">
               Register
             </a>
@@ -47,7 +45,7 @@
           <ng-container *ngIf="isLoggedIn$ | async">
             <div class="relative">
               <button (click)="toggleMenu()"
-                class="rounded-md bg-green-500 px-5 py-2 text-white flex items-center gap-2 text-sm font-medium hover:bg-green-600">
+                class="rounded-md bg-green-700 px-5 py-2 text-white flex items-center gap-2 text-sm font-medium hover:bg-green-800">
                 Account
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
@@ -59,15 +57,15 @@
               <div *ngIf="menuOpen"
                 class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg text-gray-700 z-10 overflow-hidden">
                 <a routerLink="/subscription" (click)="closeMenu()"
-                  class="block px-4 py-2 hover:bg-green-500 hover:text-white first:rounded-t-lg">
+                  class="block px-4 py-2 hover:bg-green-700 hover:text-white first:rounded-t-lg">
                   Subscription
                 </a>
                 <a routerLink="/account" (click)="closeMenu()"
-                  class="block px-4 py-2 hover:bg-green-500 hover:text-white">
+                  class="block px-4 py-2 hover:bg-green-700 hover:text-white">
                   Account
                 </a>
                 <button (click)="logout(); closeMenu()"
-                  class="cursor-pointer block w-full text-left px-4 py-2 hover:bg-green-500 hover:text-white last:rounded-b-lg">
+                  class="cursor-pointer block w-full text-left px-4 py-2 hover:bg-green-700 hover:text-white last:rounded-b-lg">
                   Logout
                 </button>
               </div>

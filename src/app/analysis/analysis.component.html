@@ -30,34 +30,61 @@
             <div class="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-white/20 assistant-avatar self-start" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
               <img src="assets/profile.png" class="w-full h-full object-cover">
             </div>
-            <div class="max-w-[85%] bg-white/3 border border-white/10 text-white rounded-2xl px-4 py-3 typewriter-bubble break-words" style="white-space: normal; word-wrap: break-word; word-break: break-word;">
-              <span class="typewriter-text">{{ m.displayedText || '' }}</span>
-              <span *ngIf="m.isAnimating" class="typewriter-cursor">|</span>
+            <div class="max-w-[85%] bg-white/3 border border-white/10 text-white rounded-2xl px-4 py-3 typewriter-bubble break-words" [ngClass]="{'inline-loading': !m.displayedText?.length}" style="white-space: normal; word-wrap: break-word; word-break: break-word;">
+              <ng-container *ngIf="m.displayedText?.length; else textTypingIndicator">
+                <span class="typewriter-text">{{ m.displayedText }}</span>
+                <span *ngIf="m.isAnimating" class="typewriter-cursor">|</span>
+              </ng-container>
+              <ng-template #textTypingIndicator>
+                <div class="inline-typing-indicator" aria-label="Assistant is thinking">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </ng-template>
             </div>
           </div>
 
           <!-- Assistant clarification (Yes/No) -->
-          <div *ngIf="m.role === 'assistant' && m.type === 'clarification' && (m.displayedText || !m.isAnimating)" class="flex justify-start items-baseline gap-3 min-h-[40px]">
+          <div *ngIf="m.role === 'assistant' && m.type === 'clarification'" class="flex justify-start items-baseline gap-3 min-h-[40px]">
             <div class="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-white/20 assistant-avatar self-start" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
               <img src="assets/profile.png" class="w-full h-full object-cover">
             </div>
             <div class="max-w-[85%] w-full">
-              <div class="inline-block bg-white/3 dark:bg-white/3 border border-white/10 text-white rounded-2xl px-4 py-3 typewriter-bubble break-words">
-                <span class="typewriter-text">{{ m.displayedText || '' }}</span>
-                <span *ngIf="m.isAnimating" class="typewriter-cursor">|</span>
+              <div class="inline-block bg-white/3 dark:bg-white/3 border border-white/10 text-white rounded-2xl px-4 py-3 typewriter-bubble break-words" [ngClass]="{'inline-loading': !m.displayedText?.length}">
+                <ng-container *ngIf="m.displayedText?.length; else clarificationTypingIndicator">
+                  <span class="typewriter-text">{{ m.displayedText }}</span>
+                  <span *ngIf="m.isAnimating" class="typewriter-cursor">|</span>
+                </ng-container>
+                <ng-template #clarificationTypingIndicator>
+                  <div class="inline-typing-indicator" aria-label="Assistant is thinking">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </ng-template>
               </div>
             </div>
           </div>
 
           <!-- Assistant pain question (Yes/No) -->
-          <div *ngIf="m.role === 'assistant' && m.type === 'pain' && (m.displayedText || !m.isAnimating)" class="flex justify-start items-baseline gap-3 min-h-[40px]">
+          <div *ngIf="m.role === 'assistant' && m.type === 'pain'" class="flex justify-start items-baseline gap-3 min-h-[40px]">
             <div class="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-white/20 assistant-avatar self-start" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
               <img src="assets/profile.png" class="w-full h-full object-cover">
             </div>
             <div class="max-w-[85%] w-full">
-              <div class="inline-block bg-white/3 dark:bg-white/3 border border-white/10 text-white rounded-2xl px-4 py-3 typewriter-bubble break-words">
-                <span class="typewriter-text">{{ m.displayedText || '' }}</span>
-                <span *ngIf="m.isAnimating" class="typewriter-cursor">|</span>
+              <div class="inline-block bg-white/3 dark:bg-white/3 border border-white/10 text-white rounded-2xl px-4 py-3 typewriter-bubble break-words" [ngClass]="{'inline-loading': !m.displayedText?.length}">
+                <ng-container *ngIf="m.displayedText?.length; else painTypingIndicator">
+                  <span class="typewriter-text">{{ m.displayedText }}</span>
+                  <span *ngIf="m.isAnimating" class="typewriter-cursor">|</span>
+                </ng-container>
+                <ng-template #painTypingIndicator>
+                  <div class="inline-typing-indicator" aria-label="Assistant is thinking">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </ng-template>
               </div>
             </div>
           </div>
@@ -70,9 +97,18 @@
             <div class="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-white/20 assistant-avatar self-start" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
               <img src="assets/profile.png" class="w-full h-full object-cover">
             </div>
-            <div class="max-w-[85%] bg-white/3 border border-white/10 text-white rounded-2xl px-4 py-3 typewriter-bubble break-words-multiline">
-              <span class="typewriter-text" [innerHTML]="m.displayedText || ''"></span>
-              <span *ngIf="m.isAnimating" class="typewriter-cursor">|</span>
+            <div class="max-w-[85%] bg-white/3 border border-white/10 text-white rounded-2xl px-4 py-3 typewriter-bubble break-words-multiline" [ngClass]="{'inline-loading': !m.displayedText?.length}">
+              <div *ngIf="m.displayedText?.length; else quickSummaryTypingIndicator">
+                <span class="typewriter-text" [innerHTML]="m.displayedText"></span>
+                <span *ngIf="m.isAnimating" class="typewriter-cursor">|</span>
+              </div>
+              <ng-template #quickSummaryTypingIndicator>
+                <div class="inline-typing-indicator" aria-label="Assistant is thinking">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </ng-template>
               
               <!-- Discreet button to toggle detailed analysis -->
               <div *ngIf="!m.isAnimating" class="mt-3 flex justify-start">
@@ -817,14 +853,23 @@
           </div>
 
           <!-- Assistant extras (ask for demographics/treatments) -->
-          <div *ngIf="m.role === 'assistant' && isExtrasMessage(m) && (m.displayedText || !m.isAnimating)" class="flex justify-start items-baseline gap-3 min-h-[40px]">
+          <div *ngIf="m.role === 'assistant' && isExtrasMessage(m)" class="flex justify-start items-baseline gap-3 min-h-[40px]">
             <div class="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-white/20 assistant-avatar self-start" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
               <img src="assets/profile.png" class="w-full h-full object-cover">
             </div>
             <div class="max-w-[85%] w-full">
-              <div class="inline-block bg-white/3 dark:bg-white/3 border border-white/10 text-white rounded-2xl px-4 py-3 typewriter-bubble break-words">
-                <span class="typewriter-text">{{ m.displayedText || '' }}</span>
-                <span *ngIf="m.isAnimating" class="typewriter-cursor">|</span>
+              <div class="inline-block bg-white/3 dark:bg-white/3 border border-white/10 text-white rounded-2xl px-4 py-3 typewriter-bubble break-words" [ngClass]="{'inline-loading': !m.displayedText?.length}">
+                <ng-container *ngIf="m.displayedText?.length; else extrasTypingIndicator">
+                  <span class="typewriter-text">{{ m.displayedText }}</span>
+                  <span *ngIf="m.isAnimating" class="typewriter-cursor">|</span>
+                </ng-container>
+                <ng-template #extrasTypingIndicator>
+                  <div class="inline-typing-indicator" aria-label="Assistant is thinking">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </ng-template>
               </div>
               <div class="flex justify-end mt-2" *ngIf="!m.answered && !m.isAnimating">
                 <div class="flex gap-3">
@@ -837,7 +882,7 @@
         </ng-container>
 
         <!-- Bottom typing indicator -->
-        <div *ngIf="thinking" class="flex justify-start items-start gap-3">
+        <div *ngIf="thinking && !hasInlineLoadingBubble()" class="flex justify-start items-start gap-3">
           <div class="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden border-2 border-white/20 assistant-avatar self-start" style="width: 40px; height: 40px; min-width: 40px; min-height: 40px;">
             <img src="assets/profile.png" class="w-full h-full object-cover">
           </div>

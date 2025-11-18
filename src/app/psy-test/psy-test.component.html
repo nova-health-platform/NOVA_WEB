@@ -13,6 +13,38 @@
         </p>
     </div>
 
+    <!-- Profile selection -->
+    <div class="max-w-4xl mx-auto mb-10">
+        <div class="flex flex-col gap-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-4 text-white shadow-lg shadow-black/5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-xs uppercase tracking-[0.4em] text-green-400">Profile Required</p>
+                <p class="text-sm text-white/70">
+                    {{ activeProfileName ? ('Current: ' + activeProfileName) : 'Select a profile to save your scores.' }}
+                </p>
+            </div>
+            <div class="flex-1 sm:max-w-xs">
+                <select
+                    #profileSelect
+                    class="w-full bg-[#0f0f0f]/80 text-white border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50"
+                    [disabled]="!isAuthenticated || profilesLoading || !profiles.length"
+                    (change)="onSelectProfileById(profileSelect.value)"
+                    [value]="selectedProfileId || ''">
+                    <option value="" disabled>
+                        {{
+                            !isAuthenticated ? 'Login required' :
+                            profilesLoading ? 'Loading...' :
+                            profiles.length ? 'Choose a profile' :
+                            'No profile'
+                        }}
+                    </option>
+                    <option *ngFor="let profile of profiles" [value]="profile.id">
+                        {{ profile.first_name }} {{ profile.last_name }}
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+
     <!-- Tools Table -->
     <div class="max-w-7xl mx-auto">
         <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl shadow-md overflow-hidden">
@@ -36,7 +68,7 @@
                                     <span class="text-yellow-600 dark:text-yellow-400 text-lg">🔍</span>
                                 </div>
                                 <div>
-                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white">Smart Prediction</h3>
+                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white mb-1">Smart Prediction</h3>
                                     <span class="bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 text-xs font-semibold px-2 py-1 rounded-full border border-yellow-500/30">
                                         Beta 1.0
                                     </span>
@@ -56,9 +88,11 @@
                         </td>
                         <td class="w-1/6 px-4 py-4 text-center">
                             <div class="flex flex-col gap-2">
-                                <a href="/smartpred" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
-                                    Start
-                                </a>
+                                <button 
+                                    (click)="navigateToTest('/smartpred')" 
+                                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-700 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
+                                    {{ isAuthenticated ? 'Start' : 'Login' }}
+                                </button>
                                 <button (click)="openModal('smart')" class="text-xs text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors cursor-pointer">
                                     Learn more
                                 </button>
@@ -66,25 +100,6 @@
                         </td>
                     </tr>
         
-        <!-- 🔳 Smart Prediction Modal -->
-        <div *ngIf="activeModal === 'smart'" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <!-- Blurred backdrop -->
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
-        
-            <!-- Modal content -->
-            <div class="relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border dark:border-white/10 border-[#101010]/10 rounded-2xl shadow-2xl max-w-lg w-full p-8" (click)="$event.stopPropagation()">
-                <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">About Smart Prediction</h3>
-                <p class="text-[#101010] dark:text-white/80 mb-8 leading-relaxed">
-                    This tool uses a machine learning model trained on anonymous questionnaire data to suggest patterns or trends in your mental state. It doesn't provide a diagnosis, but offers insights to reflect on or discuss with a professional.
-                </p>
-                <div class="flex justify-end">
-                    <button (click)="closeModal()" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
-                        Got it
-                    </button>
-                </div>
-            </div>
-        </div>
-
                     <!-- PHQ-9 Row -->
                     <tr class="hover:bg-green-500/5 transition-colors">
                         <td class="w-1/4 px-4 py-4">
@@ -93,7 +108,7 @@
                                     <span class="text-green-600 dark:text-green-400 text-lg">🧠</span>
                                 </div>
                                 <div>
-                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white">PHQ-9 – Depression Screening</h3>
+                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white mb-1">PHQ-9 – Depression Screening</h3>
                                     <span class="bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-full border border-green-500/30">
                                         Verified
                                     </span>
@@ -113,9 +128,11 @@
                         </td>
                         <td class="w-1/6 px-4 py-4 text-center">
                             <div class="flex flex-col gap-2">
-                                <a href="/phq9" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
-                                    Start
-                                </a>
+                                <button 
+                                    (click)="navigateToTest('/phq9')" 
+                                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-700 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
+                                    {{ isAuthenticated ? 'Start' : 'Login' }}
+                                </button>
                                 <button (click)="openModal('phq')" class="text-xs text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors cursor-pointer">
                                     Learn more
                                 </button>
@@ -123,25 +140,6 @@
                         </td>
                     </tr>
 
-        <!-- 🔳 PHQ-9 Modal -->
-        <div *ngIf="activeModal === 'phq'" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <!-- Blurred backdrop -->
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
-            
-            <!-- Modal content -->
-            <div class="relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border dark:border-white/10 border-[#101010]/10 rounded-2xl shadow-2xl max-w-lg w-full p-8" (click)="$event.stopPropagation()">
-                <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">About PHQ-9</h3>
-                <p class="text-[#101010] dark:text-white/80 mb-8 leading-relaxed">
-                    The PHQ-9 (Patient Health Questionnaire) is a brief self-assessment tool designed to identify symptoms of depression. It's commonly used in clinical practice and helps individuals understand whether they might be experiencing depressive episodes.
-                </p>
-                <div class="flex justify-end">
-                    <button (click)="closeModal()" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
-                        Got it
-                    </button>
-                </div>
-            </div>
-        </div>
-        
 
                     <!-- GAD-7 Row -->
                     <tr class="hover:bg-green-500/5 transition-colors">
@@ -151,7 +149,7 @@
                                     <span class="text-blue-600 dark:text-blue-400 text-lg">😰</span>
                                 </div>
                                 <div>
-                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white">GAD-7 – Anxiety Assessment</h3>
+                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white mb-1">GAD-7 – Anxiety Assessment</h3>
                                     <span class="bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-full border border-green-500/30">
                                         Verified
                                     </span>
@@ -171,9 +169,11 @@
                         </td>
                         <td class="w-1/6 px-4 py-4 text-center">
                             <div class="flex flex-col gap-2">
-                                <a href="/gad7" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
-                                    Start
-                                </a>
+                                <button 
+                                    (click)="navigateToTest('/gad7')" 
+                                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-700 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
+                                    {{ isAuthenticated ? 'Start' : 'Login' }}
+                                </button>
                                 <button (click)="openModal('gad7')" class="text-xs text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors cursor-pointer">
                                     Learn more
                                 </button>
@@ -181,25 +181,6 @@
                         </td>
                     </tr>
         
-        <!-- 🔳 GAD-7 Modal -->
-        <div *ngIf="activeModal === 'gad7'" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <!-- Blurred backdrop -->
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
-        
-            <!-- Modal content -->
-            <div class="relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border dark:border-white/10 border-[#101010]/10 rounded-2xl shadow-2xl max-w-lg w-full p-8" (click)="$event.stopPropagation()">
-                <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">About GAD-7</h3>
-                <p class="text-[#101010] dark:text-white/80 mb-8 leading-relaxed">
-                    The GAD-7 (Generalized Anxiety Disorder 7-item scale) is a validated self-assessment tool that helps screen for anxiety severity. It evaluates how often you've felt excessive worry, restlessness, or difficulty relaxing. GAD-7 is widely used by professionals to initiate discussions about mental health.
-                </p>
-                <div class="flex justify-end">
-                    <button (click)="closeModal()" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
-                        Got it
-                    </button>
-                </div>
-            </div>
-        </div>
-  
 
                     <!-- DASS-21 Row -->
                     <tr class="hover:bg-green-500/5 transition-colors">
@@ -209,7 +190,7 @@
                                     <span class="text-orange-600 dark:text-orange-400 text-lg">😤</span>
                                 </div>
                                 <div>
-                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white">DASS-21 – Stress, Anxiety & Depression</h3>
+                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white mb-1">DASS-21 – Stress, Anxiety & Depression</h3>
                                     <span class="bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-full border border-green-500/30">
                                         Verified
                                     </span>
@@ -229,34 +210,17 @@
                         </td>
                         <td class="w-1/6 px-4 py-4 text-center">
                             <div class="flex flex-col gap-2">
-                                <a href="/dass21" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
-                                    Start
-                                </a>
+                                <button 
+                                    (click)="navigateToTest('/dass21')" 
+                                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-700 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
+                                    {{ isAuthenticated ? 'Start' : 'Login' }}
+                                </button>
                                 <button (click)="openModal('dass21')" class="text-xs text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors cursor-pointer">
                                     Learn more
                                 </button>
                             </div>
                         </td>
                     </tr>
-        
-        <!-- 🔳 DASS-21 Modal -->
-        <div *ngIf="activeModal === 'dass21'" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <!-- Backdrop with blur -->
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
-        
-            <!-- Modal content -->
-            <div class="relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border dark:border-white/10 border-[#101010]/10 rounded-2xl shadow-2xl max-w-lg w-full p-8" (click)="$event.stopPropagation()">
-                <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">About DASS-21</h3>
-                <p class="text-[#101010] dark:text-white/80 mb-8 leading-relaxed">
-                    The DASS-21 (Depression, Anxiety and Stress Scale – 21 items) is a scientifically validated tool that provides insights across three emotional states. It breaks down how you experience stress, anxiety, and depression, helping you recognize which area might need attention. It's ideal for gaining a more complete picture of your psychological health.
-                </p>
-                <div class="flex justify-end">
-                    <button (click)="closeModal()" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
-                        Got it
-                    </button>
-                </div>
-            </div>
-        </div>
         
 
                     <!-- ISI Row -->
@@ -267,7 +231,7 @@
                                     <span class="text-purple-600 dark:text-purple-400 text-lg">🌙</span>
                                 </div>
                                 <div>
-                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white">ISI – Sleep Quality</h3>
+                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white mb-1">ISI – Sleep Quality</h3>
                                     <span class="bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-full border border-green-500/30">
                                         Verified
                                     </span>
@@ -287,9 +251,11 @@
                         </td>
                         <td class="w-1/6 px-4 py-4 text-center">
                             <div class="flex flex-col gap-2">
-                                <a href="/isi" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
-                                    Start
-                                </a>
+                                <button 
+                                    (click)="navigateToTest('/isi')" 
+                                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-700 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
+                                    {{ isAuthenticated ? 'Start' : 'Login' }}
+                                </button>
                                 <button (click)="openModal('isi')" class="text-xs text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors cursor-pointer">
                                     Learn more
                                 </button>
@@ -297,26 +263,6 @@
                         </td>
                     </tr>
         
-        <!-- 🔳 ISI Modal -->
-        <div *ngIf="activeModal === 'isi'" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <!-- Backdrop -->
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
-        
-            <!-- Modal content -->
-            <div class="relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border dark:border-white/10 border-[#101010]/10 rounded-2xl shadow-2xl max-w-lg w-full p-8" (click)="$event.stopPropagation()">
-                <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">About ISI</h3>
-                <p class="text-[#101010] dark:text-white/80 mb-8 leading-relaxed">
-                    The Insomnia Severity Index (ISI) is a brief and reliable screening tool that evaluates sleep issues such as difficulty falling asleep, maintaining sleep, and waking up too early. It also asks about how much these problems affect your daily functioning, mood, and overall quality of life. It's often used in clinical and research settings.
-                </p>
-                <div class="flex justify-end">
-                    <button (click)="closeModal()" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
-                        Got it
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-
                     <!-- Burnout Row -->
                     <tr class="hover:bg-green-500/5 transition-colors">
                         <td class="w-1/4 px-4 py-4">
@@ -325,7 +271,7 @@
                                     <span class="text-red-600 dark:text-red-400 text-lg">🔥</span>
                                 </div>
                                 <div>
-                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white">Burnout Assessment</h3>
+                                    <h3 class="text-sm font-bold text-[#101010] dark:text-white mb-1">Burnout Assessment</h3>
                                     <span class="bg-green-500/20 text-green-600 dark:text-green-400 text-xs font-semibold px-2 py-1 rounded-full border border-green-500/30">
                                         Verified
                                     </span>
@@ -345,9 +291,11 @@
                         </td>
                         <td class="w-1/6 px-4 py-4 text-center">
                             <div class="flex flex-col gap-2">
-                                <a href="/burnout" class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
-                                    Start
-                                </a>
+                                <button 
+                                    (click)="navigateToTest('/burnout')" 
+                                    class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-green-700 text-white text-sm font-semibold hover:bg-green-600 transition-all duration-200 hover:scale-105">
+                                    {{ isAuthenticated ? 'Start' : 'Login' }}
+                                </button>
                                 <button (click)="openModal('burnout')" class="text-xs text-green-500 hover:text-green-600 dark:text-green-400 dark:hover:text-green-300 transition-colors cursor-pointer">
                                     Learn more
                                 </button>
@@ -359,22 +307,27 @@
         </div>
     </div>
         
-        <!-- 🔳 Burnout Modal -->
-        <div *ngIf="activeModal === 'burnout'" class="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <!-- Blurred backdrop -->
-            <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" (click)="closeModal()"></div>
-        
-            <!-- Modal content -->
-            <div class="relative z-10 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border dark:border-white/10 border-[#101010]/10 rounded-2xl shadow-2xl max-w-lg w-full p-8" (click)="$event.stopPropagation()">
-                <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">About Burnout</h3>
-                <p class="text-[#101010] dark:text-white/80 mb-8 leading-relaxed">
-                    Burnout is a state of emotional, mental, and physical exhaustion caused by prolonged stress — particularly from work. This questionnaire helps assess symptoms such as lack of motivation, reduced performance, and detachment. Identifying burnout early can be key to restoring balance and preventing long-term consequences.
-                </p>
-                <div class="flex justify-end">
-                    <button (click)="closeModal()" class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
-                        Got it
-                    </button>
+        <ng-container *ngIf="activeModal as modalId">
+            <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div class="absolute inset-0 bg-[#050505]/90 backdrop-blur-md" (click)="closeModal()"></div>
+                <div class="relative z-10 bg-[#101010] border border-white/10 rounded-2xl shadow-2xl max-w-2xl w-full p-8 text-white" (click)="$event.stopPropagation()">
+                    <div class="flex items-start justify-between mb-6">
+                        <div>
+                            <p class="text-xs uppercase tracking-widest text-green-400 mb-2">
+                                {{ modalContent[modalId].tagline }}
+                            </p>
+                            <h3 class="text-2xl font-bold">{{ modalContent[modalId].title }}</h3>
+                        </div>
+                        <button (click)="closeModal()" class="text-white/60 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg" aria-label="Close modal">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <p class="text-white/80 leading-relaxed">
+                        {{ modalContent[modalId].description }}
+                    </p>
                 </div>
             </div>
-        </div>
+        </ng-container>
 </section>

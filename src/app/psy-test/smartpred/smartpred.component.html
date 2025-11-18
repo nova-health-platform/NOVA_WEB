@@ -7,7 +7,7 @@
             Smart Prediction – AI Mental Health Insights
         </h1>
         <hr class="w-32 mx-auto h-0.5 border-t-0 bg-green-500/90 mb-6" />
-        <p class="text-lg text-[#101010] dark:text-white/80 max-w-3xl mx-auto">
+        <p class="text-sm text-[#101010] dark:text-white/80 max-w-3xl mx-auto">
             Combine answers across different questionnaires and receive AI-based insights into your mental health patterns. 
             This tool is anonymous and non-diagnostic.
         </p>
@@ -15,7 +15,7 @@
 
     <!-- Intro Screen -->
     <div *ngIf="step === 'intro'" class="max-w-4xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
             <!-- Left: Description -->
             <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
                 <h3 class="text-xl font-bold text-[#101010] dark:text-white mb-4">About Smart Prediction</h3>
@@ -49,7 +49,7 @@
             </div>
 
             <!-- Right: Features & Disclaimer -->
-            <div class="space-y-6">
+            <div class="space-y-4">
                 <div class="rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-6">
                     <div class="flex items-start gap-3">
                         <span class="text-yellow-600 dark:text-yellow-400 text-xl">⚠️</span>
@@ -83,11 +83,14 @@
             </div>
         </div>
 
-        <div class="text-center">
+        <div class="text-center space-y-4">
             <button (click)="startAnalysis()" 
-                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                class="inline-flex cursor-pointer items-center justify-center h-12 px-8 rounded-lg bg-green-700 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
                 Start AI Analysis
             </button>
+            <div *ngIf="analysisError" class="text-sm text-red-500">
+                {{ analysisError }}
+            </div>
         </div>
     </div>
 
@@ -123,54 +126,70 @@
 
     <!-- Results Step -->
     <div *ngIf="step === 'result'" class="max-w-4xl mx-auto">
-        <!-- Main Title -->
-        <div class="text-center mb-12">
-            <h2 class="text-lg font-bold text-[#101010] dark:text-white mb-4">Your AI Mental Health Analysis</h2>
-            <p class="text-[#101010] dark:text-white/60">Personalized insights based on your assessment responses</p>
-        </div>
 
         <!-- Overall Score Card -->
-        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
-            <div class="text-center mb-8">
-                <div class="text-4xl font-bold text-[#101010] dark:text-white mb-2">Overall Mental Health Score</div>
-                <div class="text-6xl font-bold text-green-500 mb-4">{{ overallScore }}/100</div>
-                <div class="text-lg text-[#101010] dark:text-white/80">{{ overallInterpretation }}</div>
+        <div class="rounded-2xl border border-[#101010]/10 dark:border-white/10 bg-white/80 dark:bg-white/5 backdrop-blur-xl p-4 shadow-lg shadow-black/5 mb-4">
+            <div class="grid gap-8 md:grid-cols-2 md:items-center">
+                <div>
+                    <p class="text-xs font-semibold tracking-[0.3em] uppercase text-green-500 mb-2">Global summary</p>
+                    <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-1">Global Mental Health Score</h3>
+                    <p class="text-xs uppercase tracking-[0.3em] text-[#101010]/50 dark:text-white/40 mb-2">100 = good health, 0 = poor</p>
+                    <p class="text-base text-[#101010]/80 dark:text-white/70 leading-relaxed">
+                        {{ overallInterpretation }}
+                    </p>
+                    <div class="mt-3 text-sm text-[#101010]/70 dark:text-white/60" *ngIf="summary">
+                        {{ summary.totalTests }} tests saved · Last updated: {{ summary.lastUpdated | date:'medium' }}
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-3 justify-start md:justify-end text-[#101010] dark:text-white">
+                    <div class="flex items-baseline gap-2">
+                        <p class="text-xs uppercase tracking-[0.3em] text-green-500">Score</p>
+                        <p class="text-3xl font-bold" [ngClass]="{'text-green-500': overallScore >= 75, 'text-yellow-500': overallScore >= 50 && overallScore < 75, 'text-orange-500': overallScore >= 25 && overallScore < 50, 'text-red-500': overallScore < 25}">{{ overallScore }}</p>
+                        <span class="text-sm text-[#101010]/50 dark:text-white/50">/100</span>
+                    </div>
+                </div>
             </div>
 
-            <!-- Progress Bar -->
-            <div class="w-full bg-gray-200 dark:bg-white/20 rounded-full h-4 mb-4">
-                <div class="bg-gradient-to-r from-green-500 to-green-600 h-4 rounded-full transition-all duration-1000" 
-                     [style.width.%]="overallScore"></div>
+            <div class="mt-4 space-y-4">
+                <!-- Progress Bar -->
+                <div class="w-full bg-[#101010]/10 dark:bg-white/10 rounded-full h-3">
+                    <div class="bg-gradient-to-r from-green-500 to-emerald-400 h-3 rounded-full transition-all duration-1000"
+                         [style.width.%]="overallScore"></div>
+                </div>
+
+                <div *ngIf="patterns.length" class="p-4 rounded-xl border border-[#101010]/10 dark:border-white/10 bg-white/70 dark:bg-white/5">
+                    <p class="text-xs uppercase tracking-widest text-green-600 dark:text-green-400 mb-2">Highlights</p>
+                    <ul class="space-y-1 text-sm text-[#101010]/80 dark:text-white/80 leading-relaxed">
+                        <li *ngFor="let pattern of patterns">• {{ pattern }}</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
         <!-- Detailed Analysis Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <!-- Pattern Analysis -->
-            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
-                <h4 class="text-green-600 dark:text-green-400 font-semibold mb-4">Pattern Analysis</h4>
+            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-4 shadow-md">
+                <h4 class="text-blue-400 font-semibold mb-4">Pattern Analysis</h4>
                 <div class="space-y-4">
                     <div class="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                        <h5 class="font-medium text-[#101010] dark:text-white mb-2">Key Patterns Identified</h5>
                         <ul class="space-y-1 text-sm text-[#101010] dark:text-white/80">
-                            <li>• {{ pattern1 }}</li>
-                            <li>• {{ pattern2 }}</li>
-                            <li>• {{ pattern3 }}</li>
+                            <li *ngFor="let pattern of patterns">• {{ pattern }}</li>
+                            <li *ngIf="!patterns.length" class="text-[#101010]/60 dark:text-white/50">Insufficient data.</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
             <!-- Risk Factors -->
-            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
+            <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-4 shadow-md">
                 <h4 class="text-orange-600 dark:text-orange-400 font-semibold mb-4">Risk Assessment</h4>
                 <div class="space-y-4">
                     <div class="p-4 rounded-lg bg-orange-500/10 border border-orange-500/20">
-                        <h5 class="font-medium text-[#101010] dark:text-white mb-2">Areas of Concern</h5>
                         <ul class="space-y-1 text-sm text-[#101010] dark:text-white/80">
-                            <li>• {{ risk1 }}</li>
-                            <li>• {{ risk2 }}</li>
-                            <li>• {{ risk3 }}</li>
+                            <li *ngFor="let risk of risks">• {{ risk }}</li>
+                            <li *ngIf="!risks.length" class="text-[#101010]/60 dark:text-white/50">No major risks detected.</li>
                         </ul>
                     </div>
                 </div>
@@ -178,40 +197,34 @@
         </div>
 
         <!-- Recommendations -->
-        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md mb-8">
+        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-4 shadow-md mb-4">
             <h4 class="text-green-600 dark:text-green-400 font-semibold mb-4">Personalized Recommendations</h4>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-3">
                     <h5 class="font-medium text-[#101010] dark:text-white">Immediate Actions</h5>
                     <ul class="space-y-2 text-sm text-[#101010] dark:text-white/80">
-                        <li class="flex items-start gap-2">
+                        <li class="flex items-start gap-2" *ngFor="let action of immediateActions">
                             <span class="w-2 h-2 bg-green-500 rounded-full mt-2"></span>
-                            {{ immediateAction1 }}
+                            {{ action }}
                         </li>
-                        <li class="flex items-start gap-2">
-                            <span class="w-2 h-2 bg-green-500 rounded-full mt-2"></span>
-                            {{ immediateAction2 }}
-                        </li>
+                        <li *ngIf="!immediateActions.length" class="text-[#101010]/60 dark:text-white/60">Maintain your current habits.</li>
                     </ul>
                 </div>
                 <div class="space-y-3">
                     <h5 class="font-medium text-[#101010] dark:text-white">Long-term Strategies</h5>
                     <ul class="space-y-2 text-sm text-[#101010] dark:text-white/80">
-                        <li class="flex items-start gap-2">
+                        <li class="flex items-start gap-2" *ngFor="let strategy of longTermStrategies">
                             <span class="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
-                            {{ longTermStrategy1 }}
+                            {{ strategy }}
                         </li>
-                        <li class="flex items-start gap-2">
-                            <span class="w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
-                            {{ longTermStrategy2 }}
-                        </li>
+                        <li *ngIf="!longTermStrategies.length" class="text-[#101010]/60 dark:text-white/60">Gradually add preventive routines.</li>
                     </ul>
                 </div>
             </div>
         </div>
 
         <!-- Professional Support -->
-        <div class="rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-6 mb-8">
+        <div class="rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-4 mb-4">
             <div class="flex items-start gap-3">
                 <span class="text-yellow-600 dark:text-yellow-400 text-xl">💡</span>
                 <div>
@@ -229,22 +242,32 @@
             </div>
         </div>
 
-        <!-- Disclaimer -->
-        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md mb-8">
-            <p class="text-xs text-[#101010] dark:text-white/40 text-center">
-                This AI analysis is for informational purposes only and is not a medical diagnosis. 
-                Always consult with qualified healthcare professionals for clinical evaluation and treatment decisions.
-            </p>
+
+        <!-- Recent tests -->
+        <div *ngIf="breakdown.length" class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-4 shadow-md mb-4">
+            <h4 class="text-green-600 dark:text-green-400 font-semibold mb-4">Test History</h4>
+            <div class="space-y-3 text-sm text-[#101010] dark:text-white/80 max-h-[400px] overflow-y-auto pr-2">
+                <div *ngFor="let row of breakdown" class="flex items-center justify-between border border-white/10 rounded-lg px-3 py-2">
+                    <div>
+                        <p class="font-semibold">{{ row.test_name }}</p>
+                        <p class="text-xs text-[#101010]/60 dark:text-white/50">{{ row.created_at | date:'medium' }}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-lg font-bold">{{ row.score }}</p>
+                        <p class="text-xs text-[#101010]/60 dark:text-white/50">{{ row.interpretation }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Action Buttons -->
         <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <button (click)="exportResults()" 
-                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                class="cursor-pointer inline-flex items-center justify-center h-12 px-8 rounded-lg bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-all duration-200 shadow-md hover:shadow-lg">
                 Export Results
             </button>
             <button (click)="reset()" 
-                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                class="cursor-pointer inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-700 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg">
                 New Analysis
             </button>
         </div>

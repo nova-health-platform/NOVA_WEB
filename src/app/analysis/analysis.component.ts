@@ -301,6 +301,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
     this.loading = false;
     this.errorMessage = '';
     this.currentClarification = null;
+    this.setInitialActiveTab();
     
     // Add Quick Summary message first
     const quickSummaryContent = this.generateQuickSummaryContent();
@@ -2524,6 +2525,7 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
         this.askedQuestions = data.asked_questions || [];
         if (data.final_prediction || data.predicted_disease) {
           this.response = data;
+          this.setInitialActiveTab();
           this.currentClarification = null;
           
           // Add Quick Summary message first
@@ -2628,6 +2630,15 @@ export class AnalysisComponent implements OnInit, AfterViewInit {
            (lastMessage.type === 'clarification' || lastMessage.type === 'pain') && 
            !lastMessage.answered && 
            !lastMessage.isAnimating;
+  }
+
+  hasInlineLoadingBubble(): boolean {
+    return this.messages.some(
+      (msg) =>
+        msg.role === 'assistant' &&
+        !!msg.isAnimating &&
+        (!msg.displayedText || msg.displayedText.length === 0)
+    );
   }
 
   answerCurrentYesNoQuestion(answer: boolean) {

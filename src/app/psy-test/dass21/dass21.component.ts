@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TestResultsService } from '../../services/test-results.service';
 
 @Component({
   selector: 'app-dass21',
@@ -104,7 +105,12 @@ export class Dass21Component {
 
   vcl: boolean[] = new Array(16).fill(false);
 
+  constructor(private testResultsService: TestResultsService) {}
+
   startTest() {
+    if (!this.ensureProfileSelected()) {
+      return;
+    }
     this.step = 'demographics';
     this.currentIndex = 0;
   }
@@ -161,6 +167,7 @@ export class Dass21Component {
     this.stressLabel = this.getStressLabel(this.stressScore);
 
     this.step = 'result';
+    this.saveResult();
   }
 
   getDepressionLabel(score: number): string {
@@ -216,5 +223,60 @@ export class Dass21Component {
     this.vcl = new Array(16).fill(false);
     
     this.step = 'intro';
+  }
+
+  isCurrentDemographicValid(): boolean {
+    switch (this.currentIndex) {
+      case 0:
+        return this.demographics.age !== null && Number(this.demographics.age) > 0;
+      case 1:
+        return this.demographics.gender !== null;
+      case 2:
+        return this.demographics.education !== null;
+      case 3:
+        return this.demographics.urban !== null;
+      case 4:
+        return this.demographics.married !== null;
+      case 5:
+        return this.demographics.familysize !== null && Number(this.demographics.familysize) > 0;
+      default:
+        return false;
+    }
+  }
+
+  isCurrentQuestionAnswered(): boolean {
+    return this.questions[this.currentQuestionIndex].answer !== null;
+  }
+
+  isCurrentTipiAnswered(): boolean {
+    return this.tipi[this.tipiIndex] !== null;
+  }
+
+  private saveResult() {
+    const profileId = this.testResultsService.getActiveProfileId();
+    const payload = {
+      profile_id: profileId,
+      test_name: 'DASS21',
+      score: this.depressionScore + this.anxietyScore + this.stressScore,
+      interpretation: `Depression: ${this.depressionLabel} | Anxiety: ${this.anxietyLabel} | Stress: ${this.stressLabel}`,
+      answers: {
+        demographics: this.demographics,
+        questions: this.questions.map(q => ({ text: q.text, answer: q.answer })),
+        tipi: this.tipi,
+        vcl: this.vcl
+      }
+    };
+
+    this.testResultsService.saveResult(payload).subscribe({
+      error: (err) => console.error('Failed to save DASS-21 result', err)
+    });
+  }
+
+  private ensureProfileSelected(): boolean {
+    if (!this.testResultsService.getActiveProfileId()) {
+      alert('Veuillez sélectionner un profil sur la page Tests avant de commencer.');
+      return false;
+    }
+    return true;
   }
 }

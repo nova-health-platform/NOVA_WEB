@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TestResultsService } from '../../services/test-results.service';
 
 @Component({
   selector: 'app-gad7',
@@ -35,7 +36,12 @@ export class Gad7Component {
   totalScore = 0;
   interpretation = '';
 
+  constructor(private testResultsService: TestResultsService) {}
+
   startTest() {
+    if (!this.ensureProfileSelected()) {
+      return;
+    }
     this.step = 'questions';
     this.currentQuestionIndex = 0;
   }
@@ -73,6 +79,7 @@ export class Gad7Component {
     }
 
     this.step = 'result';
+    this.saveResult();
   }
 
   reset() {
@@ -82,5 +89,32 @@ export class Gad7Component {
     this.interpretation = '';
     this.step = 'intro';
     this.currentQuestionIndex = 0;
+  }
+
+  private saveResult() {
+    const profileId = this.testResultsService.getActiveProfileId();
+    const payload = {
+      profile_id: profileId,
+      test_name: 'GAD7',
+      score: this.totalScore,
+      interpretation: this.interpretation,
+      answers: {
+        questions: this.questions.map(q => ({ text: q.text, answer: q.answer })),
+        impact: this.impact,
+        selectedCountry: this.selectedCountry
+      }
+    };
+
+    this.testResultsService.saveResult(payload).subscribe({
+      error: (err) => console.error('Failed to save GAD-7 result', err)
+    });
+  }
+
+  private ensureProfileSelected(): boolean {
+    if (!this.testResultsService.getActiveProfileId()) {
+      alert('Veuillez sélectionner un profil sur la page Tests avant de commencer.');
+      return false;
+    }
+    return true;
   }
 }

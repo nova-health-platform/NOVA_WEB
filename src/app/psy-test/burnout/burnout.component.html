@@ -7,7 +7,7 @@
             Burnout Self-Assessment
         </h1>
         <hr class="w-32 mx-auto h-0.5 border-t-0 bg-green-500/90 mb-6" />
-        <p class="text-lg text-[#101010] dark:text-white/80 max-w-3xl mx-auto">
+        <p class="text-sm text-[#101010] dark:text-white/80 max-w-3xl mx-auto">
             This burnout questionnaire helps identify signs of emotional exhaustion, depersonalization,
             and reduced personal accomplishment. It is inspired by tools such as the Maslach Burnout Inventory.
         </p>
@@ -15,7 +15,7 @@
 
     <!-- Intro Screen -->
     <div *ngIf="step === 'intro'" class="max-w-4xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
             <!-- Left: Description -->
             <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
                 <h3 class="text-xl font-bold text-[#101010] dark:text-white mb-4">About Burnout Assessment</h3>
@@ -48,7 +48,7 @@
             </div>
 
             <!-- Right: Interpretation Guide -->
-            <div class="space-y-6">
+            <div class="space-y-4">
                 <div class="rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-6">
                     <div class="flex items-start gap-3">
                         <span class="text-yellow-600 dark:text-yellow-400 text-xl">⚠️</span>
@@ -84,7 +84,7 @@
 
         <div class="text-center">
             <button (click)="startTest()" 
-                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                class="inline-flex cursor-pointer items-center justify-center h-12 px-8 rounded-lg bg-green-700 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
                 Start the test
             </button>
         </div>
@@ -129,7 +129,7 @@
 
         <div class="text-center">
             <button type="submit" 
-                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                class="inline-flex cursor-pointer items-center justify-center h-12 px-8 rounded-lg bg-green-700 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
                 Next
             </button>
         </div>
@@ -185,26 +185,29 @@
 
     <!-- Results Step -->
     <div *ngIf="step === 'result'" class="max-w-4xl mx-auto">
-        <!-- Main Title -->
-        <div class="text-center mb-12">
-            <h2 class="text-lg font-bold text-[#101010] dark:text-white mb-4">Your Burnout Result</h2>
-            <p class="text-[#101010] dark:text-white/60">This is a reflection of your recent experience.</p>
-        </div>
 
         <!-- Score Card -->
-        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
-            <!-- Score & Interpretation -->
-            <div class="text-center mb-8">
-                <div class="text-4xl font-bold text-[#101010] dark:text-white mb-2">Your Score: {{ totalScore }}</div>
-                <div class="text-lg text-[#101010] dark:text-white/80">{{ interpretation }}</div>
+        <div class="rounded-2xl border border-[#101010]/10 dark:border-white/10 bg-white/80 dark:bg-white/5 backdrop-blur-xl p-6 shadow-lg shadow-black/5 mb-4">
+            <div class="grid gap-6 md:grid-cols-2 md:items-center">
+                <div>
+                    <p class="text-xs font-semibold tracking-[0.3em] uppercase text-green-500 mb-2">Latest result</p>
+                    <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-2">Burnout Risk Overview</h3>
+                    <p class="text-base text-[#101010]/80 dark:text-white/70 leading-relaxed">
+                        {{ interpretation }}
+                    </p>
+                </div>
+
+                <div class="flex items-baseline gap-2 justify-start md:justify-end text-[#101010] dark:text-white">
+                    <p class="text-xs uppercase tracking-[0.3em] text-green-500">Score</p>
+                    <p class="text-3xl font-bold text-green-600 dark:text-green-400">{{ totalScore }}</p>
+                    <span class="text-sm text-[#101010]/50 dark:text-white/50">/54</span>
+                </div>
             </div>
 
             <!-- Progress Bar -->
-            <div class="space-y-4">
-                <div class="flex w-full h-6 gap-1">
-                    <div class="flex-1 bg-gray-200 dark:bg-white/20 rounded overflow-hidden">
-                        <div class="h-full bg-green-500 transition-all duration-500" [style.width.%]="(totalScore / 54) * 100"></div>
-                    </div>
+            <div class="mt-4 space-y-4">
+                <div class="flex w-full h-3 bg-[#101010]/10 dark:bg-white/10 rounded-full overflow-hidden">
+                    <div class="bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 h-full transition-all duration-500" [style.width.%]="(totalScore / 54) * 100"></div>
                 </div>
                 <div class="flex justify-between text-xs text-[#101010] dark:text-white/60 px-1">
                     <span>Low</span>
@@ -214,7 +217,7 @@
             </div>
 
             <!-- Personalized Advice -->
-            <div class="mt-8 p-6 rounded-xl border border-green-500/20 bg-green-500/10">
+            <div class="mt-6 p-6 rounded-xl border border-green-500/20 bg-green-500/10">
                 <div *ngIf="totalScore <= 18" class="text-center text-[#101010] dark:text-white/80">
                     You show low signs of burnout. Maintain healthy routines and boundaries.
                 </div>
@@ -232,7 +235,7 @@
         </div>
 
         <!-- Support Resources -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
             <!-- Understanding Results -->
             <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
                 <h4 class="text-green-600 dark:text-green-400 font-semibold mb-4">Understanding your results</h4>
@@ -287,7 +290,7 @@
         <!-- Restart Button -->
         <div class="text-center">
             <button (click)="reset()" 
-                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                class="inline-flex cursor-pointer items-center justify-center h-12 px-8 rounded-lg bg-green-700 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
                 Restart Assessment
             </button>
         </div>

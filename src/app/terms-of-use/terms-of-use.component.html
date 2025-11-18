@@ -1,184 +1,282 @@
-<section class="min-h-screen w-full py-8">
-  <div class="w-full max-w-4xl mx-auto">
-    <div class="bg-[#101010] dark:bg-white/5 backdrop-blur-md rounded-2xl border border-white/10">
-      <!-- Header -->
-      <div class="p-8 border-b border-white/10 text-center">
-        <div class="flex items-center justify-center gap-3 mb-4">
-          <div class="w-10 h-10 bg-green-700 rounded-lg flex items-center justify-center">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-            </svg>
-          </div>
-          <h1 class="text-3xl font-semibold text-white">Terms of Use</h1>
-        </div>
-        <p class="text-white/60 text-base">Last updated: {{ currentDate }}</p>
-      </div>
+<section class="min-h-screen w-full px-6 py-20">
+  <div class="w-full max-w-5xl mx-auto">
+    
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1 class="text-3xl sm:text-4xl font-bold text-white mb-4 tracking-tight">Terms of Use</h1>
+      <p class="text-sm text-white/60 max-w-2xl mx-auto leading-relaxed">
+        Last updated: {{ currentDate }}
+      </p>
+    </div>
 
-      <!-- Content -->
-      <div class="p-8">
-        <!-- Introduction -->
+    <!-- Content Container -->
+    <div class="space-y-10">
+      
+      <!-- Introduction -->
+      <section class="scroll-mt-20">
         <div class="mb-8">
-          <h2 class="text-xl font-semibold text-white mb-4">1. Introduction</h2>
-          <p class="text-white/80 leading-relaxed mb-4">
+          <h2 class="text-2xl font-bold text-white mb-2">1. Introduction</h2>
+          <div class="w-16 h-1 bg-green-500 rounded-full"></div>
+        </div>
+        
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+          <p class="text-white/70 leading-relaxed mb-4">
             Welcome to Nova, a comprehensive health analysis platform. These Terms of Use ("Terms") govern your use of our website, mobile application, and services (collectively, the "Service") operated by Nova Health Technologies ("us", "we", or "our").
           </p>
-          <p class="text-white/80 leading-relaxed">
+          <p class="text-white/70 leading-relaxed">
             By accessing or using our Service, you agree to be bound by these Terms. If you disagree with any part of these terms, then you may not access the Service.
           </p>
         </div>
+      </section>
 
-        <!-- Acceptance of Terms -->
+      <!-- Acceptance of Terms -->
+      <section class="scroll-mt-20">
         <div class="mb-8">
-          <h2 class="text-xl font-semibold text-white mb-4">2. Acceptance of Terms</h2>
-          <p class="text-white/80 leading-relaxed mb-4">
+          <h2 class="text-2xl font-bold text-white mb-2">2. Acceptance of Terms</h2>
+          <div class="w-16 h-1 bg-green-500 rounded-full"></div>
+        </div>
+        
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+          <p class="text-white/70 leading-relaxed mb-4">
             By creating an account, accessing, or using Nova's services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Use and our Privacy Policy.
           </p>
-          <div class="bg-white/5 border border-white/10 rounded-lg p-4">
-            <p class="text-white/70 text-sm">
+          <div class="bg-white/10 border border-white/20 rounded-lg p-4 mt-4">
+            <p class="text-white/80 text-sm">
               <strong class="text-white">Important:</strong> These terms constitute a legally binding agreement between you and Nova Health Technologies.
             </p>
           </div>
         </div>
+      </section>
 
-        <!-- Service Description -->
+      <!-- Service Description -->
+      <section class="scroll-mt-20">
         <div class="mb-8">
-          <h2 class="text-xl font-semibold text-white mb-4">3. Service Description</h2>
-          <p class="text-white/80 leading-relaxed mb-4">
+          <h2 class="text-2xl font-bold text-white mb-2">3. Service Description</h2>
+          <div class="w-16 h-1 bg-green-500 rounded-full"></div>
+        </div>
+        
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+          <p class="text-white/70 leading-relaxed mb-4">
             Nova provides AI-powered health analysis services including but not limited to:
           </p>
-          <ul class="list-disc list-inside text-white/80 space-y-2 ml-4">
-            <li>Symptom analysis and preliminary health assessments</li>
-            <li>Mental health screening tools and questionnaires</li>
-            <li>Body scanning and analysis features</li>
-            <li>Health data tracking and insights</li>
-            <li>Educational health content and recommendations</li>
+          <ul class="space-y-2 text-white/70 mb-4">
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">•</span>
+              <span>Symptom analysis and preliminary health assessments</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">•</span>
+              <span>Mental health screening tools and questionnaires</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">•</span>
+              <span>Body scanning and analysis features</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">•</span>
+              <span>Health data tracking and insights</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">•</span>
+              <span>Educational health content and recommendations</span>
+            </li>
           </ul>
-          <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-4 mt-4">
+          <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4 mt-4">
             <p class="text-green-400 text-sm">
               <strong>Medical Disclaimer:</strong> Nova is not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of qualified health providers.
             </p>
           </div>
         </div>
+      </section>
 
-        <!-- User Accounts -->
+      <!-- User Accounts -->
+      <section class="scroll-mt-20">
         <div class="mb-8">
-          <h2 class="text-xl font-semibold text-white mb-4">4. User Accounts</h2>
-          <div class="space-y-4">
-            <div>
-              <h3 class="text-lg font-medium text-white mb-2">4.1 Account Creation</h3>
-              <p class="text-white/80 leading-relaxed">
-                To access certain features, you must create an account. You agree to provide accurate, current, and complete information during registration.
-              </p>
-            </div>
-            <div>
-              <h3 class="text-lg font-medium text-white mb-2">4.2 Account Security</h3>
-              <p class="text-white/80 leading-relaxed">
-                You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.
-              </p>
-            </div>
-            <div>
-              <h3 class="text-lg font-medium text-white mb-2">4.3 Age Requirements</h3>
-              <p class="text-white/80 leading-relaxed">
-                You must be at least 18 years old to use our Service. Users under 18 may use the Service only with parental consent and supervision.
-              </p>
-            </div>
+          <h2 class="text-2xl font-bold text-white mb-2">4. User Accounts</h2>
+          <div class="w-16 h-1 bg-green-500 rounded-full"></div>
+        </div>
+        
+        <div class="space-y-4">
+          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+            <h3 class="text-lg font-semibold text-white mb-3">4.1 Account Creation</h3>
+            <p class="text-white/70 leading-relaxed">
+              To access certain features, you must create an account. You agree to provide accurate, current, and complete information during registration.
+            </p>
+          </div>
+          
+          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+            <h3 class="text-lg font-semibold text-white mb-3">4.2 Account Security</h3>
+            <p class="text-white/70 leading-relaxed">
+              You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.
+            </p>
+          </div>
+          
+          <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+            <h3 class="text-lg font-semibold text-white mb-3">4.3 Age Requirements</h3>
+            <p class="text-white/70 leading-relaxed">
+              You must be at least 18 years old to use our Service. Users under 18 may use the Service only with parental consent and supervision.
+            </p>
           </div>
         </div>
+      </section>
 
-        <!-- Privacy and Data Protection -->
+      <!-- Privacy and Data Protection -->
+      <section class="scroll-mt-20">
         <div class="mb-8">
-          <h2 class="text-xl font-semibold text-white mb-4">5. Privacy and Data Protection</h2>
-          <p class="text-white/80 leading-relaxed mb-4">
+          <h2 class="text-2xl font-bold text-white mb-2">5. Privacy and Data Protection</h2>
+          <div class="w-16 h-1 bg-green-500 rounded-full"></div>
+        </div>
+        
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+          <p class="text-white/70 leading-relaxed mb-4">
             Your privacy is important to us. Our collection and use of personal information is governed by our Privacy Policy, which is incorporated into these Terms by reference.
           </p>
-          <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-            <h3 class="text-lg font-medium text-blue-400 mb-2">HIPAA Compliance</h3>
+          <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mt-4">
+            <h3 class="text-lg font-semibold text-blue-400 mb-2">HIPAA Compliance</h3>
             <p class="text-blue-300 text-sm">
               We implement appropriate safeguards to protect health information in accordance with HIPAA regulations where applicable.
             </p>
           </div>
         </div>
+      </section>
 
-        <!-- Prohibited Uses -->
+      <!-- Prohibited Uses -->
+      <section class="scroll-mt-20">
         <div class="mb-8">
-          <h2 class="text-xl font-semibold text-white mb-4">6. Prohibited Uses</h2>
-          <p class="text-white/80 leading-relaxed mb-4">
+          <h2 class="text-2xl font-bold text-white mb-2">6. Prohibited Uses</h2>
+          <div class="w-16 h-1 bg-green-500 rounded-full"></div>
+        </div>
+        
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+          <p class="text-white/70 leading-relaxed mb-4">
             You may not use our Service:
           </p>
-          <ul class="list-disc list-inside text-white/80 space-y-2 ml-4">
-            <li>For any unlawful purpose or to solicit others to perform unlawful acts</li>
-            <li>To violate any international, federal, provincial, or state regulations, rules, laws, or local ordinances</li>
-            <li>To infringe upon or violate our intellectual property rights or the intellectual property rights of others</li>
-            <li>To harass, abuse, insult, harm, defame, slander, disparage, intimidate, or discriminate</li>
-            <li>To submit false or misleading information</li>
-            <li>To upload or transmit viruses or any other type of malicious code</li>
+          <ul class="space-y-2 text-white/70">
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">•</span>
+              <span>For any unlawful purpose or to solicit others to perform unlawful acts</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">•</span>
+              <span>To violate any international, federal, provincial, or state regulations, rules, laws, or local ordinances</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">•</span>
+              <span>To infringe upon or violate our intellectual property rights or the intellectual property rights of others</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">•</span>
+              <span>To harass, abuse, insult, harm, defame, slander, disparage, intimidate, or discriminate</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">•</span>
+              <span>To submit false or misleading information</span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-green-400 mt-1">•</span>
+              <span>To upload or transmit viruses or any other type of malicious code</span>
+            </li>
           </ul>
         </div>
+      </section>
 
-        <!-- Intellectual Property -->
+      <!-- Intellectual Property -->
+      <section class="scroll-mt-20">
         <div class="mb-8">
-          <h2 class="text-xl font-semibold text-white mb-4">7. Intellectual Property Rights</h2>
-          <p class="text-white/80 leading-relaxed mb-4">
+          <h2 class="text-2xl font-bold text-white mb-2">7. Intellectual Property Rights</h2>
+          <div class="w-16 h-1 bg-green-500 rounded-full"></div>
+        </div>
+        
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+          <p class="text-white/70 leading-relaxed mb-4">
             The Service and its original content, features, and functionality are and will remain the exclusive property of Nova Health Technologies and its licensors.
           </p>
-          <div class="bg-white/5 border border-white/10 rounded-lg p-4">
-            <p class="text-white/70 text-sm">
+          <div class="bg-white/10 border border-white/20 rounded-lg p-4 mt-4">
+            <p class="text-white/80 text-sm">
               <strong class="text-white">Trademark Notice:</strong> "Nova" and related marks are trademarks of Nova Health Technologies.
             </p>
           </div>
         </div>
+      </section>
 
-        <!-- Disclaimers -->
+      <!-- Disclaimers -->
+      <section class="scroll-mt-20">
         <div class="mb-8">
-          <h2 class="text-xl font-semibold text-white mb-4">8. Disclaimers</h2>
-          <div class="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-4">
-            <h3 class="text-lg font-medium text-red-400 mb-2">Medical Disclaimer</h3>
+          <h2 class="text-2xl font-bold text-white mb-2">8. Disclaimers</h2>
+          <div class="w-16 h-1 bg-green-500 rounded-full"></div>
+        </div>
+        
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+          <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
+            <h3 class="text-lg font-semibold text-red-400 mb-2">Medical Disclaimer</h3>
             <p class="text-red-300 text-sm">
               Nova is not a medical device or diagnostic tool. Our Service provides informational content only and should not be used as a substitute for professional medical advice.
             </p>
           </div>
-          <p class="text-white/80 leading-relaxed">
+          <p class="text-white/70 leading-relaxed">
             The Service is provided on an "AS IS" and "AS AVAILABLE" basis. We disclaim all warranties, express or implied, including but not limited to merchantability, fitness for a particular purpose, and non-infringement.
           </p>
         </div>
+      </section>
 
-        <!-- Limitation of Liability -->
+      <!-- Limitation of Liability -->
+      <section class="scroll-mt-20">
         <div class="mb-8">
-          <h2 class="text-xl font-semibold text-white mb-4">9. Limitation of Liability</h2>
-          <p class="text-white/80 leading-relaxed">
+          <h2 class="text-2xl font-bold text-white mb-2">9. Limitation of Liability</h2>
+          <div class="w-16 h-1 bg-green-500 rounded-full"></div>
+        </div>
+        
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+          <p class="text-white/70 leading-relaxed">
             In no event shall Nova Health Technologies, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your use of the Service.
           </p>
         </div>
+      </section>
 
-        <!-- Termination -->
+      <!-- Termination -->
+      <section class="scroll-mt-20">
         <div class="mb-8">
-          <h2 class="text-xl font-semibold text-white mb-4">10. Termination</h2>
-          <p class="text-white/80 leading-relaxed">
+          <h2 class="text-2xl font-bold text-white mb-2">10. Termination</h2>
+          <div class="w-16 h-1 bg-green-500 rounded-full"></div>
+        </div>
+        
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+          <p class="text-white/70 leading-relaxed">
             We may terminate or suspend your account and bar access to the Service immediately, without prior notice or liability, under our sole discretion, for any reason whatsoever and without limitation, including but not limited to a breach of the Terms.
           </p>
         </div>
+      </section>
 
-        <!-- Changes to Terms -->
+      <!-- Changes to Terms -->
+      <section class="scroll-mt-20">
         <div class="mb-8">
-          <h2 class="text-xl font-semibold text-white mb-4">11. Changes to Terms</h2>
-          <p class="text-white/80 leading-relaxed">
+          <h2 class="text-2xl font-bold text-white mb-2">11. Changes to Terms</h2>
+          <div class="w-16 h-1 bg-green-500 rounded-full"></div>
+        </div>
+        
+        <div class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:border-white/20 transition-colors">
+          <p class="text-white/70 leading-relaxed">
             We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days notice prior to any new terms taking effect.
           </p>
         </div>
+      </section>
 
-        <!-- Contact Information -->
+      <!-- Contact Information -->
+      <section class="scroll-mt-20">
         <div class="mb-8">
-          <h2 class="text-xl font-semibold text-white mb-4">12. Contact Information</h2>
-          <div class="bg-white/5 border border-white/10 rounded-lg p-6">
-            <p class="text-white/80 leading-relaxed mb-4">
-              If you have any questions about these Terms of Use, please contact us:
-            </p>
-            <div class="space-y-2 text-white/70">
-              <p><strong class="text-white">Email:</strong> novahealthtechnologies&#64;gmail.com</p>
-            </div>
-          </div>
+          <h2 class="text-2xl font-bold text-white mb-2">12. Contact Information</h2>
+          <div class="w-16 h-1 bg-green-500 rounded-full"></div>
         </div>
-      </div>
+        
+        <div class="bg-gradient-to-br from-green-500/10 to-green-600/5 backdrop-blur-sm border border-green-500/30 rounded-xl p-8 text-center">
+          <p class="text-white/70 leading-relaxed mb-4">
+            If you have any questions about these Terms of Use, please contact us:
+          </p>
+          <a href="mailto:dumortier.contact&#64;gmail.com" class="text-green-400 font-medium hover:text-green-300 transition-colors inline-block">
+            dumortier.contact&#64;gmail.com
+          </a>
+        </div>
+      </section>
     </div>
   </div>
 </section>

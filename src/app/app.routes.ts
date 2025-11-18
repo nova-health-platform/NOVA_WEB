@@ -47,17 +47,17 @@ export const routes: Routes = [
 
     { path: 'mentalHealth', component: PsyTestComponent },
 
-    { path: 'smartpred', component: SmartpredComponent },
+    { path: 'smartpred', component: SmartpredComponent, canActivate: [AuthGuard] },
 
-    { path: 'phq9', component: Phq9Component },
+    { path: 'phq9', component: Phq9Component, canActivate: [AuthGuard] },
 
-    { path: 'gad7', component: Gad7Component },
+    { path: 'gad7', component: Gad7Component, canActivate: [AuthGuard] },
 
-    { path: 'dass21', component: Dass21Component },
+    { path: 'dass21', component: Dass21Component, canActivate: [AuthGuard] },
 
-    { path: 'isi', component: IsiComponent },
+    { path: 'isi', component: IsiComponent, canActivate: [AuthGuard] },
 
-    { path: 'burnout', component: BurnoutComponent },
+    { path: 'burnout', component: BurnoutComponent, canActivate: [AuthGuard] },
 
     { path: 'medecineSearch', component: ScanMedComponent },
 

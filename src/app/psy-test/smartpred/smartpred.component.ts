@@ -1,7 +1,29 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { TestResultsService } from '../../services/test-results.service';
+
+interface SummaryResponse {
+  overallScore: number;
+  overallInterpretation: string;
+  summary: {
+    totalTests: number;
+    lastUpdated: string | null;
+  };
+  patterns: string[];
+  risks: string[];
+  immediateActions: string[];
+  longTermStrategies: string[];
+  professionalAdvice: string;
+  breakdown: Array<{
+    id: number;
+    test_name: string;
+    score: number;
+    normalized_score: number;
+    interpretation: string;
+    created_at: string | null;
+  }>;
+}
 
 @Component({
   selector: 'app-smartpred',
@@ -12,74 +34,74 @@ import { CommonModule } from '@angular/common';
 })
 export class SmartpredComponent {
   step: 'intro' | 'analyzing' | 'result' = 'intro';
-  // AI Analysis Results
   overallScore = 0;
   overallInterpretation = '';
-  pattern1 = '';
-  pattern2 = '';
-  pattern3 = '';
-  risk1 = '';
-  risk2 = '';
-  risk3 = '';
-  immediateAction1 = '';
-  immediateAction2 = '';
-  longTermStrategy1 = '';
-  longTermStrategy2 = '';
+  patterns: string[] = [];
+  risks: string[] = [];
+  immediateActions: string[] = [];
+  longTermStrategies: string[] = [];
   professionalAdvice = '';
+  summary: SummaryResponse['summary'] | null = null;
+  breakdown: SummaryResponse['breakdown'] = [];
+  analysisError = '';
 
-
-  constructor(private http: HttpClient) {}
+  constructor(private testResultsService: TestResultsService) {}
 
   startAnalysis() {
+    if (!this.ensureProfileSelected()) {
+      return;
+    }
+    this.analysisError = '';
     this.step = 'analyzing';
-    
-    // Simulate AI analysis with realistic data
+
     setTimeout(() => {
-      this.generateMockResults();
-      this.step = 'result';
-    }, 3000);
+      this.fetchSummary();
+    }, 1500);
   }
 
-  private generateMockResults() {
-    // Generate realistic mock data for demonstration
-    this.overallScore = Math.floor(Math.random() * 40) + 60; // 60-100 range
-    
-    if (this.overallScore >= 80) {
-      this.overallInterpretation = 'Excellent mental health indicators';
-    } else if (this.overallScore >= 70) {
-      this.overallInterpretation = 'Good mental health with minor areas for improvement';
-    } else if (this.overallScore >= 60) {
-      this.overallInterpretation = 'Moderate mental health with some concerns';
-    } else {
-      this.overallInterpretation = 'Significant mental health concerns detected';
+  private fetchSummary() {
+    const profileId = this.testResultsService.getActiveProfileId();
+
+    if (!profileId) {
+      this.analysisError = 'Please select a profile with saved tests.';
+      this.step = 'intro';
+      return;
     }
 
-    this.pattern1 = 'Consistent stress patterns during work hours';
-    this.pattern2 = 'Positive correlation between sleep quality and mood';
-    this.pattern3 = 'Social support appears to be a protective factor';
-
-    this.risk1 = 'Work-related stress levels are elevated';
-    this.risk2 = 'Sleep quality could be improved';
-    this.risk3 = 'Limited coping strategies identified';
-
-    this.immediateAction1 = 'Practice 10 minutes of daily mindfulness meditation';
-    this.immediateAction2 = 'Establish a consistent sleep schedule';
-
-    this.longTermStrategy1 = 'Develop stress management techniques';
-    this.longTermStrategy2 = 'Build stronger social support networks';
-
-    this.professionalAdvice = 'Consider speaking with a mental health professional if symptoms persist or worsen over time.';
+    this.testResultsService.getTestSummary(profileId).subscribe({
+      next: (summary: SummaryResponse | null) => {
+        if (!summary) {
+          this.analysisError = 'Session expired. Please log in again.';
+          this.step = 'intro';
+          return;
+        }
+        this.applySummary(summary);
+        this.step = 'result';
+      },
+      error: (error) => {
+        if (error.status === 404) {
+          this.analysisError = 'No tests saved for this profile.';
+        } else if (error.status === 401) {
+          this.analysisError = 'Session expired. Please log in again.';
+        } else {
+          this.analysisError = 'Unable to retrieve analysis. Please try again later.';
+        }
+        this.step = 'intro';
+      }
+    });
   }
 
   exportResults() {
     const results = {
       overallScore: this.overallScore,
       interpretation: this.overallInterpretation,
-      patterns: [this.pattern1, this.pattern2, this.pattern3],
-      risks: [this.risk1, this.risk2, this.risk3],
-      immediateActions: [this.immediateAction1, this.immediateAction2],
-      longTermStrategies: [this.longTermStrategy1, this.longTermStrategy2],
+      patterns: this.patterns,
+      risks: this.risks,
+      immediateActions: this.immediateActions,
+      longTermStrategies: this.longTermStrategies,
       professionalAdvice: this.professionalAdvice,
+      breakdown: this.breakdown,
+      summary: this.summary,
       timestamp: new Date().toISOString()
     };
 
@@ -97,16 +119,33 @@ export class SmartpredComponent {
     this.step = 'intro';
     this.overallScore = 0;
     this.overallInterpretation = '';
-    this.pattern1 = '';
-    this.pattern2 = '';
-    this.pattern3 = '';
-    this.risk1 = '';
-    this.risk2 = '';
-    this.risk3 = '';
-    this.immediateAction1 = '';
-    this.immediateAction2 = '';
-    this.longTermStrategy1 = '';
-    this.longTermStrategy2 = '';
+    this.patterns = [];
+    this.risks = [];
+    this.immediateActions = [];
+    this.longTermStrategies = [];
     this.professionalAdvice = '';
+    this.breakdown = [];
+    this.summary = null;
+    this.analysisError = '';
+  }
+
+  private applySummary(summary: SummaryResponse) {
+    this.overallScore = summary.overallScore;
+    this.overallInterpretation = summary.overallInterpretation;
+    this.patterns = summary.patterns || [];
+    this.risks = summary.risks || [];
+    this.immediateActions = summary.immediateActions || [];
+    this.longTermStrategies = summary.longTermStrategies || [];
+    this.professionalAdvice = summary.professionalAdvice;
+    this.summary = summary.summary;
+    this.breakdown = summary.breakdown || [];
+  }
+
+  private ensureProfileSelected(): boolean {
+    if (!this.testResultsService.getActiveProfileId()) {
+      this.analysisError = 'Select a profile from the Tests page before launching Smart Prediction.';
+      return false;
+    }
+    return true;
   }
 }

@@ -7,7 +7,7 @@
             GAD-7 – Anxiety Assessment
         </h1>
         <hr class="w-32 mx-auto h-0.5 border-t-0 bg-green-500/90 mb-6" />
-        <p class="text-lg text-[#101010] dark:text-white/80 max-w-3xl mx-auto">
+        <p class="text-sm text-[#101010] dark:text-white/80 max-w-3xl mx-auto">
             A clinically validated questionnaire to assess the severity of generalized anxiety disorder. 
             It is widely used in both clinical and research settings.
         </p>
@@ -15,7 +15,7 @@
 
     <!-- Intro Screen -->
     <div *ngIf="step === 'intro'" class="max-w-4xl mx-auto">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
             <!-- Left: Description -->
             <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-6 shadow-md">
                 <h3 class="text-xl font-bold text-[#101010] dark:text-white mb-4">About GAD-7</h3>
@@ -48,7 +48,7 @@
             </div>
 
             <!-- Right: Interpretation Guide -->
-            <div class="space-y-6">
+            <div class="space-y-4">
                 <div class="rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-6">
                     <div class="flex items-start gap-3">
                         <span class="text-yellow-600 dark:text-yellow-400 text-xl">⚠️</span>
@@ -87,7 +87,7 @@
 
         <div class="text-center">
             <button (click)="startTest()" 
-                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                class="inline-flex cursor-pointer items-center justify-center h-12 px-8 rounded-lg bg-green-700 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
                 Start the test
             </button>
         </div>
@@ -132,7 +132,7 @@
 
         <div class="text-center">
             <button type="submit" 
-                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                class="inline-flex cursor-pointer items-center justify-center h-12 px-8 rounded-lg bg-green-700 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
                 Next
             </button>
         </div>
@@ -191,22 +191,27 @@
 
     <!-- Result Step -->
     <div *ngIf="step === 'result'" class="max-w-4xl mx-auto">
-        <!-- Main Title -->
-        <div class="text-center mb-12">
-            <h2 class="text-lg font-bold text-[#101010] dark:text-white mb-4">Your GAD-7 Result</h2>
-            <p class="text-[#101010] dark:text-white/60">Based on your answers, here is an overview of your anxiety level.</p>
-        </div>
 
         <!-- Score Card -->
-        <div class="rounded-xl border dark:border-white/10 border-[#101010]/10 bg-white/2 backdrop-blur-xl p-8 shadow-md mb-8">
-            <!-- Score & Interpretation -->
-            <div class="text-center mb-8">
-                <div class="text-4xl font-bold text-[#101010] dark:text-white mb-2">Your Score: {{ totalScore }}</div>
-                <div class="text-lg text-[#101010] dark:text-white/80">{{ interpretation }}</div>
+        <div class="rounded-2xl border border-[#101010]/10 dark:border-white/10 bg-white/80 dark:bg-white/5 backdrop-blur-xl p-4 shadow-lg shadow-black/5 mb-6">
+            <div class="grid gap-6 md:grid-cols-2 md:items-center">
+                <div>
+                    <p class="text-xs font-semibold tracking-[0.3em] uppercase text-green-500 mb-2">Latest result</p>
+                    <h3 class="text-2xl font-bold text-[#101010] dark:text-white mb-2">GAD-7 Score Overview</h3>
+                    <p class="text-base text-[#101010]/80 dark:text-white/70 leading-relaxed">
+                        {{ interpretation }}
+                    </p>
+                </div>
+
+                <div class="flex items-baseline gap-2 justify-start md:justify-end text-[#101010] dark:text-white">
+                    <p class="text-xs uppercase tracking-[0.3em] text-green-500">Score</p>
+                    <p class="text-3xl font-bold text-green-600 dark:text-green-400">{{ totalScore }}</p>
+                    <span class="text-sm text-[#101010]/50 dark:text-white/50">/21</span>
+                </div>
             </div>
 
             <!-- Progress Bar -->
-            <div class="space-y-4">
+            <div class="mt-4 space-y-4">
                 <div class="flex w-full h-6 gap-1">
                     <ng-container *ngFor="let seg of [
                         { from: 0, to: 4, color: 'bg-green-500' },
@@ -280,7 +285,7 @@
         <!-- Restart Button -->
         <div class="text-center">
             <button (click)="reset()" 
-                class="inline-flex items-center justify-center h-12 px-8 rounded-lg bg-green-500 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105">
+                class="inline-flex cursor-pointer items-center justify-center h-12 px-8 rounded-lg bg-green-700 text-white font-semibold hover:bg-green-600 transition-all duration-200 shadow-md hover:shadow-lg">
                 Restart Assessment
             </button>
         </div>

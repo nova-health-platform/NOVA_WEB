@@ -1,0 +1,69 @@
+<div class="flex flex-col items-center gap-3">
+  <!-- Gauge/Circular Progress -->
+  <div class="relative" [ngClass]="getSizeClasses().gauge">
+    <svg class="transform -rotate-90 w-full h-full" 
+         [attr.viewBox]="'0 0 ' + (size === 'small' ? 64 : size === 'large' ? 128 : 96) + ' ' + (size === 'small' ? 64 : size === 'large' ? 128 : 96)">
+      <defs>
+        <filter id="shadow">
+          <feDropShadow dx="0" dy="2" stdDeviation="2" [attr.flood-color]="getGaugeColor()" flood-opacity="0.3"/>
+        </filter>
+      </defs>
+      <!-- Background circle -->
+      <circle
+        [attr.cx]="size === 'small' ? 32 : size === 'large' ? 64 : 48"
+        [attr.cy]="size === 'small' ? 32 : size === 'large' ? 64 : 48"
+        [attr.r]="size === 'small' ? 28 : size === 'large' ? 56 : 42"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="4"
+        class="text-gray-700/30"
+      />
+      <!-- Progress circle -->
+      <circle
+        [attr.cx]="size === 'small' ? 32 : size === 'large' ? 64 : 48"
+        [attr.cy]="size === 'small' ? 32 : size === 'large' ? 64 : 48"
+        [attr.r]="size === 'small' ? 28 : size === 'large' ? 56 : 42"
+        fill="none"
+        [attr.stroke]="getGaugeColor()"
+        stroke-width="4"
+        stroke-linecap="round"
+        [attr.stroke-dasharray]="getCircumference()"
+        [attr.stroke-dashoffset]="getCircumference() * (1 - riskPercentage / 100)"
+        filter="url(#shadow)"
+        class="transition-all duration-500 ease-out"
+      />
+    </svg>
+    <!-- Percentage text in center -->
+    <div class="absolute inset-0 flex items-center justify-center">
+      <span [class]="getSizeClasses().text + ' font-bold'" 
+            [style.color]="getGaugeColor()">
+        {{ riskPercentage.toFixed(1) }}%
+      </span>
+    </div>
+  </div>
+  
+  <!-- Risk Label and Badge -->
+  <div *ngIf="showLabel" class="flex flex-col items-center gap-2">
+    <span class="px-4 py-1.5 rounded-full border font-semibold text-sm"
+          [ngClass]="getColorClasses()">
+      {{ getRiskLabel() }}
+    </span>
+    
+    <!-- Risk range indicator -->
+    <div class="flex items-center gap-2 text-xs text-white/50">
+      <div class="flex items-center gap-1">
+        <div class="w-2 h-2 rounded-full bg-green-500"></div>
+        <span>0-20%</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+        <span>20-50%</span>
+      </div>
+      <div class="flex items-center gap-1">
+        <div class="w-2 h-2 rounded-full bg-red-500"></div>
+        <span>&gt;50%</span>
+      </div>
+    </div>
+  </div>
+</div>
+

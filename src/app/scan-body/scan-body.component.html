@@ -1,38 +1,567 @@
-<section class="min-h-screen">
-    <div class="photo-upload-container">
-      <h1>Upload or Take a Photo</h1>
-    
-      <!-- Upload photo -->
-      <label for="photo-upload" class="upload-label">Choose a Photo:</label>
-      <input
-        type="file"
-        id="photo-upload"
-        accept="image/*"
-        (change)="onFileSelected($event)"
-        class="photo-input"
-      />
-    
-      <!-- Take photo -->
-      <button class="take-photo-btn" (click)="capturePhoto()">Take Photo</button>
-      <video #videoElement class="video-preview" *ngIf="showCamera" autoplay></video>
-      <canvas #canvasElement class="canvas-preview" *ngIf="showCanvas"></canvas>
-    
-      <!-- Display selected photo preview -->
-      <div class="photo-preview" *ngIf="preview">
-        <h2>Photo Preview:</h2>
-        <img [src]="preview" alt="Selected Photo" />
-      </div>
-    
-      <!-- Upload button -->
-      <button class="upload-btn" (click)="uploadPhoto()" [disabled]="!photo">
-        Upload Photo
+<!-- Loading overlay with enhanced skeleton -->
+<div *ngIf="isLoading" 
+     class="fixed inset-0 z-[100] bg-[#101010]/95 flex items-center justify-center transition-opacity duration-500 backdrop-blur-md">
+  <div class="text-white text-xl flex flex-col items-center gap-4 max-w-md px-8 text-center">
+    <div class="spinner"></div>
+    <div class="space-y-2">
+      <p class="text-lg font-semibold">{{ loadingMessage }}</p>
+      <p class="text-sm text-white/60">Please wait while we analyze your image...</p>
+    </div>
+    <!-- Skeleton loader -->
+    <div class="w-full space-y-3 mt-6">
+      <div class="h-4 bg-white/10 rounded animate-pulse"></div>
+      <div class="h-4 bg-white/10 rounded animate-pulse w-3/4 mx-auto"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Security Disclaimer (Fixed at bottom) -->
+<div class="fixed bottom-0 left-0 right-0 z-40 bg-yellow-500/10 border-t border-yellow-500/30 backdrop-blur-sm">
+  <div class="max-w-6xl mx-auto px-6 py-3">
+    <p class="text-xs text-yellow-400 text-center leading-relaxed">
+      <strong>⚠️ Medical Disclaimer:</strong> This application does not provide medical diagnosis. 
+      Consult a healthcare professional if you have concerns. This tool is for informational purposes only and should not replace professional medical advice.
+    </p>
+  </div>
+</div>
+
+<section class="min-h-screen w-full px-6 py-16">
+  <!-- Header Section -->
+  <div class="text-center mb-12">
+    <p class="text-sm font-bold uppercase tracking-widest text-green-500 mb-4">Dermatological Analysis</p>
+    <h1 class="text-2xl font-bold text-[#101010] dark:text-white mb-6">
+      Professional AI-Powered Skin Lesion Assessment
+    </h1>
+    <hr class="w-32 mx-auto h-0.5 border-t-0 bg-green-500/90 mb-6" />
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-6xl mx-auto">
+    <!-- New Analysis Button -->
+    <div class="mb-8 flex justify-center">
+      <button 
+        (click)="openNewAnalysisModal()"
+        class="bg-green-700 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2 shadow-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+        </svg>
+        New Analysis
       </button>
+    </div>
+
+    <!-- History List - Using new component -->
+    <app-lesion-history
+      [history]="history"
+      (viewEntry)="viewHistoryResults($event)"
+      (deleteEntry)="deleteHistoryItem($event)"
+      (compareEntries)="onCompareEntries($event)">
+    </app-lesion-history>
+  </div>
+</section>
+
+<!-- Modal: New Analysis - Step 1: Image -->
+<div *ngIf="showNewAnalysisModal" 
+     class="fixed inset-0 z-50 flex items-center justify-center p-4"
+     (click)="closeNewAnalysisModal()">
+  <div class="absolute inset-0 bg-[#050505]/90 backdrop-blur-md"></div>
+  <div class="relative z-10 bg-[#101010] border border-white/10 rounded-2xl shadow-2xl max-w-3xl w-full p-8 text-white max-h-[90vh] overflow-y-auto"
+       (click)="$event.stopPropagation()">
     
-      <!-- API response -->
-      <div *ngIf="response">
-        <h2>Server Response:</h2>
-        <pre>{{ response | json }}</pre>
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <p class="text-xs uppercase tracking-widest text-green-400 mb-2">Step 1/3</p>
+        <h3 class="text-2xl font-bold">Select an Image</h3>
+      </div>
+      <button (click)="closeNewAnalysisModal()" class="text-white/60 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="mb-4 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+      <p class="text-xs text-red-400">{{ errorMessage }}</p>
+    </div>
+    
+    <!-- Image Quality Warning -->
+    <div *ngIf="showQualityWarning && imageQuality" 
+         class="mb-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <div class="flex-1">
+          <h4 class="text-sm font-semibold text-yellow-400 mb-2">Image Quality Warning</h4>
+          <ul class="text-xs text-yellow-300 space-y-1">
+            <li *ngFor="let rec of imageQuality.recommendations">• {{ rec }}</li>
+          </ul>
+          <p class="text-xs text-yellow-300/70 mt-2">
+            You can still proceed, but image quality may affect analysis accuracy.
+          </p>
+        </div>
       </div>
     </div>
-  </section>
-  
+    
+    <!-- Image Quality Analysis Indicator -->
+    <div *ngIf="isAnalyzingQuality" class="mb-4 bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+      <div class="text-xs text-blue-400 flex items-center gap-2">
+        <div class="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+        Analyzing image quality...
+      </div>
+    </div>
+
+    <!-- Drag and Drop Zone -->
+    <div *ngIf="!preview && !showCamera"
+         #dropZone
+         class="border-2 border-dashed border-white/20 rounded-xl p-12 text-center hover:border-green-500/50 transition-colors cursor-pointer"
+         (click)="triggerFileInput()"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave($event)"
+         (drop)="onDrop($event)">
+      <input 
+        type="file" 
+        #fileInput
+        accept="image/*" 
+        (change)="onFileSelected($event)"
+        class="hidden"
+      />
+      <svg class="w-16 h-16 mx-auto mb-4 text-white/40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>
+      <p class="text-sm text-white/70 mb-1">Drag and drop an image here</p>
+      <p class="text-xs text-white/50">or click to select</p>
+    </div>
+
+    <!-- Image Preview -->
+    <div *ngIf="preview && !showCamera" class="">
+      <div class="relative rounded-xl overflow-hidden border border-white/10 bg-black">
+        <img [src]="preview" alt="Preview" class="w-full h-auto max-h-96 object-contain">
+        <button 
+          (click)="clearImage()"
+          class="absolute top-2 right-2 bg-red-500/80 hover:bg-red-500 text-white rounded-full p-2 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Camera View -->
+    <div *ngIf="showCamera" class="mb-6">
+      <div class="relative rounded-xl overflow-hidden border border-white/10 bg-black">
+        <video #videoElement class="w-full h-auto max-h-96 object-contain" autoplay playsinline></video>
+        <button 
+          (click)="stopCamera()"
+          class="absolute top-2 right-2 bg-red-500/80 hover:bg-red-500 text-white rounded-full p-2 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <canvas #canvasElement class="hidden"></canvas>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-3 pt-4">
+      <button 
+        (click)="triggerFileInput()"
+        class="flex-1 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+        </svg>
+        Upload
+      </button>
+      
+      <button 
+        (click)="capturePhoto()"
+        class="flex-1 bg-green-700 hover:bg-green-600 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+        Use Camera
+      </button>
+
+      <button 
+        *ngIf="showCamera"
+        (click)="takePhoto()"
+        class="w-full bg-green-700 hover:bg-green-600 text-white px-4 py-3 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        Capture Photo
+      </button>
+    </div>
+
+    <!-- Continue Button -->
+    <button 
+      *ngIf="photo && !showCamera"
+      (click)="continueToProfile()"
+      class="w-full mt-4 bg-green-700 hover:bg-green-600 text-white px-4 py-3 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+      Continue
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- Modal: Profile Selection -->
+<div *ngIf="showProfileModal" 
+     class="fixed inset-0 z-50 flex items-center justify-center p-4"
+     (click)="closeProfileModal()">
+  <div class="absolute inset-0 bg-[#050505]/90 backdrop-blur-md"></div>
+  <div class="relative z-10 bg-[#101010] border border-white/10 rounded-2xl shadow-2xl max-w-2xl w-full p-8 text-white"
+       (click)="$event.stopPropagation()">
+    
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <p class="text-xs uppercase tracking-widest text-green-400 mb-2">Step 2/3</p>
+        <h3 class="text-2xl font-bold">Select a Profile</h3>
+      </div>
+      <button (click)="closeProfileModal()" class="text-white/60 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="mb-4 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+      <p class="text-xs text-red-400">{{ errorMessage }}</p>
+    </div>
+
+    <!-- Profile Selection Options -->
+    <div class="space-y-4 mb-6">
+      <!-- If user is logged in: show profiles + manual option -->
+      <ng-container *ngIf="isLoggedIn; else guestProfileOptions">
+        <!-- Loading State -->
+        <div *ngIf="loadingProfiles" class="text-center py-8">
+          <div class="w-8 h-8 border-2 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+          <p class="text-sm text-white/50">Loading profiles...</p>
+        </div>
+        
+        <!-- Use Profile -->
+        <div *ngIf="!loadingProfiles" class="border border-white/10 rounded-lg p-4">
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="radio" 
+                   [checked]="useProfile" 
+                   (change)="useProfile = true"
+                   class="w-4 h-4 text-green-600">
+            <span class="text-sm font-medium">Use an existing profile</span>
+          </label>
+          
+          <div *ngIf="useProfile" class="mt-4 space-y-2">
+            <div *ngIf="profiles.length === 0" class="text-center py-4 text-white/50 text-sm">
+              No profiles available. Please create a profile in your account settings.
+            </div>
+            <div *ngFor="let profile of profiles"
+                 (click)="selectProfile(profile)"
+                 class="p-3 rounded-lg border cursor-pointer transition-colors"
+                 [ngClass]="{
+                   'border-green-500 bg-green-500/10': selectedProfile?.id === profile.id,
+                   'border-white/10 hover:border-green-500/50': selectedProfile?.id !== profile.id
+                 }">
+              <p class="text-sm font-medium">{{ getProfileDisplayName(profile) }}</p>
+              <p class="text-xs text-white/50">
+                <span *ngIf="getProfileAge(profile)">{{ getProfileAge(profile) }} years old</span>
+                <span *ngIf="!getProfileAge(profile) && profile.age">{{ profile.age }} years old</span>
+                <span *ngIf="profile.sex">, {{ profile.sex === 'male' ? 'Male' : profile.sex === 'female' ? 'Female' : 'Not specified' }}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Manual Entry -->
+        <div *ngIf="!loadingProfiles" class="border border-white/10 rounded-lg p-4">
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="radio" 
+                   [checked]="!useProfile" 
+                   (change)="useManualData()"
+                   class="w-4 h-4 text-green-600">
+            <span class="text-sm font-medium">Enter data manually</span>
+          </label>
+        </div>
+      </ng-container>
+
+      <!-- Guest (not logged in): force manual entry + login/signup -->
+      <ng-template #guestProfileOptions>
+        <div class="border border-white/10 rounded-lg p-4 space-y-3">
+          <p class="text-sm font-medium mb-1">Enter data manually</p>
+          <p class="text-xs text-white/60">
+            You are not logged in. To use saved profiles, please log in or create an account.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-2 mt-2">
+            <a routerLink="/login"
+               (click)="closeProfileModal()"
+               class="flex-1 inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-semibold bg-green-700 hover:bg-green-600 text-white transition-colors cursor-pointer">
+              Login
+            </a>
+            <a routerLink="/register"
+               (click)="closeProfileModal()"
+               class="flex-1 inline-flex items-center justify-center px-4 py-2.5 rounded-lg text-sm font-semibold bg-white/10 hover:bg-white/20 text-white transition-colors border border-white/20 cursor-pointer">
+              Sign up
+            </a>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Continue Button -->
+    <button 
+      (click)="continueToClinical()"
+      class="w-full bg-green-700 hover:bg-green-600 text-white px-4 py-3 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+      Continue
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- Modal: Clinical Context -->
+<div *ngIf="showClinicalContext" 
+     class="fixed inset-0 z-50 flex items-center justify-center p-4"
+     (click)="closeClinicalContext()">
+  <div class="absolute inset-0 bg-[#050505]/90 backdrop-blur-md"></div>
+  <div class="relative z-10 bg-[#101010] border border-white/10 rounded-2xl shadow-2xl max-w-4xl w-full p-8 text-white max-h-[90vh] overflow-y-auto"
+       (click)="$event.stopPropagation()">
+    
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <p class="text-xs uppercase tracking-widest text-green-400 mb-2">Step 3/3</p>
+        <h3 class="text-2xl font-bold">Clinical Context</h3>
+      </div>
+      <button (click)="closeClinicalContext()" class="text-white/60 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="mb-4 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+      <p class="text-xs text-red-400">{{ errorMessage }}</p>
+    </div>
+
+    <!-- Clinical Form - Using new component -->
+    <app-clinical-form
+      [initialData]="patientForm.value"
+      (formSubmit)="submitAnalysis()"
+      (formChange)="patientForm.patchValue($event)">
+    </app-clinical-form>
+    
+    <!-- Submit Button -->
+    <button 
+      type="button"
+      (click)="submitAnalysis()"
+      [disabled]="isLoading || patientForm.invalid"
+      class="w-full mt-6 bg-green-700 hover:bg-green-600 disabled:bg-green-700/50 disabled:cursor-not-allowed text-white px-4 py-3 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2">
+      <div *ngIf="isLoading" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+      <svg *ngIf="!isLoading" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+      {{ isLoading ? 'Analyzing...' : 'Start Analysis' }}
+    </button>
+  </div>
+</div>
+
+<!-- Modal: Results -->
+<div *ngIf="showResultsModal && currentResults" 
+     class="fixed inset-0 z-50 flex items-center justify-center p-4"
+     (click)="closeResultsModal()">
+  <div class="absolute inset-0 bg-[#050505]/90 backdrop-blur-md"></div>
+  <div class="relative z-10 bg-[#101010] border border-white/10 rounded-2xl shadow-2xl max-w-4xl w-full p-8 text-white max-h-[90vh] overflow-y-auto"
+       (click)="$event.stopPropagation()">
+    
+    <div class="flex items-start justify-between mb-6">
+      <div class="flex-1">
+        <p class="text-xs uppercase tracking-widest text-green-400 mb-2">Analysis Results</p>
+        <h3 class="text-2xl font-bold">Diagnosis</h3>
+      </div>
+      
+      <!-- User Image - Top Right -->
+      <div class="ml-4 flex-shrink-0">
+        <div *ngIf="preview" class="w-32 h-32 rounded-lg overflow-hidden border border-white/20 bg-black">
+          <img [src]="preview" alt="Analyzed image" class="w-full h-full object-cover">
+        </div>
+      </div>
+      
+      <button (click)="closeResultsModal()" class="ml-4 text-white/60 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Risk Score - Using new component -->
+    <div class="mb-6">
+      <app-risk-score
+        [riskPercentage]="getRiskPercentage(currentResults)"
+        [showLabel]="true"
+        size="large">
+      </app-risk-score>
+    </div>
+    
+    <!-- Triage Advice - Using new component -->
+    <div class="mb-6">
+      <app-triage-advice
+        [riskPercentage]="getRiskPercentage(currentResults)"
+        [customRecommendation]="currentResults?.recommendation">
+      </app-triage-advice>
+    </div>
+    
+    <!-- Image Visualization Section -->
+    <div *ngIf="preview" class="mb-6 space-y-4">
+      <!-- Heatmap Overlay -->
+      <app-heatmap-overlay
+        [imageUrl]="preview"
+        [heatmapData]="currentResults?.gradcam_image || currentResults?.heatmap"
+        [showHeatmap]="showHeatmap"
+        [opacity]="heatmapOpacity / 100">
+      </app-heatmap-overlay>
+      
+      <!-- Segmentation Viewer -->
+      <app-segmentation-viewer
+        *ngIf="currentResults?.segmentation_mask"
+        [imageUrl]="preview"
+        [segmentationMask]="currentResults?.segmentation_mask"
+        [showSegmentation]="showSegmentation"
+        [measurements]="currentResults?.measurements">
+      </app-segmentation-viewer>
+    </div>
+
+    <!-- Risk Breakdown -->
+    <div *ngIf="currentResults?.benign_probability !== undefined" class="mb-6">
+      <h4 class="text-sm font-semibold text-white mb-3">Risk Breakdown</h4>
+      <div class="space-y-2">
+        <div class="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center text-red-400 text-sm font-semibold">
+              M
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white">Malignant</p>
+              <p class="text-xs text-white/60">Risk of malignancy</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-lg font-semibold text-red-400">{{ getRiskPercentage(currentResults).toFixed(1) }}%</p>
+          </div>
+        </div>
+        <div class="bg-white/5 border border-white/10 rounded-lg p-4 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-400 text-sm font-semibold">
+              B
+            </div>
+            <div>
+              <p class="text-sm font-medium text-white">Benign</p>
+              <p class="text-xs text-white/60">Likelihood of benign lesion</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-lg font-semibold text-green-400">{{ currentResults.benign_probability.toFixed(1) }}%</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div *ngIf="currentResults?.description" class="mb-6 bg-white/5 border border-white/10 rounded-lg p-4">
+      <h4 class="text-sm font-semibold text-white mb-2">Description</h4>
+      <p class="text-sm text-white/80 leading-relaxed">{{ currentResults.description }}</p>
+    </div>
+
+    <!-- Recommendations -->
+    <div *ngIf="currentResults?.recommendations" class="mb-6 bg-white/5 border border-white/10 rounded-lg p-4">
+      <h4 class="text-sm font-semibold text-white mb-2">Recommendations</h4>
+      <p class="text-sm text-white/80 leading-relaxed">{{ currentResults.recommendations }}</p>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
+      <p class="text-xs text-yellow-400 leading-relaxed">
+        <strong>Disclaimer:</strong> This analysis is for informational purposes only and should not replace professional medical advice. Always consult a qualified dermatologist for accurate diagnosis and treatment.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Comparison -->
+<div *ngIf="showComparisonModal && getComparisonData()" 
+     class="fixed inset-0 z-50 flex items-center justify-center p-4"
+     (click)="closeComparisonModal()">
+  <div class="absolute inset-0 bg-[#050505]/90 backdrop-blur-md"></div>
+  <div class="relative z-10 bg-[#101010] border border-white/10 rounded-2xl shadow-2xl max-w-6xl w-full p-8 text-white max-h-[90vh] overflow-y-auto"
+       (click)="$event.stopPropagation()">
+    
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <p class="text-xs uppercase tracking-widest text-blue-400 mb-2">Comparison</p>
+        <h3 class="text-2xl font-bold">Before & After Analysis</h3>
+      </div>
+      <button (click)="closeComparisonModal()" class="text-white/60 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+    
+    <div *ngIf="getComparisonData() as compData" class="space-y-6">
+      <!-- Comparison Summary -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+        <div>
+          <p class="text-xs text-blue-400 mb-1">Risk Change</p>
+          <p class="text-2xl font-bold"
+             [ngClass]="{
+               'text-red-400': compData.comparison.riskDirection === 'increased',
+               'text-green-400': compData.comparison.riskDirection === 'decreased',
+               'text-white': compData.comparison.riskDirection === 'stable'
+             }">
+            {{ compData.comparison.riskChange > 0 ? '+' : '' }}{{ compData.comparison.riskChange.toFixed(1) }}%
+          </p>
+        </div>
+        <div>
+          <p class="text-xs text-blue-400 mb-1">Time Difference</p>
+          <p class="text-2xl font-bold text-white">{{ compData.comparison.timeDiff.toFixed(0) }} days</p>
+        </div>
+      </div>
+      
+      <!-- Side by side comparison -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Entry 1 -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="font-semibold">Earlier Analysis</h4>
+            <span class="text-xs text-white/50">{{ formatDate(compData.entry1.date) }}</span>
+          </div>
+          <div class="rounded-lg overflow-hidden border border-white/10">
+            <img [src]="compData.entry1.imagePreview" alt="Earlier" class="w-full h-auto">
+          </div>
+          <app-risk-score
+            [riskPercentage]="getRiskPercentage(compData.entry1.results)"
+            [showLabel]="true"
+            size="medium">
+          </app-risk-score>
+        </div>
+        
+        <!-- Entry 2 -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h4 class="font-semibold">Recent Analysis</h4>
+            <span class="text-xs text-white/50">{{ formatDate(compData.entry2.date) }}</span>
+          </div>
+          <div class="rounded-lg overflow-hidden border border-white/10">
+            <img [src]="compData.entry2.imagePreview" alt="Recent" class="w-full h-auto">
+          </div>
+          <app-risk-score
+            [riskPercentage]="getRiskPercentage(compData.entry2.results)"
+            [showLabel]="true"
+            size="medium">
+          </app-risk-score>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

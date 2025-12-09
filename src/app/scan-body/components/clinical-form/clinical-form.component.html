@@ -1,0 +1,65 @@
+<form [formGroup]="clinicalForm" (ngSubmit)="onSubmit()" class="space-y-6">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <!-- Age -->
+    <div>
+      <label class="block text-sm font-medium text-white/80 mb-2">
+        Age <span class="text-red-400">*</span>
+      </label>
+      <input
+        type="number"
+        formControlName="patientAge"
+        class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-green-500"
+        placeholder="e.g., 45"
+        min="0"
+        max="120">
+      <p *ngIf="isFieldInvalid('patientAge')" 
+         class="text-xs text-red-400 mt-1">
+        Age is required (0-120)
+      </p>
+    </div>
+    
+    <!-- Sex -->
+    <div>
+      <label class="block text-sm font-medium text-white/80 mb-2">
+        Sex <span class="text-red-400">*</span>
+      </label>
+      <select
+        formControlName="patientSex"
+        class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
+        <option value="">Select</option>
+        <option *ngFor="let option of sexOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+      <p *ngIf="isFieldInvalid('patientSex')" 
+         class="text-xs text-red-400 mt-1">
+        Sex is required
+      </p>
+    </div>
+    
+    <!-- Localization -->
+    <div>
+      <label class="block text-sm font-medium text-white/80 mb-2">
+        Anatomical Location <span class="text-red-400">*</span>
+      </label>
+      <select
+        formControlName="localization"
+        class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-green-500">
+        <option value="">Select</option>
+        <option *ngFor="let loc of localizationOptions" [value]="loc">
+          {{ loc }}
+        </option>
+      </select>
+      <p *ngIf="isFieldInvalid('localization')" 
+         class="text-xs text-red-400 mt-1">
+        Location is required
+      </p>
+    </div>
+  </div>
+  
+  <!-- Form status indicator -->
+  <div class="text-xs text-white/50">
+    <span class="text-red-400">*</span> Required fields
+  </div>
+</form>
+

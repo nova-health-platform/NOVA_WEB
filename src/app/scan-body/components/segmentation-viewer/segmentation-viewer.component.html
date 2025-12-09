@@ -1,0 +1,72 @@
+<div class="space-y-4">
+  <!-- Image with segmentation overlay -->
+  <div class="relative rounded-lg overflow-hidden border border-white/10 bg-black">
+    <img #imageElement
+         [src]="imageUrl"
+         alt="Analysis image"
+         class="w-full h-auto max-h-[600px] object-contain"
+         (load)="renderSegmentation()">
+    
+    <!-- Canvas overlay for segmentation -->
+    <canvas #canvasElement
+            class="absolute top-0 left-0 w-full h-full pointer-events-none"
+            [style.opacity]="showSegmentation ? 1 : 0"
+            [style.transition]="'opacity 0.3s ease'">
+    </canvas>
+  </div>
+  
+  <!-- Controls -->
+  <div class="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-lg">
+    <button
+      (click)="toggleSegmentation()"
+      class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+      [ngClass]="showSegmentation 
+        ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+        : 'bg-white/10 hover:bg-white/20 text-white'">
+      <span class="flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        {{ showSegmentation ? 'Hide Segmentation' : 'Show Segmentation' }}
+      </span>
+    </button>
+  </div>
+  
+  <!-- Measurements (if available) -->
+  <div *ngIf="measurements && showSegmentation" 
+       class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 bg-white/5 border border-white/10 rounded-lg">
+    <!-- Area -->
+    <div class="text-center">
+      <p class="text-xs text-white/50 mb-1">Area</p>
+      <p class="text-sm font-semibold text-white">
+        {{ formatMeasurement(measurements.area, 'mm²') }}
+      </p>
+    </div>
+    
+    <!-- Diameter -->
+    <div class="text-center">
+      <p class="text-xs text-white/50 mb-1">Diameter</p>
+      <p class="text-sm font-semibold text-white">
+        {{ formatMeasurement(measurements.diameter, 'mm') }}
+      </p>
+    </div>
+    
+    <!-- Perimeter -->
+    <div class="text-center">
+      <p class="text-xs text-white/50 mb-1">Perimeter</p>
+      <p class="text-sm font-semibold text-white">
+        {{ formatMeasurement(measurements.perimeter, 'mm') }}
+      </p>
+    </div>
+    
+    <!-- Asymmetry -->
+    <div class="text-center">
+      <p class="text-xs text-white/50 mb-1">Asymmetry</p>
+      <p class="text-sm font-semibold text-white">
+        {{ getAsymmetryLabel(measurements.asymmetry) }}
+      </p>
+    </div>
+  </div>
+</div>
+

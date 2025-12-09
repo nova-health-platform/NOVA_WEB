@@ -1,0 +1,56 @@
+<div class="relative w-full">
+  <!-- Image with heatmap overlay -->
+  <div class="relative rounded-lg overflow-hidden border border-white/10 bg-black">
+    <img #imageElement
+         [src]="imageUrl"
+         alt="Analysis image"
+         class="w-full h-auto max-h-[600px] object-contain"
+         (load)="renderHeatmap()">
+    
+    <!-- Canvas overlay for heatmap -->
+    <canvas #canvasElement
+            class="absolute top-0 left-0 w-full h-full pointer-events-none"
+            [style.opacity]="showHeatmap ? 1 : 0"
+            [style.transition]="'opacity 0.3s ease'">
+    </canvas>
+  </div>
+  
+  <!-- Controls -->
+  <div class="mt-4 flex flex-col sm:flex-row items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-lg">
+    <!-- Toggle button -->
+    <button
+      (click)="toggleHeatmap()"
+      class="px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+      [ngClass]="showHeatmap 
+        ? 'bg-green-600 hover:bg-green-700 text-white' 
+        : 'bg-white/10 hover:bg-white/20 text-white'">
+      <span class="flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        {{ showHeatmap ? 'Hide Heatmap' : 'Show Heatmap' }}
+      </span>
+    </button>
+    
+    <!-- Opacity slider -->
+    <div class="flex-1 flex items-center gap-3 min-w-0">
+      <label class="text-sm text-white/70 whitespace-nowrap">Intensity:</label>
+      <input
+        type="range"
+        min="0"
+        max="100"
+        [value]="opacity * 100"
+        (input)="onOpacityChange($event)"
+        class="flex-1 h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+        [disabled]="!showHeatmap">
+      <span class="text-sm text-white/70 w-12 text-right">{{ (opacity * 100).toFixed(0) }}%</span>
+    </div>
+  </div>
+  
+  <!-- Info text -->
+  <p class="mt-2 text-xs text-white/50 text-center">
+    Heatmap shows the areas of the image that contribute most to the risk assessment
+  </p>
+</div>
+

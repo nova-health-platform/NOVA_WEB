@@ -17,6 +17,8 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AccountComponent } from './account/account.component';
 import { AuthGuard } from './guards/auth.guards';
+import { SitePasswordGuard } from './guards/site-password.guard';
+import { SitePasswordComponent } from './site-password/site-password.component';
 import { AboutUsComponent } from './about-us/about-us.component';
 import { ContactComponent } from './contact/contact.component';
 import { TermsOfUseComponent } from './terms-of-use/terms-of-use.component';
@@ -24,53 +26,57 @@ import { DocsComponent } from './docs/docs.component';
 
 // Définition des routes
 export const routes: Routes = [
-    // Route par défaut, redirige vers la page d'accueil
+    // Route pour la protection par mot de passe (non protégée)
+    { path: 'site-password', component: SitePasswordComponent },
+
+    // Route par défaut, redirige vers la page d'accueil (le guard sera appliqué sur /home)
     { path: '', redirectTo: 'home', pathMatch: 'full' },
 
-    { path: 'home', component: HomeComponent },
+    { path: 'home', component: HomeComponent, canActivate: [SitePasswordGuard] },
 
-    { path: 'login', component: LoginComponent },
+    { path: 'login', component: LoginComponent, canActivate: [SitePasswordGuard] },
 
-    { path: 'register', component: RegisterComponent },
+    { path: 'register', component: RegisterComponent, canActivate: [SitePasswordGuard] },
 
-    { path: 'account', component: AccountComponent, canActivate: [AuthGuard] },
+    { path: 'account', component: AccountComponent, canActivate: [SitePasswordGuard, AuthGuard] },
 
-    { path: 'subscription', component: SubscriptionComponent, canActivate: [AuthGuard] },
+    { path: 'subscription', component: SubscriptionComponent, canActivate: [SitePasswordGuard, AuthGuard] },
 
-    { path: 'success', component: SuccessComponent, canActivate: [AuthGuard] },
+    { path: 'success', component: SuccessComponent, canActivate: [SitePasswordGuard, AuthGuard] },
 
-    { path: 'cancel', component: CancelComponent, canActivate: [AuthGuard] },
+    { path: 'cancel', component: CancelComponent, canActivate: [SitePasswordGuard, AuthGuard] },
 
-    { path: 'analysis', component: AnalysisComponent },
+    { path: 'analysis', component: AnalysisComponent, canActivate: [SitePasswordGuard] },
 
-    { path: 'skinCheck', component: ScanBodyComponent },
+    { path: 'skinCheck', component: ScanBodyComponent, canActivate: [SitePasswordGuard] },
 
-    { path: 'mentalHealth', component: PsyTestComponent },
+    { path: 'mentalHealth', component: PsyTestComponent, canActivate: [SitePasswordGuard] },
 
-    { path: 'smartpred', component: SmartpredComponent, canActivate: [AuthGuard] },
+    { path: 'smartpred', component: SmartpredComponent, canActivate: [SitePasswordGuard, AuthGuard] },
 
-    { path: 'phq9', component: Phq9Component, canActivate: [AuthGuard] },
+    { path: 'phq9', component: Phq9Component, canActivate: [SitePasswordGuard, AuthGuard] },
 
-    { path: 'gad7', component: Gad7Component, canActivate: [AuthGuard] },
+    { path: 'gad7', component: Gad7Component, canActivate: [SitePasswordGuard, AuthGuard] },
 
-    { path: 'dass21', component: Dass21Component, canActivate: [AuthGuard] },
+    { path: 'dass21', component: Dass21Component, canActivate: [SitePasswordGuard, AuthGuard] },
 
-    { path: 'isi', component: IsiComponent, canActivate: [AuthGuard] },
+    { path: 'isi', component: IsiComponent, canActivate: [SitePasswordGuard, AuthGuard] },
 
-    { path: 'burnout', component: BurnoutComponent, canActivate: [AuthGuard] },
+    { path: 'burnout', component: BurnoutComponent, canActivate: [SitePasswordGuard, AuthGuard] },
 
-    { path: 'medecineSearch', component: ScanMedComponent },
+    { path: 'medecineSearch', component: ScanMedComponent, canActivate: [SitePasswordGuard] },
 
-    { path: 'about-us', component: AboutUsComponent },
+    { path: 'about-us', component: AboutUsComponent, canActivate: [SitePasswordGuard] },
 
-    { path: 'contact', component: ContactComponent },
+    { path: 'contact', component: ContactComponent, canActivate: [SitePasswordGuard] },
 
-    { path: 'roadmap', component: AboutUsComponent },
+    { path: 'roadmap', component: AboutUsComponent, canActivate: [SitePasswordGuard] },
 
-    { path: 'terms-of-use', component: TermsOfUseComponent },
+    { path: 'terms-of-use', component: TermsOfUseComponent, canActivate: [SitePasswordGuard] },
 
-    { path: 'docs', component: DocsComponent },
+    { path: 'docs', component: DocsComponent, canActivate: [SitePasswordGuard] },
 
     // Route pour capturer toutes les autres URLs et rediriger vers 'home'
+    // Note: Le guard sera appliqué sur /home, donc pas besoin de le mettre ici
     { path: '**', redirectTo: 'home' },
 ];

@@ -9,7 +9,6 @@ import { HistoryService, HistoryEntry } from '../services/history.service';
 import { ImageQualityService, ImageQualityMetrics } from '../services/image-quality.service';
 import { RiskScoreComponent } from './components/risk-score/risk-score.component';
 import { TriageAdviceComponent } from './components/triage-advice/triage-advice.component';
-import { HeatmapOverlayComponent } from './components/heatmap-overlay/heatmap-overlay.component';
 import { SegmentationViewerComponent } from './components/segmentation-viewer/segmentation-viewer.component';
 import { LesionHistoryComponent } from './components/lesion-history/lesion-history.component';
 import { ClinicalFormComponent } from './components/clinical-form/clinical-form.component';
@@ -24,7 +23,6 @@ import { environment } from '../../environments/environment';
     RouterModule,
     RiskScoreComponent,
     TriageAdviceComponent,
-    HeatmapOverlayComponent,
     SegmentationViewerComponent,
     LesionHistoryComponent,
     ClinicalFormComponent
@@ -195,6 +193,13 @@ export class ScanBodyComponent implements OnDestroy, OnInit {
   }
 
   private saveHistoryEntry(imagePreview: string, patientData: any, results: any, imageQuality?: ImageQualityMetrics): void {
+    const profileInfo = this.useProfile && this.selectedProfile ? {
+      id: this.selectedProfile.id,
+      name: this.getProfileDisplayName(this.selectedProfile),
+      sex: this.selectedProfile.sex,
+      age: this.getProfileAge(this.selectedProfile)
+    } : undefined;
+
     const historyEntry: HistoryEntry = {
       id: Date.now().toString(),
       date: new Date().toISOString(),
@@ -202,6 +207,7 @@ export class ScanBodyComponent implements OnDestroy, OnInit {
       patientData: patientData,
       results: results,
       imageQuality: imageQuality || undefined,
+      profile: profileInfo,
       expanded: false
     };
 
@@ -210,6 +216,10 @@ export class ScanBodyComponent implements OnDestroy, OnInit {
 
   // Modal Management
   openNewAnalysisModal(): void {
+    if (!this.isLoggedIn) {
+      this.errorMessage = 'Please log in to start a new analysis.';
+      return;
+    }
     this.showNewAnalysisModal = true;
     this.currentStep = 'image';
     this.resetWorkflow();
@@ -510,8 +520,6 @@ export class ScanBodyComponent implements OnDestroy, OnInit {
       return;
     }
     
-    console.log('🔍 Loading profiles from:', `${this.apiUrl}/profiles`);
-    
     this.authService.checkAndRefreshToken().subscribe({
       next: (isValid) => {
         if (isValid) {
@@ -519,8 +527,6 @@ export class ScanBodyComponent implements OnDestroy, OnInit {
             headers: { Authorization: `Bearer ${token}` }
           }).subscribe({
             next: (data) => {
-              console.log('✅ Profiles loaded successfully:', data);
-              console.log('📊 Number of profiles:', data?.length || 0);
               this.profiles = Array.isArray(data) ? data : [];
               this.loadingProfiles = false;
             },

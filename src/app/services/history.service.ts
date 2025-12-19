@@ -7,6 +7,12 @@ export interface HistoryEntry {
   patientData: any;
   results: any;
   imageQuality?: any;
+  profile?: {
+    id?: string | number;
+    name?: string;
+    sex?: string;
+    age?: number | null;
+  };
   expanded?: boolean;
 }
 

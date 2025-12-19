@@ -73,12 +73,12 @@ export class RiskScoreComponent {
         };
       case 'large':
         return { 
-          text: 'text-5xl', 
+          text: 'text-4xl', 
           gauge: 'w-32 h-32' 
         };
       default: // medium
         return { 
-          text: 'text-4xl', 
+          text: 'text-3xl', 
           gauge: 'w-24 h-24' 
         };
     }
